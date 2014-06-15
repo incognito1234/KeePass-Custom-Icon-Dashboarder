@@ -81,6 +81,7 @@
     <None Include="createPlgx.cmd">
       <Generator>TextTemplatingFileGenerator</Generator>
     </None>
+    <None Include="versionInfo.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\KeePass\KeePass\KeePass.csproj">

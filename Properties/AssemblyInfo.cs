@@ -9,8 +9,8 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("CustomIconDashboarder")]
-[assembly: AssemblyDescription("Provides some statistic about custom icons")]
+[assembly: AssemblyTitle("Custom Icon Dashboarder")]
+[assembly: AssemblyDescription("Provides some statistics about custom icons")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Jareth Lomson")]
 [assembly: AssemblyProduct("KeePass Plugin")]

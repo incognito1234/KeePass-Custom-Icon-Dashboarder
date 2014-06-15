@@ -30,6 +30,12 @@ namespace CustomIconDashboarderPlugin
 	{
 		private IPluginHost m_host = null;
 		
+		public override string UpdateUrl
+        {
+            get { return "https://sourceforge.net/p/keepasscustomicondashboarder/KPCustomIconDashboarder/ci/master/tree/versionInfo.txt?format=raw"; }
+        }
+
+		
 		private ToolStripSeparator m_tsSeparator = null;
 		private ToolStripMenuItem m_tsmiMenuItem = null;
 		
