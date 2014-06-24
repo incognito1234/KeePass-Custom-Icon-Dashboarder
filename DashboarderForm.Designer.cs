@@ -57,7 +57,6 @@ namespace CustomIconDashboarderPlugin
 			// m_lvViewIcon
 			// 
 			this.m_lvViewIcon.AllowColumnReorder = true;
-			this.m_lvViewIcon.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
 			this.m_lvViewIcon.HideSelection = false;
 			this.m_lvViewIcon.Location = new System.Drawing.Point(12, 35);
 			this.m_lvViewIcon.MultiSelect = false;
@@ -66,6 +65,7 @@ namespace CustomIconDashboarderPlugin
 			this.m_lvViewIcon.TabIndex = 0;
 			this.m_lvViewIcon.UseCompatibleStateImageBehavior = false;
 			this.m_lvViewIcon.View = System.Windows.Forms.View.Details;
+			this.m_lvViewIcon.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.OnLvViewIconColumnClick);
 			this.m_lvViewIcon.SelectedIndexChanged += new System.EventHandler(this.M_lvViewIconSelectedIndexChanged);
 			// 
 			// lbl_title

@@ -30,7 +30,7 @@
     <FileAlignment>4096</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <OutputPath>..\..\keepass\Build\KeePass\Debug\</OutputPath>
+    <OutputPath>..\KeePass\Build\KeePass\Debug\</OutputPath>
     <DebugSymbols>True</DebugSymbols>
     <DebugType>Full</DebugType>
     <Optimize>False</Optimize>
@@ -61,6 +61,7 @@
       <DependentUpon>DashboarderForm.cs</DependentUpon>
     </Compile>
     <Compile Include="CustomIconDashboarderExt.cs" />
+    <Compile Include="ListViewColumnSorter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resource.Designer.cs">
       <DependentUpon>Resource.resx</DependentUpon>

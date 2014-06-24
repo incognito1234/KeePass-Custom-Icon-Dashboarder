@@ -36,6 +36,8 @@ namespace CustomIconDashboarderPlugin
 		private IPluginHost m_PluginHost;
 		private IconStatsHandler m_iconCounter = null;
 		private Dictionary<int, PwCustomIcon> m_iconIndexer = null;
+
+		private ListViewColumnSorter  m_lvwColumnSorter;
 		
 		public DashboarderForm(IPluginHost pluginHost)
 		{
@@ -59,7 +61,10 @@ namespace CustomIconDashboarderPlugin
 			m_iconCounter.Initialize( m_PluginHost.Database);
 			
 			buildCustomListView();
-
+			
+			m_lvwColumnSorter = new ListViewColumnSorter();
+			this.m_lvViewIcon.ListViewItemSorter = m_lvwColumnSorter;
+			
 		}
 		
 		private void buildCustomListView()
@@ -169,6 +174,92 @@ namespace CustomIconDashboarderPlugin
 					imgNew = new Bitmap(imgToBeConverted, new Size(nWidth, nHeight));
 				
 				return imgNew;
+		}
+		
+		private void OnLvViewIconColumnClick(object sender, ColumnClickEventArgs e)
+		{
+			bool boToDefault = false;
+			
+			if ( e.Column == m_lvwColumnSorter.SortColumn )
+				{
+					// Change sortOrder for this column
+					if (m_lvwColumnSorter.Order == SortOrder.Ascending)
+					{
+						m_lvwColumnSorter.Order = SortOrder.Descending;
+					}
+					else if (m_lvwColumnSorter.Order == SortOrder.Descending) {
+						boToDefault = true;
+					}
+					else
+					{
+						m_lvwColumnSorter.Order = SortOrder.Ascending;
+					}
+					
+				}
+				else
+				{
+					// Define sort column.
+					m_lvwColumnSorter.SortColumn = e.Column;
+					m_lvwColumnSorter.Order = SortOrder.Ascending;
+				}
+				
+				// Process Sort
+				if (boToDefault) {
+					m_lvwColumnSorter.SortColumn = 0;
+					m_lvwColumnSorter.Order = SortOrder.Ascending;
+					this.m_lvViewIcon.Sort();
+					m_lvwColumnSorter.Order = SortOrder.None;
+					UpdateColumnSortingIcons();
+				}
+				else {
+					this.m_lvViewIcon.Sort();
+					UpdateColumnSortingIcons();
+				}
+		}
+		
+		
+		private void UpdateColumnSortingIcons()
+		{
+			if(UIUtil.SetSortIcon(m_lvViewIcon, m_lvwColumnSorter.SortColumn,
+				m_lvwColumnSorter.Order)) return;
+
+			if(m_lvwColumnSorter.SortColumn < 0) { Debug.Assert(m_lvViewIcon.ListViewItemSorter == null); }
+
+			string strAsc = "  \u2191"; // Must have same length
+			string strDsc = "  \u2193"; // Must have same length
+			if(WinUtil.IsWindows9x || WinUtil.IsWindows2000 || WinUtil.IsWindowsXP ||
+				KeePassLib.Native.NativeLib.IsUnix())
+			{
+				strAsc = @"  ^";
+				strDsc = @"  v";
+			}
+			else if(WinUtil.IsAtLeastWindowsVista)
+			{
+				strAsc = "  \u25B3";
+				strDsc = "  \u25BD";
+			}
+
+			foreach(ColumnHeader ch in m_lvViewIcon.Columns)
+			{
+				string strCur = ch.Text, strNew = null;
+
+				if(strCur.EndsWith(strAsc) || strCur.EndsWith(strDsc))
+				{
+					strNew = strCur.Substring(0, strCur.Length - strAsc.Length);
+					strCur = strNew;
+				}
+
+				if((ch.Index == m_lvwColumnSorter.SortColumn) &&
+					(m_lvwColumnSorter.Order != SortOrder.None))
+				{
+					if(m_lvwColumnSorter.Order == SortOrder.Ascending)
+						strNew = strCur + strAsc;
+					else if(m_lvwColumnSorter.Order == SortOrder.Descending)
+						strNew = strCur + strDsc;
+				}
+
+				if(strNew != null) ch.Text = strNew;
+			}
 		}
 		
 	}
