@@ -62,7 +62,7 @@ namespace CustomIconDashboarderPlugin
 			this.m_lvViewIcon.Location = new System.Drawing.Point(12, 35);
 			this.m_lvViewIcon.MultiSelect = false;
 			this.m_lvViewIcon.Name = "m_lvViewIcon";
-			this.m_lvViewIcon.Size = new System.Drawing.Size(205, 406);
+			this.m_lvViewIcon.Size = new System.Drawing.Size(225, 406);
 			this.m_lvViewIcon.TabIndex = 0;
 			this.m_lvViewIcon.UseCompatibleStateImageBehavior = false;
 			this.m_lvViewIcon.View = System.Windows.Forms.View.Details;
@@ -80,9 +80,9 @@ namespace CustomIconDashboarderPlugin
 			// m_lvUsedEntries
 			// 
 			this.m_lvUsedEntries.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-			this.m_lvUsedEntries.Location = new System.Drawing.Point(245, 106);
+			this.m_lvUsedEntries.Location = new System.Drawing.Point(263, 106);
 			this.m_lvUsedEntries.Name = "m_lvUsedEntries";
-			this.m_lvUsedEntries.Size = new System.Drawing.Size(400, 150);
+			this.m_lvUsedEntries.Size = new System.Drawing.Size(382, 150);
 			this.m_lvUsedEntries.TabIndex = 2;
 			this.m_lvUsedEntries.UseCompatibleStateImageBehavior = false;
 			this.m_lvUsedEntries.View = System.Windows.Forms.View.Details;
@@ -90,9 +90,9 @@ namespace CustomIconDashboarderPlugin
 			// m_lvUsedGroups
 			// 
 			this.m_lvUsedGroups.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-			this.m_lvUsedGroups.Location = new System.Drawing.Point(245, 291);
+			this.m_lvUsedGroups.Location = new System.Drawing.Point(263, 291);
 			this.m_lvUsedGroups.Name = "m_lvUsedGroups";
-			this.m_lvUsedGroups.Size = new System.Drawing.Size(400, 150);
+			this.m_lvUsedGroups.Size = new System.Drawing.Size(382, 150);
 			this.m_lvUsedGroups.TabIndex = 3;
 			this.m_lvUsedGroups.UseCompatibleStateImageBehavior = false;
 			this.m_lvUsedGroups.View = System.Windows.Forms.View.Details;
@@ -100,7 +100,7 @@ namespace CustomIconDashboarderPlugin
 			// lbl_usedinentries
 			// 
 			this.lbl_usedinentries.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lbl_usedinentries.Location = new System.Drawing.Point(245, 80);
+			this.lbl_usedinentries.Location = new System.Drawing.Point(255, 80);
 			this.lbl_usedinentries.Name = "lbl_usedinentries";
 			this.lbl_usedinentries.Size = new System.Drawing.Size(100, 23);
 			this.lbl_usedinentries.TabIndex = 4;
@@ -109,7 +109,7 @@ namespace CustomIconDashboarderPlugin
 			// lbl_usedInGroups
 			// 
 			this.lbl_usedInGroups.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lbl_usedInGroups.Location = new System.Drawing.Point(245, 268);
+			this.lbl_usedInGroups.Location = new System.Drawing.Point(255, 268);
 			this.lbl_usedInGroups.Name = "lbl_usedInGroups";
 			this.lbl_usedInGroups.Size = new System.Drawing.Size(100, 20);
 			this.lbl_usedInGroups.TabIndex = 5;
@@ -119,7 +119,7 @@ namespace CustomIconDashboarderPlugin
 			// 
 			this.pbo_selectedIcon.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
 			this.pbo_selectedIcon.InitialImage = null;
-			this.pbo_selectedIcon.Location = new System.Drawing.Point(361, 12);
+			this.pbo_selectedIcon.Location = new System.Drawing.Point(371, 9);
 			this.pbo_selectedIcon.Name = "pbo_selectedIcon";
 			this.pbo_selectedIcon.Size = new System.Drawing.Size(36, 36);
 			this.pbo_selectedIcon.TabIndex = 6;
@@ -128,7 +128,7 @@ namespace CustomIconDashboarderPlugin
 			// lbl_selectedIcon
 			// 
 			this.lbl_selectedIcon.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lbl_selectedIcon.Location = new System.Drawing.Point(245, 24);
+			this.lbl_selectedIcon.Location = new System.Drawing.Point(255, 25);
 			this.lbl_selectedIcon.Name = "lbl_selectedIcon";
 			this.lbl_selectedIcon.Size = new System.Drawing.Size(110, 23);
 			this.lbl_selectedIcon.TabIndex = 7;

@@ -18,8 +18,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Diagnostics;
+
 using KeePass.UI;
 using KeePass.Plugins;
+using KeePass.Util;
+
 using KeePassLib;
 
 namespace CustomIconDashboarderPlugin
@@ -44,8 +47,6 @@ namespace CustomIconDashboarderPlugin
 			
 			m_PluginHost = pluginHost;
 			
-            
-			
 		}
 		
 		private void OnFormLoad(object sender, EventArgs e)
@@ -54,12 +55,11 @@ namespace CustomIconDashboarderPlugin
 			
 			GlobalWindowManager.AddWindow(this);
 			
-			
 			m_iconCounter = new IconStatsHandler();
 			m_iconCounter.Initialize( m_PluginHost.Database);
 			
 			buildCustomListView();
-			
+
 		}
 		
 		private void buildCustomListView()
@@ -69,13 +69,14 @@ namespace CustomIconDashboarderPlugin
 			m_lvViewIcon.Columns.Add( Resource.hdr_icon, 50 );
 			m_lvViewIcon.Columns.Add( Resource.hdr_nEntry, 50, HorizontalAlignment.Center);
 			m_lvViewIcon.Columns.Add( Resource.hdr_nGroup, 50, HorizontalAlignment.Center);
+			m_lvViewIcon.Columns.Add( Resource.hdr_nTotal, 50, HorizontalAlignment.Center);
 			
-			m_lvUsedEntries.Columns.Add( Resource.hdr_titleEntry, 100 );
-			m_lvUsedEntries.Columns.Add( Resource.hdr_userName, 100);
-			m_lvUsedEntries.Columns.Add( Resource.hdr_groupName, 200 );
+			m_lvUsedEntries.Columns.Add( Resource.hdr_titleEntry, 85 );
+			m_lvUsedEntries.Columns.Add( Resource.hdr_userName, 85);
+			m_lvUsedEntries.Columns.Add( Resource.hdr_groupName, 190 );
 			
-			m_lvUsedGroups.Columns.Add( Resource.hdr_groupName, 150 );
-			m_lvUsedGroups.Columns.Add( Resource.hdr_fullPath, 250 );
+			m_lvUsedGroups.Columns.Add( Resource.hdr_groupName, 130 );
+			m_lvUsedGroups.Columns.Add( Resource.hdr_fullPath, 230 );
 			
 			CreateCustomIconList();
 		
@@ -99,16 +100,16 @@ namespace CustomIconDashboarderPlugin
 				ListViewItem lvi = m_lvViewIcon.Items.Add(j.ToString(), j);
 				m_iconIndexer.Add(j, pwci);
 				
-				lvi.SubItems.Add(m_iconCounter.getNbUsageInEntries( pwci ).ToString());
+				lvi.SubItems.Add(m_iconCounter.getNbUsageInEntries(pwci).ToString());
 				lvi.SubItems.Add(m_iconCounter.getNbUsageInGroups(pwci).ToString());
+				int nTotal = m_iconCounter.getNbUsageInEntries(pwci) + m_iconCounter.getNbUsageInGroups(pwci);
+				lvi.SubItems.Add( nTotal.ToString());
 				lvi.Tag = pwci.Uuid;
 				
 				++j;
 			}
 
-			
 		}
-		
 		
 		
 		private void CleanUpEx()
@@ -169,5 +170,6 @@ namespace CustomIconDashboarderPlugin
 				
 				return imgNew;
 		}
+		
 	}
 }

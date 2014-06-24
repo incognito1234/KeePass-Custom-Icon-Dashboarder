@@ -1212,4 +1212,7 @@
   <data name="menu_customIcon" xml:space="preserve">
     <value>Custom Icons Dashboard</value>
   </data>
+  <data name="hdr_nTotal" xml:space="preserve">
+    <value>#Total</value>
+  </data>
 </root>

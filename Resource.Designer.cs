@@ -107,6 +107,15 @@ namespace CustomIconDashboarderPlugin {
 		}
 		
 		/// <summary>
+		///   Looks up a localized string similar to #Total.
+		/// </summary>
+		internal static string hdr_nTotal {
+			get {
+				return ResourceManager.GetString("hdr_nTotal", resourceCulture);
+			}
+		}
+		
+		/// <summary>
 		///   Looks up a localized string similar to Title.
 		/// </summary>
 		internal static string hdr_titleEntry {
