@@ -20,7 +20,6 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using KeePass.Plugins;
 
-
 namespace CustomIconDashboarderPlugin
 {
 	/// <summary>
@@ -55,12 +54,12 @@ namespace CustomIconDashboarderPlugin
 			m_tsmiMenuItem.Text = Resource.menu_customIcon;
 			m_tsmiMenuItem.Click += this.OnMenuFavicon;
 			tsMenu.Add(m_tsmiMenuItem);
-			
+			m_host.MainWindow.ToolsMenu.DropDownOpened += this.OnToolsMenuOpen;
 			
 			return true;
 		}
 	
-	
+		
 		/// <summary>
 		/// Terminate plugin
 		/// </summary>
@@ -69,12 +68,17 @@ namespace CustomIconDashboarderPlugin
 			// Remove all of our menu items
 			ToolStripItemCollection tsMenu = m_host.MainWindow.ToolsMenu.DropDownItems;
 			m_tsmiMenuItem.Click -= this.OnMenuFavicon;
+			m_host.MainWindow.ToolsMenu.DropDownOpened -= this.OnToolsMenuOpen;
 			tsMenu.Remove(m_tsmiMenuItem);
 			tsMenu.Remove(m_tsSeparator);
 			
-			// TODO dispose MainForm
 		}
 		
+		public void OnToolsMenuOpen(object sender, EventArgs e)
+		{
+			m_tsmiMenuItem.Enabled = m_host.Database.IsOpen;
+		}
+	
 		
 		private void OnMenuFavicon(object sender, EventArgs e)
 		{
