@@ -28,7 +28,7 @@ namespace LomsonLib.UI
 	/// <summary>
 	/// Sorter for List.
 	/// </summary>
-	public class ListViewColumnSorter : IComparer
+	public class ListViewLayoutManager : IComparer
 	{
 		private List<OrderedColumn>  m_DefaultOrderedColumn;
 		
@@ -81,7 +81,7 @@ namespace LomsonLib.UI
 		
 		
 		// Initialize
-		public ListViewColumnSorter()
+		public ListViewLayoutManager()
 		{
 			m_lvi = null;
 			m_CurrentSortedColumn = 0;

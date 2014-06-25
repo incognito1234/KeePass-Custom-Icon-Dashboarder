@@ -67,7 +67,7 @@
       <AutoGen>True</AutoGen>
     </Compile>
     <Compile Include="UI\SwappableStringComparer.cs" />
-    <Compile Include="UI\ListViewColumnSorter.cs" />
+    <Compile Include="UI\ListViewLayoutManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="DashboarderForm.resx">

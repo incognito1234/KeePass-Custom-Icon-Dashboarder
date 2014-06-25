@@ -39,9 +39,9 @@ namespace CustomIconDashboarderPlugin
 		private IconStatsHandler m_iconCounter = null;
 		private Dictionary<int, PwCustomIcon> m_iconIndexer = null;
 
-		private ListViewColumnSorter  m_lvIconsColumnSorter;
-		private ListViewColumnSorter  m_lvGroupsColumnSorter;
-		private ListViewColumnSorter  m_lvEntriesColumnSorter;
+		private ListViewLayoutManager  m_lvIconsColumnSorter;
+		private ListViewLayoutManager  m_lvGroupsColumnSorter;
+		private ListViewLayoutManager  m_lvEntriesColumnSorter;
 		
 		public DashboarderForm(IPluginHost pluginHost)
 		{
@@ -77,7 +77,7 @@ namespace CustomIconDashboarderPlugin
 			m_lvUsedEntries.Columns.Add( Resource.hdr_userName, 85);
 			m_lvUsedEntries.Columns.Add( Resource.hdr_groupName, 190 );
 			
-			m_lvEntriesColumnSorter = new ListViewColumnSorter();
+			m_lvEntriesColumnSorter = new ListViewLayoutManager();
 			m_lvEntriesColumnSorter.AddColumnComparer(0, new LomsonLib.UI.StringComparer(false,true) );
 			m_lvEntriesColumnSorter.AddColumnComparer(1, new LomsonLib.UI.StringComparer(false,true) );
 			m_lvEntriesColumnSorter.AddColumnComparer(2, new LomsonLib.UI.StringComparer(false,true) );
@@ -92,7 +92,7 @@ namespace CustomIconDashboarderPlugin
 			m_lvUsedGroups.Columns.Add( Resource.hdr_groupName, 130 );
 			m_lvUsedGroups.Columns.Add( Resource.hdr_fullPath, 230 );
 			
-			m_lvGroupsColumnSorter = new ListViewColumnSorter();
+			m_lvGroupsColumnSorter = new ListViewLayoutManager();
 			m_lvGroupsColumnSorter.AddColumnComparer(0, new LomsonLib.UI.StringComparer(false,true) );
 			m_lvGroupsColumnSorter.AddColumnComparer(1, new LomsonLib.UI.StringComparer(false,true) );
 			m_lvGroupsColumnSorter.AddDefaultSortedColumn(1,false);
@@ -105,7 +105,7 @@ namespace CustomIconDashboarderPlugin
 			m_lvViewIcon.Columns.Add( Resource.hdr_nGroup, 50, HorizontalAlignment.Center);
 			m_lvViewIcon.Columns.Add( Resource.hdr_nTotal, 50, HorizontalAlignment.Center);
 			
-			m_lvIconsColumnSorter = new ListViewColumnSorter();
+			m_lvIconsColumnSorter = new ListViewLayoutManager();
 			
 			m_lvIconsColumnSorter.AddColumnComparer(0, new IntegerAsStringComparer(false));
 			m_lvIconsColumnSorter.AddColumnComparer(1, new IntegerAsStringComparer(false));
