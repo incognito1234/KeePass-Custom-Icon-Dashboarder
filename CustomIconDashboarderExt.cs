@@ -66,11 +66,13 @@ namespace CustomIconDashboarderPlugin
 		/// </summary>
 		public override void Terminate()
 		{
-				// Remove all of our menu items
+			// Remove all of our menu items
 			ToolStripItemCollection tsMenu = m_host.MainWindow.ToolsMenu.DropDownItems;
 			m_tsmiMenuItem.Click -= this.OnMenuFavicon;
 			tsMenu.Remove(m_tsmiMenuItem);
 			tsMenu.Remove(m_tsSeparator);
+			
+			// TODO dispose MainForm
 		}
 		
 		

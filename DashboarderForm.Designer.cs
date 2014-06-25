@@ -65,7 +65,6 @@ namespace CustomIconDashboarderPlugin
 			this.m_lvViewIcon.TabIndex = 0;
 			this.m_lvViewIcon.UseCompatibleStateImageBehavior = false;
 			this.m_lvViewIcon.View = System.Windows.Forms.View.Details;
-			this.m_lvViewIcon.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.OnLvViewIconColumnClick);
 			this.m_lvViewIcon.SelectedIndexChanged += new System.EventHandler(this.M_lvViewIconSelectedIndexChanged);
 			// 
 			// lbl_title

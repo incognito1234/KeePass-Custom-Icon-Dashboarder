@@ -20,6 +20,9 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Diagnostics;
 
+using KeePass.Util;
+using KeePass.UI;
+
 namespace LomsonLib.UI
 {
 	/// <summary>
@@ -30,6 +33,8 @@ namespace LomsonLib.UI
 		private List<OrderedColumn>  m_DefaultOrderedColumn;
 		
 		private Dictionary<int,ISwappableStringComparer> m_ColumnComparers; 
+		
+		private ListView m_lvi;
 		
 		private SortOrder m_CurrentSortOrder;
 		private ISwappableStringComparer m_CurrentComparer;
@@ -78,6 +83,7 @@ namespace LomsonLib.UI
 		// Initialize
 		public ListViewColumnSorter()
 		{
+			m_lvi = null;
 			m_CurrentSortedColumn = 0;
 			CurrentSortOrder    = SortOrder.None;
 			
@@ -152,8 +158,90 @@ namespace LomsonLib.UI
 			return result;
 		}
 		
+		private void OnLvViewIconColumnClick(object sender, ColumnClickEventArgs e)
+		{	
+			if ( e.Column == CurrentSortedColumn )
+				{
+					// Change sortOrder for this column
+					if (CurrentSortOrder == SortOrder.Ascending)
+					{
+						CurrentSortOrder = SortOrder.None;
+					}
+					else if (CurrentSortOrder == SortOrder.Descending) {
+						CurrentSortOrder = SortOrder.Ascending;
+					}
+					else
+					{ // Set to Default
+						CurrentSortOrder = SortOrder.Descending;
+					}
+					
+				}
+				else
+				{
+					// Define sort column.
+					CurrentSortedColumn = e.Column;
+					CurrentSortOrder = SortOrder.Descending;
+				}
+				
+				// Process Sort
+				this.m_lvi.Sort();
+				UpdateColumnSortingIcons();
+		}
+		
+		
+		private void UpdateColumnSortingIcons()
+		{
+			if(UIUtil.SetSortIcon(m_lvi, CurrentSortedColumn,
+				CurrentSortOrder)) return;
+
+			string strAsc = "  \u2191"; // Must have same length
+			string strDsc = "  \u2193"; // Must have same length
+			if(WinUtil.IsWindows9x || WinUtil.IsWindows2000 || WinUtil.IsWindowsXP ||
+				KeePassLib.Native.NativeLib.IsUnix())
+			{
+				strAsc = @"  ^";
+				strDsc = @"  v";
+			}
+			else if(WinUtil.IsAtLeastWindowsVista)
+			{
+				strAsc = "  \u25B3";
+				strDsc = "  \u25BD";
+			}
+
+			foreach(ColumnHeader ch in m_lvi.Columns)
+			{
+				string strCur = ch.Text, strNew = null;
+
+				if(strCur.EndsWith(strAsc) || strCur.EndsWith(strDsc))
+				{
+					strNew = strCur.Substring(0, strCur.Length - strAsc.Length);
+					strCur = strNew;
+				}
+
+				if((ch.Index == CurrentSortedColumn) &&
+					(CurrentSortOrder != SortOrder.None))
+				{
+					if(CurrentSortOrder == SortOrder.Ascending)
+						strNew = strCur + strAsc;
+					else if(CurrentSortOrder == SortOrder.Descending)
+						strNew = strCur + strDsc;
+				}
+
+				if(strNew != null) ch.Text = strNew;
+			}
+		}
+		
+		
+		public void ApplyToListView(ListView lvi) {
+			Debug.Assert( m_lvi == null );
+			lvi.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.OnLvViewIconColumnClick);
+			lvi.ListViewItemSorter = this;
+			m_lvi = lvi;
+		}
+		
 		
 		public void dispose() {
+			m_lvi = null;
 			throw new NotImplementedException();
 			//TODO Implement dispose (dispose Dictionnary)
 		}
