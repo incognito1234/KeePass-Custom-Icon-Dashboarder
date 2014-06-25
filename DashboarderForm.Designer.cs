@@ -78,7 +78,6 @@ namespace CustomIconDashboarderPlugin
 			// 
 			// m_lvUsedEntries
 			// 
-			this.m_lvUsedEntries.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
 			this.m_lvUsedEntries.Location = new System.Drawing.Point(263, 106);
 			this.m_lvUsedEntries.Name = "m_lvUsedEntries";
 			this.m_lvUsedEntries.Size = new System.Drawing.Size(382, 150);
@@ -88,7 +87,6 @@ namespace CustomIconDashboarderPlugin
 			// 
 			// m_lvUsedGroups
 			// 
-			this.m_lvUsedGroups.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
 			this.m_lvUsedGroups.Location = new System.Drawing.Point(263, 291);
 			this.m_lvUsedGroups.Name = "m_lvUsedGroups";
 			this.m_lvUsedGroups.Size = new System.Drawing.Size(382, 150);

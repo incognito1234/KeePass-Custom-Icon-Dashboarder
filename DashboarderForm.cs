@@ -39,7 +39,9 @@ namespace CustomIconDashboarderPlugin
 		private IconStatsHandler m_iconCounter = null;
 		private Dictionary<int, PwCustomIcon> m_iconIndexer = null;
 
-		private ListViewColumnSorter  m_lvwColumnSorter;
+		private ListViewColumnSorter  m_lvIconsColumnSorter;
+		private ListViewColumnSorter  m_lvGroupsColumnSorter;
+		private ListViewColumnSorter  m_lvEntriesColumnSorter;
 		
 		public DashboarderForm(IPluginHost pluginHost)
 		{
@@ -70,30 +72,50 @@ namespace CustomIconDashboarderPlugin
 		{
 			Debug.Assert( m_iconCounter != null );
 			
+			// List View Used Entries
+			m_lvUsedEntries.Columns.Add( Resource.hdr_titleEntry, 85 );
+			m_lvUsedEntries.Columns.Add( Resource.hdr_userName, 85);
+			m_lvUsedEntries.Columns.Add( Resource.hdr_groupName, 190 );
+			
+			m_lvEntriesColumnSorter = new ListViewColumnSorter();
+			m_lvEntriesColumnSorter.addColumnComparer(0, new LomsonLib.UI.StringComparer(false,true) );
+			m_lvEntriesColumnSorter.addColumnComparer(1, new LomsonLib.UI.StringComparer(false,true) );
+			m_lvEntriesColumnSorter.addColumnComparer(2, new LomsonLib.UI.StringComparer(false,true) );
+			
+			m_lvEntriesColumnSorter.addDefaultSortedColumn(2,false);
+			m_lvEntriesColumnSorter.addDefaultSortedColumn(0,false);
+			m_lvEntriesColumnSorter.addDefaultSortedColumn(1,false);
+			
+			m_lvEntriesColumnSorter.ApplyToListView( this.m_lvUsedEntries );
+			
+			// List View Used Group
+			m_lvUsedGroups.Columns.Add( Resource.hdr_groupName, 130 );
+			m_lvUsedGroups.Columns.Add( Resource.hdr_fullPath, 230 );
+			
+			m_lvGroupsColumnSorter = new ListViewColumnSorter();
+			m_lvGroupsColumnSorter.addColumnComparer(0, new LomsonLib.UI.StringComparer(false,true) );
+			m_lvGroupsColumnSorter.addColumnComparer(1, new LomsonLib.UI.StringComparer(false,true) );
+			m_lvGroupsColumnSorter.addDefaultSortedColumn(1,false);
+			
+			m_lvGroupsColumnSorter.ApplyToListView( this.m_lvUsedGroups);
+		
+			// List View Icon
 			m_lvViewIcon.Columns.Add( Resource.hdr_icon, 50 );
 			m_lvViewIcon.Columns.Add( Resource.hdr_nEntry, 50, HorizontalAlignment.Center);
 			m_lvViewIcon.Columns.Add( Resource.hdr_nGroup, 50, HorizontalAlignment.Center);
 			m_lvViewIcon.Columns.Add( Resource.hdr_nTotal, 50, HorizontalAlignment.Center);
 			
-			m_lvUsedEntries.Columns.Add( Resource.hdr_titleEntry, 85 );
-			m_lvUsedEntries.Columns.Add( Resource.hdr_userName, 85);
-			m_lvUsedEntries.Columns.Add( Resource.hdr_groupName, 190 );
+			m_lvIconsColumnSorter = new ListViewColumnSorter();
 			
-			m_lvUsedGroups.Columns.Add( Resource.hdr_groupName, 130 );
-			m_lvUsedGroups.Columns.Add( Resource.hdr_fullPath, 230 );
-						
-			m_lvwColumnSorter = new ListViewColumnSorter();
-			
-			m_lvwColumnSorter.addColumnComparer(0, new IntegerAsStringComparer(false));
-			m_lvwColumnSorter.addColumnComparer(1, new IntegerAsStringComparer(false));
-			m_lvwColumnSorter.addColumnComparer(2, new IntegerAsStringComparer(false));
-			m_lvwColumnSorter.addColumnComparer(3, new IntegerAsStringComparer(false));
-			
-			m_lvwColumnSorter.addDefaultSortedColumn(0,false);
+			m_lvIconsColumnSorter.addColumnComparer(0, new IntegerAsStringComparer(false));
+			m_lvIconsColumnSorter.addColumnComparer(1, new IntegerAsStringComparer(false));
+			m_lvIconsColumnSorter.addColumnComparer(2, new IntegerAsStringComparer(false));
+			m_lvIconsColumnSorter.addColumnComparer(3, new IntegerAsStringComparer(false));
+			m_lvIconsColumnSorter.addDefaultSortedColumn(0,false);
 		
 			CreateCustomIconList();
 			
-			m_lvwColumnSorter.ApplyToListView( this.m_lvViewIcon );
+			m_lvIconsColumnSorter.ApplyToListView( this.m_lvViewIcon );
 		
 		}
 		
@@ -154,18 +176,26 @@ namespace CustomIconDashboarderPlugin
 				pbo_selectedIcon.Image = resizedImage(readIcon.Image, 32,32);
 				
 				IEnumerator<PwEntry> myEntryEnumerator = m_iconCounter.getListEntries( readIcon ).GetEnumerator();
+				
+				// Update entry and group list
+				// It is necessary to add all subitems to listView in a single oneshot.
+				// On the other case, a runtime exception occurs when the listView is sorted
+				// and the sort condition take into account one of the nth column, n > 1
 				while (myEntryEnumerator.MoveNext()) {
 					PwEntry readEntry = myEntryEnumerator.Current;
-					ListViewItem lvi = m_lvUsedEntries.Items.Add( readEntry.Strings.ReadSafe( PwDefs.TitleField ) );
+					
+					ListViewItem lvi = new ListViewItem( readEntry.Strings.ReadSafe( PwDefs.TitleField ) );
 					lvi.SubItems.Add( readEntry.Strings.ReadSafe( PwDefs.UserNameField ) );
 					lvi.SubItems.Add( readEntry.ParentGroup.GetFullPath(".", false) );
+					m_lvUsedEntries.Items.Add(lvi);
 				}
 				
 				IEnumerator<PwGroup> myGroupEnumerator = m_iconCounter.getListGroups( readIcon ).GetEnumerator();
 				while (myGroupEnumerator.MoveNext()) {
 					PwGroup readGroup = myGroupEnumerator.Current;
-					ListViewItem lvi = m_lvUsedGroups.Items.Add( readGroup.Name );
+					ListViewItem lvi = new ListViewItem( readGroup.Name );
 					lvi.SubItems.Add( readGroup.GetFullPath() );
+					m_lvUsedGroups.Items.Add( lvi );
 				}
 			}
 			else {
