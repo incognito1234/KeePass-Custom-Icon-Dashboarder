@@ -83,6 +83,7 @@
     <None Include="createPlgx.cmd">
       <Generator>TextTemplatingFileGenerator</Generator>
     </None>
+    <None Include="README.txt" />
     <None Include="versionInfo.txt" />
   </ItemGroup>
   <ItemGroup>
