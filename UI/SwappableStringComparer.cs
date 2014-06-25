@@ -18,6 +18,14 @@ using System.Collections;
 using System.Diagnostics;
 using System.Windows.Forms;
 
+/*
+ * LomsonLib.UI
+ * 
+ * Version 1.0 - 2014/06/25
+ *     - Initial Version
+ * 
+ */
+
 namespace LomsonLib.UI
 {
 	/// <summary>
