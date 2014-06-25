@@ -25,6 +25,8 @@ using KeePass.Util;
 
 using KeePassLib;
 
+using LomsonLib.UI;
+
 namespace CustomIconDashboarderPlugin
 {
 	/// <summary>
@@ -61,8 +63,7 @@ namespace CustomIconDashboarderPlugin
 			m_iconCounter.Initialize( m_PluginHost.Database);
 			
 			buildCustomListView();
-			
-			m_lvwColumnSorter = new ListViewColumnSorter();
+
 			this.m_lvViewIcon.ListViewItemSorter = m_lvwColumnSorter;
 			
 		}
@@ -82,6 +83,16 @@ namespace CustomIconDashboarderPlugin
 			
 			m_lvUsedGroups.Columns.Add( Resource.hdr_groupName, 130 );
 			m_lvUsedGroups.Columns.Add( Resource.hdr_fullPath, 230 );
+			
+						
+			m_lvwColumnSorter = new ListViewColumnSorter();
+			
+			m_lvwColumnSorter.addColumnComparer(0, new IntegerAsStringComparer(false));
+			m_lvwColumnSorter.addColumnComparer(1, new IntegerAsStringComparer(false));
+			m_lvwColumnSorter.addColumnComparer(2, new IntegerAsStringComparer(false));
+			m_lvwColumnSorter.addColumnComparer(3, new IntegerAsStringComparer(false));
+			
+			m_lvwColumnSorter.addDefaultSortedColumn(0,false);
 			
 			CreateCustomIconList();
 		
@@ -177,53 +188,40 @@ namespace CustomIconDashboarderPlugin
 		}
 		
 		private void OnLvViewIconColumnClick(object sender, ColumnClickEventArgs e)
-		{
-			bool boToDefault = false;
-			
-			if ( e.Column == m_lvwColumnSorter.SortColumn )
+		{	
+			if ( e.Column == m_lvwColumnSorter.CurrentSortedColumn )
 				{
 					// Change sortOrder for this column
-					if (m_lvwColumnSorter.Order == SortOrder.Ascending)
+					if (m_lvwColumnSorter.CurrentSortOrder == SortOrder.Ascending)
 					{
-						m_lvwColumnSorter.Order = SortOrder.Descending;
+						m_lvwColumnSorter.CurrentSortOrder = SortOrder.None;
 					}
-					else if (m_lvwColumnSorter.Order == SortOrder.Descending) {
-						boToDefault = true;
+					else if (m_lvwColumnSorter.CurrentSortOrder == SortOrder.Descending) {
+						m_lvwColumnSorter.CurrentSortOrder = SortOrder.Ascending;
 					}
 					else
-					{
-						m_lvwColumnSorter.Order = SortOrder.Ascending;
+					{ // Set to Default
+						m_lvwColumnSorter.CurrentSortOrder = SortOrder.Descending;
 					}
 					
 				}
 				else
 				{
 					// Define sort column.
-					m_lvwColumnSorter.SortColumn = e.Column;
-					m_lvwColumnSorter.Order = SortOrder.Ascending;
+					m_lvwColumnSorter.CurrentSortedColumn = e.Column;
+					m_lvwColumnSorter.CurrentSortOrder = SortOrder.Descending;
 				}
 				
 				// Process Sort
-				if (boToDefault) {
-					m_lvwColumnSorter.SortColumn = 0;
-					m_lvwColumnSorter.Order = SortOrder.Ascending;
-					this.m_lvViewIcon.Sort();
-					m_lvwColumnSorter.Order = SortOrder.None;
-					UpdateColumnSortingIcons();
-				}
-				else {
-					this.m_lvViewIcon.Sort();
-					UpdateColumnSortingIcons();
-				}
+				this.m_lvViewIcon.Sort();
+				UpdateColumnSortingIcons();
 		}
 		
 		
 		private void UpdateColumnSortingIcons()
 		{
-			if(UIUtil.SetSortIcon(m_lvViewIcon, m_lvwColumnSorter.SortColumn,
-				m_lvwColumnSorter.Order)) return;
-
-			if(m_lvwColumnSorter.SortColumn < 0) { Debug.Assert(m_lvViewIcon.ListViewItemSorter == null); }
+			if(UIUtil.SetSortIcon(m_lvViewIcon, m_lvwColumnSorter.CurrentSortedColumn,
+				m_lvwColumnSorter.CurrentSortOrder)) return;
 
 			string strAsc = "  \u2191"; // Must have same length
 			string strDsc = "  \u2193"; // Must have same length
@@ -249,12 +247,12 @@ namespace CustomIconDashboarderPlugin
 					strCur = strNew;
 				}
 
-				if((ch.Index == m_lvwColumnSorter.SortColumn) &&
-					(m_lvwColumnSorter.Order != SortOrder.None))
+				if((ch.Index == m_lvwColumnSorter.CurrentSortedColumn) &&
+					(m_lvwColumnSorter.CurrentSortOrder != SortOrder.None))
 				{
-					if(m_lvwColumnSorter.Order == SortOrder.Ascending)
+					if(m_lvwColumnSorter.CurrentSortOrder == SortOrder.Ascending)
 						strNew = strCur + strAsc;
-					else if(m_lvwColumnSorter.Order == SortOrder.Descending)
+					else if(m_lvwColumnSorter.CurrentSortOrder == SortOrder.Descending)
 						strNew = strCur + strDsc;
 				}
 
