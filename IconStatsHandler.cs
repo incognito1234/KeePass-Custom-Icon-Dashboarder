@@ -30,12 +30,12 @@ namespace CustomIconDashboarderPlugin
 	public class IconStatsHandler
 	{
 		
-		private Dictionary<PwUuid, iconStats> m_dicIconStats = null;
+		private Dictionary<PwUuid, IconStats> m_dicIconStats = null;
 		private bool m_isInitialized = false;
 		
 		public IconStatsHandler()
 		{
-			m_dicIconStats = new Dictionary<PwUuid, iconStats>();
+			m_dicIconStats = new Dictionary<PwUuid, IconStats>();
 		}
 		
 		public void Initialize( PwDatabase db) {
@@ -47,7 +47,7 @@ namespace CustomIconDashboarderPlugin
 			{
 				if ( !(pg.CustomIconUuid.Equals(PwUuid.Zero) ) ){
 					if (!(m_dicIconStats.ContainsKey( pg.CustomIconUuid)) ){
-						m_dicIconStats.Add( pg.CustomIconUuid, new iconStats());
+						m_dicIconStats.Add( pg.CustomIconUuid, new IconStats());
 					}
 					m_dicIconStats[ pg.CustomIconUuid ].nbInGroups += 1;
 					m_dicIconStats[ pg.CustomIconUuid ].listGroups.Add( pg);
@@ -62,7 +62,7 @@ namespace CustomIconDashboarderPlugin
 				if ( !(pe.CustomIconUuid.Equals(PwUuid.Zero))) {
 					
 					if (!(m_dicIconStats.ContainsKey( pe.CustomIconUuid))) {
-						m_dicIconStats.Add( pe.CustomIconUuid, new iconStats());
+						m_dicIconStats.Add( pe.CustomIconUuid, new IconStats());
 					}
 					m_dicIconStats[ pe.CustomIconUuid ].nbInEntries += 1;
 					m_dicIconStats[ pe.CustomIconUuid ].listEntries.Add( pe);
@@ -147,14 +147,14 @@ namespace CustomIconDashboarderPlugin
 		}
 		
 		
-		private class iconStats {
+		private class IconStats {
 		
 			public int nbInGroups  { get; set ;}
 			public int nbInEntries { get; set ;}
 			public List<PwEntry> listEntries {get; set;}
 			public List<PwGroup> listGroups {get; set; }
 			
-			public iconStats () {
+			public IconStats () {
 				nbInGroups = 0;
 				nbInEntries = 0;
 				listEntries = new List<PwEntry>();

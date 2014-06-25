@@ -64,11 +64,11 @@ namespace CustomIconDashboarderPlugin
 			m_iconCounter = new IconStatsHandler();
 			m_iconCounter.Initialize( m_PluginHost.Database);
 			
-			buildCustomListView();
+			BuildCustomListView();
 			
 		}
 		
-		private void buildCustomListView()
+		private void BuildCustomListView()
 		{
 			Debug.Assert( m_iconCounter != null );
 			
@@ -78,13 +78,13 @@ namespace CustomIconDashboarderPlugin
 			m_lvUsedEntries.Columns.Add( Resource.hdr_groupName, 190 );
 			
 			m_lvEntriesColumnSorter = new ListViewColumnSorter();
-			m_lvEntriesColumnSorter.addColumnComparer(0, new LomsonLib.UI.StringComparer(false,true) );
-			m_lvEntriesColumnSorter.addColumnComparer(1, new LomsonLib.UI.StringComparer(false,true) );
-			m_lvEntriesColumnSorter.addColumnComparer(2, new LomsonLib.UI.StringComparer(false,true) );
+			m_lvEntriesColumnSorter.AddColumnComparer(0, new LomsonLib.UI.StringComparer(false,true) );
+			m_lvEntriesColumnSorter.AddColumnComparer(1, new LomsonLib.UI.StringComparer(false,true) );
+			m_lvEntriesColumnSorter.AddColumnComparer(2, new LomsonLib.UI.StringComparer(false,true) );
 			
-			m_lvEntriesColumnSorter.addDefaultSortedColumn(2,false);
-			m_lvEntriesColumnSorter.addDefaultSortedColumn(0,false);
-			m_lvEntriesColumnSorter.addDefaultSortedColumn(1,false);
+			m_lvEntriesColumnSorter.AddDefaultSortedColumn(2,false);
+			m_lvEntriesColumnSorter.AddDefaultSortedColumn(0,false);
+			m_lvEntriesColumnSorter.AddDefaultSortedColumn(1,false);
 			
 			m_lvEntriesColumnSorter.ApplyToListView( this.m_lvUsedEntries );
 			
@@ -93,9 +93,9 @@ namespace CustomIconDashboarderPlugin
 			m_lvUsedGroups.Columns.Add( Resource.hdr_fullPath, 230 );
 			
 			m_lvGroupsColumnSorter = new ListViewColumnSorter();
-			m_lvGroupsColumnSorter.addColumnComparer(0, new LomsonLib.UI.StringComparer(false,true) );
-			m_lvGroupsColumnSorter.addColumnComparer(1, new LomsonLib.UI.StringComparer(false,true) );
-			m_lvGroupsColumnSorter.addDefaultSortedColumn(1,false);
+			m_lvGroupsColumnSorter.AddColumnComparer(0, new LomsonLib.UI.StringComparer(false,true) );
+			m_lvGroupsColumnSorter.AddColumnComparer(1, new LomsonLib.UI.StringComparer(false,true) );
+			m_lvGroupsColumnSorter.AddDefaultSortedColumn(1,false);
 			
 			m_lvGroupsColumnSorter.ApplyToListView( this.m_lvUsedGroups);
 		
@@ -107,11 +107,11 @@ namespace CustomIconDashboarderPlugin
 			
 			m_lvIconsColumnSorter = new ListViewColumnSorter();
 			
-			m_lvIconsColumnSorter.addColumnComparer(0, new IntegerAsStringComparer(false));
-			m_lvIconsColumnSorter.addColumnComparer(1, new IntegerAsStringComparer(false));
-			m_lvIconsColumnSorter.addColumnComparer(2, new IntegerAsStringComparer(false));
-			m_lvIconsColumnSorter.addColumnComparer(3, new IntegerAsStringComparer(false));
-			m_lvIconsColumnSorter.addDefaultSortedColumn(0,false);
+			m_lvIconsColumnSorter.AddColumnComparer(0, new IntegerAsStringComparer(false));
+			m_lvIconsColumnSorter.AddColumnComparer(1, new IntegerAsStringComparer(false));
+			m_lvIconsColumnSorter.AddColumnComparer(2, new IntegerAsStringComparer(false));
+			m_lvIconsColumnSorter.AddColumnComparer(3, new IntegerAsStringComparer(false));
+			m_lvIconsColumnSorter.AddDefaultSortedColumn(0,false);
 		
 			CreateCustomIconList();
 			
@@ -173,7 +173,7 @@ namespace CustomIconDashboarderPlugin
 				
 				PwCustomIcon readIcon = m_iconIndexer[sItems[0].ImageIndex];
 				
-				pbo_selectedIcon.Image = resizedImage(readIcon.Image, 32,32);
+				pbo_selectedIcon.Image = ResizedImage(readIcon.Image, 32,32);
 				
 				IEnumerator<PwEntry> myEntryEnumerator = m_iconCounter.getListEntries( readIcon ).GetEnumerator();
 				
@@ -203,7 +203,7 @@ namespace CustomIconDashboarderPlugin
 			}
 		}
 		
-		private Image resizedImage(Image imgToBeConverted, int nWidth, int nHeight) {
+		private Image ResizedImage(Image imgToBeConverted, int nWidth, int nHeight) {
 			
 				Image imgNew = imgToBeConverted;
 				if(imgToBeConverted == null) { Debug.Assert(false); }

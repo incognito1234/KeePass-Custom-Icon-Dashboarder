@@ -91,7 +91,7 @@ namespace LomsonLib.UI
 			m_DefaultOrderedColumn = new List<OrderedColumn>();
 		}
 		
-		public void addColumnComparer(int nColumn, ISwappableStringComparer comp)
+		public void AddColumnComparer(int nColumn, ISwappableStringComparer comp)
 		{
 			Debug.Assert( !m_ColumnComparers.ContainsKey( nColumn ) );
 			if (m_ColumnComparers.ContainsKey( nColumn )) throw new InvalidOperationException("addColumn::Column comparer already exists");
@@ -100,7 +100,7 @@ namespace LomsonLib.UI
 		}
 		
 		// Initialize Default
-		public void addDefaultSortedColumn( int nColumn, bool defaultSwapped )
+		public void AddDefaultSortedColumn( int nColumn, bool defaultSwapped )
 		{
 			OrderedColumn toBeAdded = new OrderedColumn();
 			toBeAdded.ColumnNumber = nColumn;
@@ -238,14 +238,6 @@ namespace LomsonLib.UI
 			lvi.ListViewItemSorter = this;
 			m_lvi = lvi;
 		}
-		
-		
-		public void dispose() {
-			m_lvi = null;
-			throw new NotImplementedException();
-			//TODO Implement dispose (dispose Dictionnary)
-		}
-		
 		
 		private class OrderedColumn {
 			public int  ColumnNumber { get; set; }
