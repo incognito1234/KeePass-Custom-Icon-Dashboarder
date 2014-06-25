@@ -36,11 +36,12 @@ namespace LomsonLib.UI
 		
 		private ListView m_lvi;
 		
-		private SortOrder m_CurrentSortOrder;
 		private ISwappableStringComparer m_CurrentComparer;
+		
 		/// <summary>
 		/// Current Sort Order. If null, default sort is applied
 		/// </summary>
+		private SortOrder m_CurrentSortOrder;
 		public SortOrder  CurrentSortOrder {
 			
 			get {
@@ -79,6 +80,27 @@ namespace LomsonLib.UI
 			}
 		}
 		
+		private bool m_boAutoWidthColumn = false;
+		public bool AutoWidthColumn {
+			get {
+				return m_boAutoWidthColumn;
+			}
+			set {
+				if ( m_boAutoWidthColumn != value ) {
+					if (m_lvi != null) {
+						if ( value = true ) {
+							MakeColumnsAutoSized();
+						}
+						else {
+							MakeColumnsNotAutoSized();
+						}
+					}
+						
+				}
+				m_boAutoWidthColumn = value;
+			}
+		}
+		
 		
 		// Initialize
 		public ListViewLayoutManager()
@@ -86,6 +108,7 @@ namespace LomsonLib.UI
 			m_lvi = null;
 			m_CurrentSortedColumn = 0;
 			CurrentSortOrder    = SortOrder.None;
+			m_boAutoWidthColumn = false;
 			
 			m_ColumnComparers = new Dictionary<int,ISwappableStringComparer>();
 			m_DefaultOrderedColumn = new List<OrderedColumn>();
@@ -236,9 +259,65 @@ namespace LomsonLib.UI
 			Debug.Assert( m_lvi == null );
 			lvi.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.OnLvViewIconColumnClick);
 			lvi.ListViewItemSorter = this;
+			
 			m_lvi = lvi;
+			if ( this.AutoWidthColumn ) {
+				MakeColumnsAutoSized();
+			}
+			
 		}
 		
+	    // AutoSize feature
+		private bool Resizing = false;
+	 
+		private void ListView_SizeChanged(object sender, EventArgs e)
+		{
+			//
+			// From URL:
+			//   http://nickstips.wordpress.com/2010/11/10/c-listview-dynamically-sizing-columns-to-fill-whole-control/
+			// ( Width of column is used in place of Tag)
+			//
+			
+			Debug.Assert( m_lvi != null );
+			
+		    // Don't allow overlapping of SizeChanged calls
+		    if (!Resizing)
+		    {
+		        // Set the resizing flag
+		        Resizing = true;
+		 
+	            float totalColumnWidth = 0;
+	 
+	            // Get the sum of all column tags
+	            for (int i = 0; i < m_lvi.Columns.Count; i++)
+	            	totalColumnWidth += Convert.ToInt32(m_lvi.Columns[i].Width);
+	 
+	            // Calculate the percentage of space each column should
+	            // occupy in reference to the other columns and then set the
+	            // width of the column to that percentage of the visible space.
+	            for (int i = 0; i < m_lvi.Columns.Count; i++)
+	            {
+	                float colPercentage = (Convert.ToInt32(m_lvi.Columns[i].Width) / totalColumnWidth);
+	                m_lvi.Columns[i].Width = (int)(colPercentage * m_lvi.ClientRectangle.Width);            
+	            }
+		        
+		    }
+		   
+		    // Clear the resizing flag
+		    Resizing = false;
+		}
+		
+		private void MakeColumnsAutoSized() {
+			Debug.Assert( m_lvi != null);
+			m_lvi.SizeChanged += new EventHandler(ListView_SizeChanged);
+		}
+		
+		private void MakeColumnsNotAutoSized() {
+			Debug.Assert( m_lvi != null);
+			m_lvi.SizeChanged -= new EventHandler(ListView_SizeChanged);
+		}
+		 
+
 		private class OrderedColumn {
 			public int  ColumnNumber { get; set; }
 			public bool DefaultSwapped { get; set; }

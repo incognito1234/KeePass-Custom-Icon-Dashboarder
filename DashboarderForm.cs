@@ -86,6 +86,8 @@ namespace CustomIconDashboarderPlugin
 			m_lvEntriesColumnSorter.AddDefaultSortedColumn(0,false);
 			m_lvEntriesColumnSorter.AddDefaultSortedColumn(1,false);
 			
+			m_lvEntriesColumnSorter.AutoWidthColumn = true;
+			
 			m_lvEntriesColumnSorter.ApplyToListView( this.m_lvUsedEntries );
 			
 			// List View Used Group
@@ -96,6 +98,8 @@ namespace CustomIconDashboarderPlugin
 			m_lvGroupsColumnSorter.AddColumnComparer(0, new LomsonLib.UI.StringComparer(false,true) );
 			m_lvGroupsColumnSorter.AddColumnComparer(1, new LomsonLib.UI.StringComparer(false,true) );
 			m_lvGroupsColumnSorter.AddDefaultSortedColumn(1,false);
+			
+			m_lvGroupsColumnSorter.AutoWidthColumn = true;
 			
 			m_lvGroupsColumnSorter.ApplyToListView( this.m_lvUsedGroups);
 		
@@ -112,11 +116,13 @@ namespace CustomIconDashboarderPlugin
 			m_lvIconsColumnSorter.AddColumnComparer(2, new IntegerAsStringComparer(false));
 			m_lvIconsColumnSorter.AddColumnComparer(3, new IntegerAsStringComparer(false));
 			m_lvIconsColumnSorter.AddDefaultSortedColumn(0,false);
-		
-			CreateCustomIconList();
+
+			m_lvIconsColumnSorter.AutoWidthColumn = true;
 			
 			m_lvIconsColumnSorter.ApplyToListView( this.m_lvViewIcon );
-		
+					
+			CreateCustomIconList();
+			
 		}
 		
 		
