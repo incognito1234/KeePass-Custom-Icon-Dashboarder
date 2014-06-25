@@ -1210,7 +1210,7 @@
 </value>
   </data>
   <data name="menu_customIcon" xml:space="preserve">
-    <value>Custom Icons Dashboard</value>
+    <value>Custom Icon Dashboard</value>
   </data>
   <data name="hdr_nTotal" xml:space="preserve">
     <value>#Total</value>

@@ -132,7 +132,8 @@ namespace CustomIconDashboarderPlugin
 			this.lbl_usedinentries.Name = "lbl_usedinentries";
 			this.lbl_usedinentries.Size = new System.Drawing.Size(419, 21);
 			this.lbl_usedinentries.TabIndex = 4;
-			this.lbl_usedinentries.Text = "Used in entries";
+			this.lbl_usedinentries.Text = "Used by entries";
+			this.lbl_usedinentries.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// lbl_usedInGroups
 			// 
@@ -143,7 +144,8 @@ namespace CustomIconDashboarderPlugin
 			this.lbl_usedInGroups.Name = "lbl_usedInGroups";
 			this.lbl_usedInGroups.Size = new System.Drawing.Size(419, 21);
 			this.lbl_usedInGroups.TabIndex = 5;
-			this.lbl_usedInGroups.Text = "Used in groups";
+			this.lbl_usedInGroups.Text = "Used by groups";
+			this.lbl_usedInGroups.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// pbo_selectedIcon
 			// 
