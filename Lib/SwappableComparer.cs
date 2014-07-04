@@ -1,4 +1,9 @@
 ﻿/*
+ LomsonLib - Library to help management of various object types in program 
+  developed in c#.
+  
+  Copyright (C) 2014 Jareth Lomson <incognito1234@users.sourceforge.net>
+ 
  This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation; either version 2 of the License, or
@@ -21,8 +26,8 @@ using System.Windows.Forms;
 /*
  * LomsonLib.UI
  * 
- * Version 1.0 - 2014/06/25
- *     - Initial Version
+ *     Version 1.1
+ *      See ListViewLayoutManager.cs for release notes
  * 
  */
 
@@ -31,26 +36,25 @@ namespace LomsonLib.UI
 	/// <summary>
 	/// Description of IListViewItemComparer.
 	/// </summary>
-	public interface ISwappableStringComparer
+	public interface ISwappableComparer<T>
 	{
-		int  compare(String str1, String str2);
+		int  compare(T obj1, T obj2);
 		void swap();
 		void revertSwapToDefault();
 	}
 	
-	public abstract class BaseSwappableStringComparer:ISwappableStringComparer
+	public abstract class BaseSwappableComparer<T>: ISwappableComparer<T>
 	{
 		protected bool  m_defaultSwapped;
 		protected bool  m_isSwapped;
 		
-		public BaseSwappableStringComparer( bool defaultSwapped ) {
+		public abstract int compare(T obj1, T obj2);
+		
+		public BaseSwappableComparer( bool defaultSwapped ) {
 			m_defaultSwapped = defaultSwapped;
 			m_isSwapped = false;
 		}
 	
-		public abstract int compare(string str1, string str2);
-	
-		
 		public void swap() {
 			m_isSwapped = !m_isSwapped;
 		}
@@ -63,12 +67,25 @@ namespace LomsonLib.UI
 			return ( m_isSwapped ^ m_defaultSwapped );
 		}
 		
+	}
+	
+	public interface ISwappableStringComparer:ISwappableComparer<String>{};
+	
+	public interface ISwappableListViewItemComparer:ISwappableComparer<ListViewItem>{};
+	
+	
+	public abstract class BaseSwappableStringComparer:BaseSwappableComparer<String>, ISwappableStringComparer
+	{
+		public BaseSwappableStringComparer( bool defaultSwapped ): base(defaultSwapped) {
+		}
 		
-		protected String getString1(string str1, string str2) {
+		public abstract override int compare(String str1, String str2);
+		
+		protected String getString1(String str1, String str2) {
 			return isSwapped()?str2:str1;
 		}
 		
-		protected String getString2(string str1, string str2) {
+		protected String getString2(String str1, String str2) {
 			return isSwapped()?str1:str2;
 		}
 		
@@ -84,7 +101,7 @@ namespace LomsonLib.UI
 			m_ignoreCase = ignoreCase;
 		}
 		
-		public override int compare(string str1, string str2)  {
+		public override int compare(String str1, String str2)  {
 			
 			string cmpStr1 = getString1( str1, str2);
 			string cmpStr2 = getString2( str1, str2);
@@ -102,7 +119,7 @@ namespace LomsonLib.UI
 			
 		}
 		
-		public override int compare( string str1, string str2) {
+		public override int compare( String str1, String str2) {
 			int compareResult;
 			
 			string cmpStr1 = getString1( str1, str2);
