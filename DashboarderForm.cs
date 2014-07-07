@@ -118,6 +118,7 @@ namespace CustomIconDashboarderPlugin
 			m_lvIconsColumnSorter.AddDefaultSortedColumn(0,false);
 
 			m_lvIconsColumnSorter.AutoWidthColumn = true;
+			m_lvIconsColumnSorter.CheckAllCheckBox = cb_allIconsSelection;
 			
 			m_lvIconsColumnSorter.ApplyToListView( this.m_lvViewIcon );
 					

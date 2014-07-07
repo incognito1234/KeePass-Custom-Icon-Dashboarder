@@ -53,6 +53,7 @@ namespace CustomIconDashboarderPlugin
 			this.lbl_selectedIcon = new System.Windows.Forms.Label();
 			this.spc_mainSplitter = new System.Windows.Forms.SplitContainer();
 			this.tlp_left = new System.Windows.Forms.TableLayoutPanel();
+			this.cb_allIconsSelection = new System.Windows.Forms.CheckBox();
 			this.tlp_right = new System.Windows.Forms.TableLayoutPanel();
 			this.tlp_upperRight = new System.Windows.Forms.TableLayoutPanel();
 			this.spc_right = new System.Windows.Forms.SplitContainer();
@@ -76,13 +77,14 @@ namespace CustomIconDashboarderPlugin
 			// m_lvViewIcon
 			// 
 			this.m_lvViewIcon.AllowColumnReorder = true;
+			this.m_lvViewIcon.CheckBoxes = true;
 			this.m_lvViewIcon.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.m_lvViewIcon.FullRowSelect = true;
 			this.m_lvViewIcon.HideSelection = false;
 			this.m_lvViewIcon.Location = new System.Drawing.Point(23, 28);
 			this.m_lvViewIcon.Margin = new System.Windows.Forms.Padding(3, 3, 15, 15);
-			this.m_lvViewIcon.MultiSelect = false;
 			this.m_lvViewIcon.Name = "m_lvViewIcon";
-			this.m_lvViewIcon.Size = new System.Drawing.Size(221, 469);
+			this.m_lvViewIcon.Size = new System.Drawing.Size(221, 449);
 			this.m_lvViewIcon.TabIndex = 0;
 			this.m_lvViewIcon.UseCompatibleStateImageBehavior = false;
 			this.m_lvViewIcon.View = System.Windows.Forms.View.Details;
@@ -197,14 +199,27 @@ namespace CustomIconDashboarderPlugin
 			this.tlp_left.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tlp_left.Controls.Add(this.lbl_title, 0, 0);
 			this.tlp_left.Controls.Add(this.m_lvViewIcon, 1, 1);
+			this.tlp_left.Controls.Add(this.cb_allIconsSelection, 1, 2);
 			this.tlp_left.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tlp_left.Location = new System.Drawing.Point(0, 0);
 			this.tlp_left.Name = "tlp_left";
-			this.tlp_left.RowCount = 2;
+			this.tlp_left.RowCount = 3;
 			this.tlp_left.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-			this.tlp_left.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.tlp_left.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tlp_left.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
 			this.tlp_left.Size = new System.Drawing.Size(259, 512);
 			this.tlp_left.TabIndex = 0;
+			// 
+			// cb_allIconsSelection
+			// 
+			this.cb_allIconsSelection.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.cb_allIconsSelection.Location = new System.Drawing.Point(20, 492);
+			this.cb_allIconsSelection.Margin = new System.Windows.Forms.Padding(0);
+			this.cb_allIconsSelection.Name = "cb_allIconsSelection";
+			this.cb_allIconsSelection.Size = new System.Drawing.Size(239, 20);
+			this.cb_allIconsSelection.TabIndex = 2;
+			this.cb_allIconsSelection.Text = "&Check/Uncheck All";
+			this.cb_allIconsSelection.UseVisualStyleBackColor = true;
 			// 
 			// tlp_right
 			// 
@@ -331,6 +346,7 @@ namespace CustomIconDashboarderPlugin
 			this.tlp_usedGroups.ResumeLayout(false);
 			this.ResumeLayout(false);
 		}
+		private System.Windows.Forms.CheckBox cb_allIconsSelection;
 		private System.Windows.Forms.SplitContainer spc_right;
 		private System.Windows.Forms.TableLayoutPanel tlp_usedGroups;
 		private System.Windows.Forms.Button bto_OK;
