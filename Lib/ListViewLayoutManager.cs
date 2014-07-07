@@ -22,7 +22,11 @@
 /*
  * LomsonLib.UI
  * 
- *    Version 1.1
+ *    Version 1.2 - 2014/07/07
+ *        - Add Contextmenu to check and invert checkboxes of selected items
+ *        - Take into account multichecking
+ * 
+ *    Version 1.1 - 2014/07/04
  *       - Add statistics in status bar
  *       - Add checkBox HeaderStyle
  *       - Add RTF Builder
@@ -51,11 +55,12 @@ namespace LomsonLib.UI
 	/// <summary>
 	/// Sorter for List.
 	/// </summary>
-	public class ListViewLayoutManager : IComparer
+	public class ListViewLayoutManager : IComparer, IDisposable
 	{
+		public String Name;
 		private ListView m_lvi;		
 		
-		#region Building and Initialization
+		#region Building, Initialization and Dispose
 		
 		// Initialize
 		public ListViewLayoutManager()
@@ -84,7 +89,17 @@ namespace LomsonLib.UI
 				AttachCheckAllCheckBox();
 			}
 			
-			ApplyStatisticMessageUpdater();
+			if (this.SelectMenuToolStripItemsToBeAdded != null ) {
+				ApplySelectedMenuItems();
+			}
+			
+			if (this.ManageMultiChecking) {
+				InitializeManageMultiChecking();
+			}
+			
+			if (StatisticIsApplicable()) {
+				ApplyStatisticMessageUpdater();
+			}
 			
 //			if (this.m_boCheckboxInHeader) {
 //				#if DEBUG
@@ -97,7 +112,6 @@ namespace LomsonLib.UI
 //				m_lvi.DrawSubItem += new DrawListViewSubItemEventHandler(OnLvColumnHeader_DrawSubItem);
 //				
 //			}
-			
 		}
 		
 		private bool m_boItemCheckedEnabled = false;
@@ -105,18 +119,28 @@ namespace LomsonLib.UI
 			Debug.Assert(m_lvi != null, "RemoveOnItemCheckedEvent::lvi is null");
 			//Debug.Assert(!m_boItemCheckedEnabled, "RemoveOnItemCheckedEvent::m_boItemCheckedEnabled is false");
 			if (m_boItemCheckedEnabled) {
-				m_lvi.ItemChecked -= OnItemChecked;
+				if (!ManageMultiChecking) {
+					m_lvi.ItemChecked -= OnItemChecked;
+				}
 				m_boItemCheckedEnabled = false;	
 			}
+			RemoveMultiCheckingManagement();
 		}
 		
 		public void RestoreCheckedItemEvent() {
 			Debug.Assert(m_lvi != null, "AssignOnItemCheckedEvent;;lvi is null");
 			//Debug.Assert(m_boItemCheckedEnabled, "RemoveOnItemCheckedEvent::m_boItemCheckedEnabled is true");
 			if (!m_boItemCheckedEnabled)  {
-				m_lvi.ItemChecked += OnItemChecked;
+				if (!ManageMultiChecking) {
+					m_lvi.ItemChecked += OnItemChecked;
+				}
 				m_boItemCheckedEnabled = true;
 			}
+			RestoreMultiCheckingManagement();
+		}
+		
+		public void Dispose() {
+			DisposeSelectedContextMenu();
 		}
 		#endregion
 		
@@ -139,7 +163,7 @@ namespace LomsonLib.UI
 			}
 		}
 		
-		private ItemCheckedEventHandler[] m_eventToDisableWhenCheckStatusChanges = {}; // Null pattern
+		private ItemCheckEventHandler[] m_eventToDisableWhenCheckStatusChanges = {}; // Null pattern
 		private dlgToBeRaiseAfterCheckStatusChanges m_methodToBeRaisedAfterCheckStatusChanges;
 		public delegate void dlgToBeRaiseAfterCheckStatusChanges();
 		
@@ -148,26 +172,11 @@ namespace LomsonLib.UI
 		/// </summary>
 		/// <param name="eventToBeDisabled">Event that will be disabled before checked/unchecked CheckBox. Can be <b>null</b> </param>
 		/// <param name="method">Method that will be launched after checking/unchecking the CheckBox.</param>
-		public void DefineCheckBoxEventBehavior(ItemCheckedEventHandler[] eventToBeDisabled, dlgToBeRaiseAfterCheckStatusChanges method) {
+		public void DefineCheckBoxEventBehavior(ItemCheckEventHandler[] eventToBeDisabled, dlgToBeRaiseAfterCheckStatusChanges method) {
 			if (eventToBeDisabled != null) {
 				m_eventToDisableWhenCheckStatusChanges = eventToBeDisabled;
 			}
 			m_methodToBeRaisedAfterCheckStatusChanges = method;
-		}
-		
-		/// <summary>
-		/// Change Status of all check boxes
-		/// </summary>
-		/// <param name="newState"></param>
-		public void ModifyAllCheckBoxesStatus(bool toBeChecked) { // TODO Remove - Check Checkbox should be used instead
-			if (m_lvi == null) { Debug.Assert(false); throw new InvalidOperationException("ModifyAllCheckBoxesStatus::SelectAllCheckBox is null"); }
-	
-			RemoveCheckedItemEvent();
-			foreach (ListViewItem lvi in m_lvi.Items) {
-				lvi.Checked = toBeChecked;
-			}
-			RestoreCheckedItemEvent();
-			UpdateCheckAllCheckBox(false);
 		}
 		
 		/// <summary>
@@ -189,8 +198,9 @@ namespace LomsonLib.UI
 				i++;
 			}
 			
-			if ( !updateCheckboxesItem)
-				m_cbCheckAllCheckBox.CheckStateChanged -= OnCheckStateChange;
+			if ( !updateCheckboxesItem) {
+				DetachCheckAllCheckBox();
+			}
 			
 			if (allChecked) {
 				CheckAllCheckBox.CheckState = CheckState.Checked;
@@ -202,8 +212,9 @@ namespace LomsonLib.UI
 				CheckAllCheckBox.CheckState = CheckState.Indeterminate;
 			}
 			if ( !updateCheckboxesItem)
-				m_cbCheckAllCheckBox.CheckStateChanged += OnCheckStateChange;
+				AttachCheckAllCheckBox();
 		}
+		
 		
 		/// <summary>
 		/// Update CheckState of individual element from CheckState of Checkall checkbox
@@ -216,9 +227,12 @@ namespace LomsonLib.UI
 			
 			// Disable event before updating everything
 			if (!simulation) {
-				foreach (ItemCheckedEventHandler eh in m_eventToDisableWhenCheckStatusChanges) {
-					m_lvi.ItemChecked -= eh;
+				foreach (ItemCheckEventHandler eh in m_eventToDisableWhenCheckStatusChanges) {
+					m_lvi.ItemCheck -= eh;
 				}
+			}
+			if (ManageMultiChecking) {
+				m_lvi.ItemCheck -= MultiCheckOnItemCheck;
 			}
 			
 			// Update check status
@@ -241,9 +255,13 @@ namespace LomsonLib.UI
 			
 			// Enable event before updating everything
 			if (!simulation) {
-				foreach (ItemCheckedEventHandler eh in m_eventToDisableWhenCheckStatusChanges) {
-					m_lvi.ItemChecked += eh;
+				foreach (ItemCheckEventHandler eh in m_eventToDisableWhenCheckStatusChanges) {
+					m_lvi.ItemCheck += eh;
 				}
+			}
+			if (ManageMultiChecking) {
+				m_lvi.ItemCheck -= MultiCheckOnItemCheck;
+				m_lvi.ItemCheck += MultiCheckOnItemCheck;
 			}
 			
 			// Run after methods
@@ -253,22 +271,45 @@ namespace LomsonLib.UI
 			
 		}
 		
-		public void AttachCheckAllCheckBox()
+		/// <summary>
+		/// If layout manager is attached to a list, attach "all check" checkbox. Otherwise do noting.
+		/// </summary>
+		/// <returns><c>true</c> is checkbox was attached. Else <c>false</c></returns>
+		private bool m_boCheckAllCheckBoxIsAttached = false;
+		public bool AttachCheckAllCheckBox()
 		{
-			Debug.Assert( (m_lvi != null) && ( m_cbCheckAllCheckBox != null ) );
-			
-			if (!m_boItemCheckedEnabled) {
-				RestoreCheckedItemEvent();
+			if ( (m_lvi != null) && ( m_cbCheckAllCheckBox != null ) ) {
+				
+				if (!m_boItemCheckedEnabled) {
+					RestoreCheckedItemEvent();
+				}
+				if (!m_boCheckAllCheckBoxIsAttached) {
+					m_cbCheckAllCheckBox.CheckStateChanged += OnCheckStateChange;
+					m_boCheckAllCheckBoxIsAttached = true;
+				}
+				return true;
 			}
-			m_cbCheckAllCheckBox.CheckStateChanged += OnCheckStateChange;
+			//else {
+				return false;
+			
 		}
 		
-		public void DetachCheckAllCheckBox()
+		/// <summary>
+		/// If layout manager is attached to a list, attach "all check" checkbox. Otherwise do noting.
+		/// </summary>
+		/// <returns><c>true</c> is checkbox was detached. Else <c>false</c></returns>
+		public bool DetachCheckAllCheckBox()
 		{
-			Debug.Assert( (m_lvi != null) && ( m_cbCheckAllCheckBox != null ) );
-			
-			RemoveCheckedItemEvent();
-			m_cbCheckAllCheckBox.CheckStateChanged -= OnCheckStateChange;
+			if ( (m_lvi != null) && ( m_cbCheckAllCheckBox != null ) ) {			
+				RemoveCheckedItemEvent();
+				
+				m_cbCheckAllCheckBox.CheckStateChanged -= OnCheckStateChange;
+				m_boCheckAllCheckBoxIsAttached = false;
+				
+				return true;
+			}
+			// else {
+			return false;
 		}
 		
 		private void OnCheckStateChange( Object sender, EventArgs e)
@@ -278,9 +319,232 @@ namespace LomsonLib.UI
 		
 		#endregion
 		
+		#region Check Selected Menu Item
+		private ICollection<ToolStripItem> SelectMenuToolStripItemsToBeAdded { get; set; }
+		private bool m_SelectedmenuItemAlreadyAssigned = false;
+		
+		/// <summary>
+		/// Add menu items Check/Uncheck checkboxes and Invert Checkboxes to contextual menu of Listview.
+		/// </summary>
+		/// <param name="menuItemCheckUncheck">Menu item text for Check/Unselected feature.
+		/// <c>null</c> if not needed</param>
+		/// <param name="menuItemInvertChecked">Menu item text for Invert checkboxes feature.
+		/// <c>null</c> if not needed</param>
+		/// <returns></returns>
+		public void AddCheckSelectedContextMenu(String menuItemCheckUncheck, String menuItemInvertCheckboxes)
+		{
+			if ( (menuItemCheckUncheck == null) && (menuItemInvertCheckboxes == null ) ) { return; }
+			
+			SelectMenuToolStripItemsToBeAdded = new List<ToolStripItem>();
+			
+			if (menuItemCheckUncheck != null) {
+				ToolStripItem tsi1 = new ToolStripMenuItem(
+					menuItemCheckUncheck, null, new System.EventHandler(OnCheckUncheckboxesClick));
+				SelectMenuToolStripItemsToBeAdded.Add(tsi1);
+			}
+			if (menuItemInvertCheckboxes != null) {
+				ToolStripItem tsi2 = new ToolStripMenuItem(menuItemInvertCheckboxes,
+				                                           null, new System.EventHandler(OnInvertCheckboxesClick));
+				SelectMenuToolStripItemsToBeAdded.Add(tsi2);
+			}		
+			
+		}
+			
+		public void ApplySelectedMenuItems() {
+			Debug.Assert(m_lvi != null);
+			
+			if (m_SelectedmenuItemAlreadyAssigned) {
+				Debug.Assert(false, "Menu Item checkboxes has already been assigned for listView");
+				return;
+			}
+			
+			if (SelectMenuToolStripItemsToBeAdded != null) {
+				ContextMenuStrip cms;
+				if (m_lvi.ContextMenuStrip != null) {
+					cms = m_lvi.ContextMenuStrip;
+				}
+				else {
+					cms = new ContextMenuStrip();
+					m_lvi.ContextMenuStrip = cms;
+				}
+				foreach (ToolStripItem tsi in SelectMenuToolStripItemsToBeAdded) {
+					cms.Items.Add(tsi);
+				}
+			}
+			
+			m_SelectedmenuItemAlreadyAssigned = true;
+			
+		}
+		
+		// Event Handler
+        private void OnCheckUncheckboxesClick(object sender, EventArgs e)
+        {
+        	if (m_lvi.SelectedItems.Count <= 0) return;
+        	
+        	bool atLeastOneUnchecked = false;
+			int i = 0;
+			while (   (i < m_lvi.SelectedItems.Count)
+			       && ( !atLeastOneUnchecked ) ) {
+				atLeastOneUnchecked = !m_lvi.SelectedItems[i].Checked;
+				i++;
+			}
+			
+			if (atLeastOneUnchecked) {
+				// Check all
+				foreach( ListViewItem lvi in m_lvi.SelectedItems ) {
+					lvi.Checked = true;
+				}
+			}
+			else {
+				// Uncheck all
+				foreach( ListViewItem lvi in m_lvi.SelectedItems ) {
+					lvi.Checked = false;
+				}
+			}
+        }
+		
+        // Event Handler
+        private void OnInvertCheckboxesClick(object sender, EventArgs e)
+        {
+        	if (m_lvi.SelectedItems.Count <= 0) return;
+        	
+    		foreach( ListViewItem lvi in m_lvi.SelectedItems ) {
+				lvi.Checked = !lvi.Checked;
+			}
+		
+        }
+        
+        private void DisposeSelectedContextMenu() {
+        	if (SelectMenuToolStripItemsToBeAdded != null) {
+        		foreach (ToolStripMenuItem tsmi in SelectMenuToolStripItemsToBeAdded) {
+        			tsmi.Dispose();
+        		}
+        	}
+        }
+		#endregion
+		
+		#region Multi Checking Checkboxes
+		public delegate void dlgMultiCheckingCheckboxes( IList<ListViewItem> lst);
+		
+		private dlgMultiCheckingCheckboxes m_launchOnItemChecked;
+		private bool ManageMultiChecking {get; set; }
+		
+		private List<ListViewItem> m_itemsAboutToBeChanged;
+		
+		private void InitializeManageMultiChecking() {
+			Debug.Assert(m_lvi != null);
+			if (ManageMultiChecking) {
+				m_lvi.ItemCheck -= MultiCheckOnItemCheck;
+				m_lvi.ItemCheck += MultiCheckOnItemCheck;
+			}
+		}
+		
+		private void RemoveMultiCheckingManagement() {
+			if (ManageMultiChecking) {
+				m_lvi.ItemCheck -= MultiCheckOnItemCheck;
+			}
+		}
+		
+		private void RestoreMultiCheckingManagement() {
+			if (ManageMultiChecking) {
+				m_lvi.ItemCheck -= MultiCheckOnItemCheck;
+				m_lvi.ItemCheck += MultiCheckOnItemCheck;
+			}
+		}
+		
+		/// <summary>
+		/// If multichecking management is enabled and a checkbox status is changed for
+		///  several items, the event launchOnItemChecked will be launched after
+		///  item will be Checked or Unchecked.
+		/// When multichecking management is enabled, it is not recommended to subscribe
+		///  to event "ItemChecked" without using ListViewLayoutManager.
+		/// </summary>
+		public void DefineMultiCheckingBehavior( dlgMultiCheckingCheckboxes launchOnItemChecked ) {
+			m_launchOnItemChecked = launchOnItemChecked;
+		}
+		
+		public void EnableMultiCheckingControl() {
+			ManageMultiChecking = true;
+		}
+		
+		public void DisableMultiCheckingControl() {
+			ManageMultiChecking = false;
+		}
+		
+		private bool m_multiCheckingIsStarted = false;
+		private int  m_countMultiChecking;
+		
+		private void MultiCheckOnItemCheck(object sender, ItemCheckEventArgs a) {
+		
+			if ( (m_lvi.SelectedItems.Count > 1) &&
+			    (m_lvi.SelectedIndices.Contains(a.Index))) {
+				
+				// MultiCheck
+				
+				bool newCheckedValue = a.NewValue == CheckState.Checked;
+				
+				if ( ! m_multiCheckingIsStarted ) {
+					
+					m_multiCheckingIsStarted = true;
+					
+					// Initialize multichecking
+					m_itemsAboutToBeChanged = new List<ListViewItem>();
+						
+					// Count number of "OnItemCheck" to be launched until it will be re-enable
+					m_countMultiChecking = 0;
+					foreach (ListViewItem lvi in m_lvi.SelectedItems) {
+						if (lvi.Checked != newCheckedValue) {
+							m_countMultiChecking++;
+							m_itemsAboutToBeChanged.Add(lvi);
+						}
+						
+					}
+					
+				}
+				
+				m_countMultiChecking--;
+				
+				if (m_countMultiChecking <= 0 ) {
+					RemoveCheckedItemEvent();
+					m_lvi.ItemChecked += ItemCheckedMultiCheckedEnd;
+				}
+				
+				
+			}
+			else {
+				m_lvi.ItemChecked += ItemCheckedOneCheckedEnd;
+			}
+		}
+		
+		// Event Handler
+		private void ItemCheckedMultiCheckedEnd(object sender, ItemCheckedEventArgs e) {
+			m_lvi.ItemChecked -= ItemCheckedMultiCheckedEnd;
+			
+			m_launchOnItemChecked(m_itemsAboutToBeChanged);
+			
+			// Restore events
+			RestoreCheckedItemEvent();
+			OnItemChecked(sender, e);
+			m_multiCheckingIsStarted = false;
+			
+		}
+		
+		private void ItemCheckedOneCheckedEnd(object sender, ItemCheckedEventArgs e) {
+			m_lvi.ItemChecked -= ItemCheckedOneCheckedEnd;
+			RemoveCheckedItemEvent();
+			List<ListViewItem> lstWithNewStatus = new List<ListViewItem>();
+
+			lstWithNewStatus.Add( e.Item );
+			
+			m_launchOnItemChecked( lstWithNewStatus );
+			
+			RestoreCheckedItemEvent();
+			OnItemChecked(sender, e);
+		}
+		
+		#endregion
 		
 		#region Common Events
-		
 		private void OnItemChecked( Object sender, ItemCheckedEventArgs e)
 		{
 			UpdateCheckAllCheckBox(false);
@@ -535,6 +799,7 @@ namespace LomsonLib.UI
 				if(strNew != null) ch.Text = strNew;
 			}
 		}
+
 		
 		#endregion
 		
@@ -640,9 +905,10 @@ namespace LomsonLib.UI
 		// Can be launched if number of selected items has been changed
 		public void UpdateStatistics()
 		{
+			if ( ! StatisticIsApplicable()) return;
+			
 			// Compile text
 			String text = m_strTemplate;
-			
 			text = text.Replace("%1", m_lvi.Items.Count.ToString());
 			text = text.Replace("%2", m_lvi.SelectedItems.Count.ToString());
 			text = text.Replace("%3", m_lvi.CheckedItems.Count.ToString());
@@ -671,6 +937,11 @@ namespace LomsonLib.UI
 			if (m_lvi != null)
 				ApplyStatisticMessageUpdater();
 			
+		}
+		
+		public bool StatisticIsApplicable() {
+			return (m_dlgStatisticMessageUpdater != null ) && 
+				(m_strTemplate != null );
 		}
 		
 		/// <summary>

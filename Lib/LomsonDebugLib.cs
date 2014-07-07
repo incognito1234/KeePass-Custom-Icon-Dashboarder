@@ -60,23 +60,29 @@ namespace LomsonLib.LomsonDebug
 			FieldInfo [] test = classType.GetFields(
             	BindingFlags.Instance |
                 BindingFlags.Static |
+                BindingFlags.GetField |
                 BindingFlags.NonPublic |
                 BindingFlags.Public );
             
             Debug.Indent();
             foreach (FieldInfo fi in test) {
-            	Debug.WriteLine("Field = " + fi.Name);
+            	Debug.WriteLine("Field = " + 
+            	                (fi.Name  + "                                                      ").Substring(0,50) +
+                              fi.FieldType.ToString());
             }
             Debug.Unindent();
-            
+            Debug.Unindent();
             Debug.WriteLine("Ending WriteAllFieldOnDebugOutput");            
 		}
 		
 		
 		
-		public static void WriteAllMethodFromAnEvent( object classInstance, string eventName) {
-			Debug.WriteLine("Entering WriteAllMethodFromAnEvent - eventName = " + eventName);
-			Debug.Indent();
+		public static void WriteAllMethodFromAnEvent( object classInstance, string eventName, bool onelinePrinting) {
+			if ( !onelinePrinting)	{	
+				Debug.Indent();
+				Debug.WriteLine("Entering WriteAllMethodFromAnEvent - eventName = " + eventName);
+			}
+			
 			
 			Delegate ehl = (LomsonDebug.GetEventHandler(classInstance, eventName)) as Delegate;
 			if (ehl != null) {
@@ -84,14 +90,23 @@ namespace LomsonLib.LomsonDebug
 			    MethodInfo method = ehl.Method;
 	            string name = ehl.Target == null ? "" : ehl.Target.ToString();
 	            if (ehl.Target is Control) name = ((Control)ehl.Target).Name;
-	            Debug.WriteLine(name + "; " + method.DeclaringType.Name + "." + method.Name);
+	            
+	            if (!onelinePrinting)
+	               	Debug.WriteLine(name + "; " + method.DeclaringType.Name + "." + method.Name);
+	            else
+	               	Debug.WriteLine("[Event]" + eventName + " - " + name + "; " + method.DeclaringType.Name + "." + method.Name);
 	            
 				Debug.Unindent();
 			}
 			
-			
-			Debug.Unindent();			
-			Debug.WriteLine("Ending WriteAllMethodFromAnEvent");
+			if ( !onelinePrinting)	{
+				Debug.Unindent();			
+				if ( !onelinePrinting) Debug.WriteLine("Ending WriteAllMethodFromAnEvent");
+			}
+		}
+		
+		public static void WriteAllMethodFromAnEvent( object classInstance, string eventName) {
+			WriteAllMethodFromAnEvent( classInstance, eventName, false);
 		}
 			
 		
@@ -106,13 +121,18 @@ namespace LomsonLib.LomsonDebug
             Type classType = classInstance.GetType();
             
             try{
-	            FieldInfo eventField =
-	            	classType.GetField(eventName,
-	            	           BindingFlags.GetField            	           
-	                         | BindingFlags.NonPublic
-	                         | BindingFlags.Instance);
-	
-	            object eventDelegate = eventField.GetValue(classInstance);
+            	object eventDelegate = null;
+            	do {
+		            FieldInfo eventField =
+		            	classType.GetField(eventName,
+		            	           BindingFlags.GetField            	           
+		                         | BindingFlags.NonPublic
+		                         | BindingFlags.Instance);
+		            try{
+		            eventDelegate = eventField.GetValue(classInstance);
+		            }catch(Exception){}
+		            classType = classType.BaseType;
+            	} while ( ( eventDelegate == null ) && (classType != null ));
 	
 	            // eventDelegate will be null if no listeners are attached to the event
 	            if (eventDelegate == null)
@@ -144,5 +164,7 @@ namespace LomsonLib.LomsonDebug
 //            if (handler.Target is Control) name = ((Control)handler.Target).Name;
 //            Console.WriteLine(name + "; " + method.DeclaringType.Name + "." + method.Name);
 //        }
+
+//http://stackoverflow.com/questions/1129517/c-sharp-how-to-find-if-an-event-is-hooked-up
 	}
 }
