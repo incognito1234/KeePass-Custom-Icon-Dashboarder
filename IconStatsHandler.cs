@@ -129,6 +129,23 @@ namespace CustomIconDashboarderPlugin
 			}
 		}
 		
+		// <summary>
+		/// Get List of entries
+		/// </summary>
+		/// <param name="pci"></param>
+		/// <returns>List of entries</returns>
+		public List<PwEntry> getListEntriesFromUuid( PwUuid puuid) {
+			Debug.Assert( m_isInitialized);
+			
+			if ( m_dicIconStats.ContainsKey( puuid ) ) {
+				return m_dicIconStats[puuid].listEntries;
+				  
+			}
+			else {
+				return new List<PwEntry>();
+			}
+		}
+		
 		/// <summary>
 		/// Get List of groups
 		/// </summary>
@@ -139,6 +156,18 @@ namespace CustomIconDashboarderPlugin
 			
 			if ( m_dicIconStats.ContainsKey( pci.Uuid ) ) {
 				return m_dicIconStats[pci.Uuid].listGroups;
+				  
+			}
+			else {
+				return new List<PwGroup>();
+			}
+		}
+		
+		public List<PwGroup> getListGroupsFromUuid( PwUuid puuid) {
+			Debug.Assert( m_isInitialized);
+			
+			if ( m_dicIconStats.ContainsKey( puuid ) ) {
+				return m_dicIconStats[puuid].listGroups;
 				  
 			}
 			else {

@@ -22,6 +22,7 @@ using System.Diagnostics;
 using KeePass.UI;
 using KeePass.Plugins;
 using KeePass.Util;
+using KeePass.Forms;
 
 using KeePassLib;
 
@@ -34,10 +35,10 @@ namespace CustomIconDashboarderPlugin
 	/// </summary>
 	public partial class DashboarderForm : Form
 	{
-		
 		private IPluginHost m_PluginHost;
 		private IconStatsHandler m_iconCounter = null;
 		private Dictionary<int, PwCustomIcon> m_iconIndexer = null;
+		private ImageList m_ilCustoms;
 
 		private ListViewLayoutManager  m_lvIconsColumnSorter;
 		private ListViewLayoutManager  m_lvGroupsColumnSorter;
@@ -61,14 +62,19 @@ namespace CustomIconDashboarderPlugin
 			
 			GlobalWindowManager.AddWindow(this);
 			
+			InitEx();			
+		}
+		
+		private void InitEx()
+		{
 			m_iconCounter = new IconStatsHandler();
 			m_iconCounter.Initialize( m_PluginHost.Database);
 			
-			BuildCustomListView();
-			
+			m_ilCustoms = UIUtil.BuildImageList(m_PluginHost.Database.CustomIcons, 16, 16);
+			BuildCustomListView(m_ilCustoms);
 		}
 		
-		private void BuildCustomListView()
+		private void BuildCustomListView(ImageList ilCustom)
 		{
 			Debug.Assert( m_iconCounter != null );
 			
@@ -108,7 +114,6 @@ namespace CustomIconDashboarderPlugin
 			m_lvViewIcon.Columns.Add( Resource.hdr_nEntry, 50, HorizontalAlignment.Center);
 			m_lvViewIcon.Columns.Add( Resource.hdr_nGroup, 50, HorizontalAlignment.Center);
 			m_lvViewIcon.Columns.Add( Resource.hdr_nTotal, 50, HorizontalAlignment.Center);
-			
 			m_lvIconsColumnSorter = new ListViewLayoutManager();
 			
 			m_lvIconsColumnSorter.AddColumnComparer(0, new IntegerAsStringComparer(false));
@@ -122,26 +127,27 @@ namespace CustomIconDashboarderPlugin
 			
 			m_lvIconsColumnSorter.ApplyToListView( this.m_lvViewIcon );
 					
-			CreateCustomIconList();
+			CreateCustomIconList(ilCustom);
 			
 		}
-		
-		
+			
 		/// <summary>
 		/// Recreate the custom icons list view.
 		/// </summary>
 		/// <returns>Index of the previous custom icon, if specified.</returns>
-		private void CreateCustomIconList()
+		private void CreateCustomIconList(ImageList ilCustom)
 		{
 			// Retrieves from Keepass IconPickerForm
-			ImageList ilCustom = UIUtil.BuildImageList(m_PluginHost.Database.CustomIcons, 16, 16);
 			m_lvViewIcon.SmallImageList = ilCustom;
 			
 			int j = 0;
 			m_iconIndexer = new Dictionary<int, PwCustomIcon>();
+			
+			m_lvViewIcon.BeginUpdate();
+			
 			foreach(PwCustomIcon pwci in m_PluginHost.Database.CustomIcons)
 			{
-				ListViewItem lvi = m_lvViewIcon.Items.Add(j.ToString(), j);
+				ListViewItem lvi = new ListViewItem(j.ToString(), j);
 				m_iconIndexer.Add(j, pwci);
 				
 				lvi.SubItems.Add(m_iconCounter.getNbUsageInEntries(pwci).ToString());
@@ -149,12 +155,23 @@ namespace CustomIconDashboarderPlugin
 				int nTotal = m_iconCounter.getNbUsageInEntries(pwci) + m_iconCounter.getNbUsageInGroups(pwci);
 				lvi.SubItems.Add( nTotal.ToString());
 				lvi.Tag = pwci.Uuid;
-				
+				m_lvViewIcon.Items.Add(lvi);
 				++j;
 			}
+			
+			m_lvViewIcon.EndUpdate();
 
 		}
 		
+		private void ResetDashboard() {
+			m_lvViewIcon.Items.Clear();
+			m_iconCounter = new IconStatsHandler();
+			m_iconCounter.Initialize( m_PluginHost.Database);
+			
+			CreateCustomIconList(m_ilCustoms);
+			m_lvUsedEntries.Items.Clear();
+			m_lvUsedGroups.Items.Clear();
+		}
 		
 		private void CleanUpEx()
 		{
@@ -169,7 +186,7 @@ namespace CustomIconDashboarderPlugin
 			GlobalWindowManager.RemoveWindow(this);
 		}
 		
-		void M_lvViewIconSelectedIndexChanged(object sender, EventArgs e)
+		void OnLvViewIconSelectedIndexChanged(object sender, EventArgs e)
 		{
 			ListView.SelectedListViewItemCollection sItems = m_lvViewIcon.SelectedItems;
 			
@@ -219,6 +236,104 @@ namespace CustomIconDashboarderPlugin
 					imgNew = new Bitmap(imgToBeConverted, new Size(nWidth, nHeight));
 				
 				return imgNew;
+		}
+		
+		void OnModifyIconClick(object sender, EventArgs e)
+		{
+			PwCustomIcon firstIcon = m_iconIndexer[
+				m_lvViewIcon.CheckedItems[0].ImageIndex];
+			
+			IconPickerForm ipf = new IconPickerForm();
+			ListView lvEntriesOfMainForm = (ListView)get_control_from_form( m_PluginHost.MainWindow, "m_lvEntries");
+			ImageList il_allIcons = lvEntriesOfMainForm.SmallImageList; // Standard icons are the "PwIcon.Count"th first items
+			ipf.InitEx(
+				il_allIcons,
+			    (uint)PwIcon.Count,
+			    m_PluginHost.Database,
+			    0,
+				firstIcon.Uuid);
+
+			if(ipf.ShowDialog() == DialogResult.OK) 
+			{
+				foreach (ListViewItem lvi in m_lvViewIcon.CheckedItems) {
+					PwCustomIcon readIcon = m_iconIndexer[lvi.ImageIndex];
+					UpdateCustomIconFromUuid( readIcon.Uuid, 
+				                         (PwIcon)ipf.ChosenIconId,
+				                         ipf.ChosenCustomIconUuid );
+				
+				}
+				ResetDashboard();
+				m_PluginHost.Database.Modified = true;
+			}
+
+			UIUtil.DestroyForm(ipf);
+		}
+		
+		
+		private void UpdateCustomIconFromUuid(
+			PwUuid srcCustomUuid,
+			PwIcon dstStandardIcon,
+			PwUuid dstCustomUuid ) {
+			
+				ICollection<PwEntry> myEntriesCollection =
+						m_iconCounter.getListEntriesFromUuid( srcCustomUuid );
+				
+				ICollection<PwGroup> myGroupsCollection =
+						m_iconCounter.getListGroupsFromUuid( srcCustomUuid );
+				
+				if(!dstCustomUuid.Equals(PwUuid.Zero)) // Custom icon
+				{
+					foreach (PwEntry pe in myEntriesCollection) {
+						pe.CustomIconUuid = dstCustomUuid;
+					}
+					foreach (PwGroup pg in myGroupsCollection) {
+						pg.CustomIconUuid = dstCustomUuid;
+					}				
+				}
+				else // Standard icon
+				{
+					foreach (PwEntry pe in myEntriesCollection) {
+						pe.IconId = dstStandardIcon;
+						pe.CustomIconUuid = PwUuid.Zero;
+					}
+					foreach (PwGroup pg in myGroupsCollection) {
+						pg.IconId = dstStandardIcon;
+						pg.CustomIconUuid = PwUuid.Zero;
+					}
+
+				}
+		}
+		
+		
+		public static Control get_control_from_form(Form form, String name) {
+			Control[] cntrls = form.Controls.Find(name, true);
+			if (cntrls.Length == 0)
+				return null;
+			return cntrls[0];
+	    }
+		
+
+		
+		void OnRemoveIconsClick(object sender, EventArgs e)
+		{
+			ListView.CheckedListViewItemCollection lvsiChecked = m_lvViewIcon.CheckedItems;
+			List<PwUuid> vUuidsToDelete = new List<PwUuid>();
+
+			foreach(ListViewItem lvi in lvsiChecked)
+			{
+				PwUuid uuidIcon = m_iconIndexer[lvi.ImageIndex].Uuid;
+				vUuidsToDelete.Add(uuidIcon);
+			}
+
+			m_PluginHost.Database.DeleteCustomIcons(vUuidsToDelete);
+
+			if(vUuidsToDelete.Count > 0)
+			{
+				m_PluginHost.Database.UINeedsIconUpdate = true;
+				m_PluginHost.Database.Modified = true;
+				ResetDashboard();
+			}
+			
 		}
 		
 	}

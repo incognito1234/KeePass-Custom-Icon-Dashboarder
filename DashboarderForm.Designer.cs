@@ -54,6 +54,9 @@ namespace CustomIconDashboarderPlugin
 			this.spc_mainSplitter = new System.Windows.Forms.SplitContainer();
 			this.tlp_left = new System.Windows.Forms.TableLayoutPanel();
 			this.cb_allIconsSelection = new System.Windows.Forms.CheckBox();
+			this.flp_buttons = new System.Windows.Forms.FlowLayoutPanel();
+			this.btn_ModifyIcon = new System.Windows.Forms.Button();
+			this.btn_removeIcons = new System.Windows.Forms.Button();
 			this.tlp_right = new System.Windows.Forms.TableLayoutPanel();
 			this.tlp_upperRight = new System.Windows.Forms.TableLayoutPanel();
 			this.spc_right = new System.Windows.Forms.SplitContainer();
@@ -65,6 +68,7 @@ namespace CustomIconDashboarderPlugin
 			this.spc_mainSplitter.Panel2.SuspendLayout();
 			this.spc_mainSplitter.SuspendLayout();
 			this.tlp_left.SuspendLayout();
+			this.flp_buttons.SuspendLayout();
 			this.tlp_right.SuspendLayout();
 			this.tlp_upperRight.SuspendLayout();
 			this.spc_right.Panel1.SuspendLayout();
@@ -82,13 +86,13 @@ namespace CustomIconDashboarderPlugin
 			this.m_lvViewIcon.FullRowSelect = true;
 			this.m_lvViewIcon.HideSelection = false;
 			this.m_lvViewIcon.Location = new System.Drawing.Point(23, 28);
-			this.m_lvViewIcon.Margin = new System.Windows.Forms.Padding(3, 3, 15, 15);
+			this.m_lvViewIcon.Margin = new System.Windows.Forms.Padding(3, 3, 15, 2);
 			this.m_lvViewIcon.Name = "m_lvViewIcon";
-			this.m_lvViewIcon.Size = new System.Drawing.Size(221, 449);
+			this.m_lvViewIcon.Size = new System.Drawing.Size(221, 409);
 			this.m_lvViewIcon.TabIndex = 0;
 			this.m_lvViewIcon.UseCompatibleStateImageBehavior = false;
 			this.m_lvViewIcon.View = System.Windows.Forms.View.Details;
-			this.m_lvViewIcon.SelectedIndexChanged += new System.EventHandler(this.M_lvViewIconSelectedIndexChanged);
+			this.m_lvViewIcon.SelectedIndexChanged += new System.EventHandler(this.OnLvViewIconSelectedIndexChanged);
 			// 
 			// lbl_title
 			// 
@@ -108,7 +112,7 @@ namespace CustomIconDashboarderPlugin
 			this.m_lvUsedEntries.Location = new System.Drawing.Point(28, 36);
 			this.m_lvUsedEntries.Margin = new System.Windows.Forms.Padding(3, 15, 15, 15);
 			this.m_lvUsedEntries.Name = "m_lvUsedEntries";
-			this.m_lvUsedEntries.Size = new System.Drawing.Size(382, 152);
+			this.m_lvUsedEntries.Size = new System.Drawing.Size(382, 135);
 			this.m_lvUsedEntries.TabIndex = 2;
 			this.m_lvUsedEntries.UseCompatibleStateImageBehavior = false;
 			this.m_lvUsedEntries.View = System.Windows.Forms.View.Details;
@@ -119,7 +123,7 @@ namespace CustomIconDashboarderPlugin
 			this.m_lvUsedGroups.Location = new System.Drawing.Point(28, 36);
 			this.m_lvUsedGroups.Margin = new System.Windows.Forms.Padding(3, 15, 15, 15);
 			this.m_lvUsedGroups.Name = "m_lvUsedGroups";
-			this.m_lvUsedGroups.Size = new System.Drawing.Size(382, 162);
+			this.m_lvUsedGroups.Size = new System.Drawing.Size(382, 151);
 			this.m_lvUsedGroups.TabIndex = 3;
 			this.m_lvUsedGroups.UseCompatibleStateImageBehavior = false;
 			this.m_lvUsedGroups.View = System.Windows.Forms.View.Details;
@@ -186,7 +190,7 @@ namespace CustomIconDashboarderPlugin
 			// 
 			this.spc_mainSplitter.Panel2.Controls.Add(this.tlp_right);
 			this.spc_mainSplitter.Panel2MinSize = 110;
-			this.spc_mainSplitter.Size = new System.Drawing.Size(706, 516);
+			this.spc_mainSplitter.Size = new System.Drawing.Size(706, 488);
 			this.spc_mainSplitter.SplitterDistance = 263;
 			this.spc_mainSplitter.TabIndex = 8;
 			// 
@@ -200,26 +204,59 @@ namespace CustomIconDashboarderPlugin
 			this.tlp_left.Controls.Add(this.lbl_title, 0, 0);
 			this.tlp_left.Controls.Add(this.m_lvViewIcon, 1, 1);
 			this.tlp_left.Controls.Add(this.cb_allIconsSelection, 1, 2);
+			this.tlp_left.Controls.Add(this.flp_buttons, 1, 3);
 			this.tlp_left.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tlp_left.Location = new System.Drawing.Point(0, 0);
 			this.tlp_left.Name = "tlp_left";
-			this.tlp_left.RowCount = 3;
+			this.tlp_left.RowCount = 4;
 			this.tlp_left.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
 			this.tlp_left.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tlp_left.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this.tlp_left.Size = new System.Drawing.Size(259, 512);
+			this.tlp_left.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
+			this.tlp_left.Size = new System.Drawing.Size(259, 484);
 			this.tlp_left.TabIndex = 0;
 			// 
 			// cb_allIconsSelection
 			// 
 			this.cb_allIconsSelection.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.cb_allIconsSelection.Location = new System.Drawing.Point(20, 492);
+			this.cb_allIconsSelection.Location = new System.Drawing.Point(20, 439);
 			this.cb_allIconsSelection.Margin = new System.Windows.Forms.Padding(0);
 			this.cb_allIconsSelection.Name = "cb_allIconsSelection";
 			this.cb_allIconsSelection.Size = new System.Drawing.Size(239, 20);
 			this.cb_allIconsSelection.TabIndex = 2;
 			this.cb_allIconsSelection.Text = "&Check/Uncheck All";
 			this.cb_allIconsSelection.UseVisualStyleBackColor = true;
+			// 
+			// flp_buttons
+			// 
+			this.flp_buttons.Controls.Add(this.btn_ModifyIcon);
+			this.flp_buttons.Controls.Add(this.btn_removeIcons);
+			this.flp_buttons.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.flp_buttons.Location = new System.Drawing.Point(20, 459);
+			this.flp_buttons.Margin = new System.Windows.Forms.Padding(0);
+			this.flp_buttons.Name = "flp_buttons";
+			this.flp_buttons.Size = new System.Drawing.Size(239, 25);
+			this.flp_buttons.TabIndex = 3;
+			// 
+			// btn_ModifyIcon
+			// 
+			this.btn_ModifyIcon.Location = new System.Drawing.Point(3, 3);
+			this.btn_ModifyIcon.Name = "btn_ModifyIcon";
+			this.btn_ModifyIcon.Size = new System.Drawing.Size(100, 23);
+			this.btn_ModifyIcon.TabIndex = 0;
+			this.btn_ModifyIcon.Text = "&Modify Icon";
+			this.btn_ModifyIcon.UseVisualStyleBackColor = true;
+			this.btn_ModifyIcon.Click += new System.EventHandler(this.OnModifyIconClick);
+			// 
+			// btn_removeIcons
+			// 
+			this.btn_removeIcons.Location = new System.Drawing.Point(109, 3);
+			this.btn_removeIcons.Name = "btn_removeIcons";
+			this.btn_removeIcons.Size = new System.Drawing.Size(98, 23);
+			this.btn_removeIcons.TabIndex = 1;
+			this.btn_removeIcons.Text = "&Remove Icons";
+			this.btn_removeIcons.UseVisualStyleBackColor = true;
+			this.btn_removeIcons.Click += new System.EventHandler(this.OnRemoveIconsClick);
 			// 
 			// tlp_right
 			// 
@@ -235,7 +272,7 @@ namespace CustomIconDashboarderPlugin
 			this.tlp_right.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 48F));
 			this.tlp_right.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tlp_right.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
-			this.tlp_right.Size = new System.Drawing.Size(435, 512);
+			this.tlp_right.Size = new System.Drawing.Size(435, 484);
 			this.tlp_right.TabIndex = 0;
 			// 
 			// tlp_upperRight
@@ -271,8 +308,8 @@ namespace CustomIconDashboarderPlugin
 			// spc_right.Panel2
 			// 
 			this.spc_right.Panel2.Controls.Add(this.tlp_usedGroups);
-			this.spc_right.Size = new System.Drawing.Size(429, 428);
-			this.spc_right.SplitterDistance = 207;
+			this.spc_right.Size = new System.Drawing.Size(429, 400);
+			this.spc_right.SplitterDistance = 190;
 			this.spc_right.TabIndex = 2;
 			// 
 			// tlp_usedEntries
@@ -289,7 +326,7 @@ namespace CustomIconDashboarderPlugin
 			this.tlp_usedEntries.RowCount = 2;
 			this.tlp_usedEntries.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 21F));
 			this.tlp_usedEntries.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.tlp_usedEntries.Size = new System.Drawing.Size(425, 203);
+			this.tlp_usedEntries.Size = new System.Drawing.Size(425, 186);
 			this.tlp_usedEntries.TabIndex = 0;
 			// 
 			// tlp_usedGroups
@@ -305,14 +342,14 @@ namespace CustomIconDashboarderPlugin
 			this.tlp_usedGroups.RowCount = 2;
 			this.tlp_usedGroups.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 21F));
 			this.tlp_usedGroups.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tlp_usedGroups.Size = new System.Drawing.Size(425, 213);
+			this.tlp_usedGroups.Size = new System.Drawing.Size(425, 202);
 			this.tlp_usedGroups.TabIndex = 0;
 			// 
 			// bto_OK
 			// 
 			this.bto_OK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.bto_OK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.bto_OK.Location = new System.Drawing.Point(330, 485);
+			this.bto_OK.Location = new System.Drawing.Point(330, 457);
 			this.bto_OK.Margin = new System.Windows.Forms.Padding(3, 3, 30, 3);
 			this.bto_OK.Name = "bto_OK";
 			this.bto_OK.Size = new System.Drawing.Size(75, 23);
@@ -322,7 +359,7 @@ namespace CustomIconDashboarderPlugin
 			// 
 			// DashboarderForm
 			// 
-			this.ClientSize = new System.Drawing.Size(706, 516);
+			this.ClientSize = new System.Drawing.Size(706, 488);
 			this.Controls.Add(this.spc_mainSplitter);
 			this.Icon = global::CustomIconDashboarderPlugin.Resource.KeePass;
 			this.Name = "DashboarderForm";
@@ -335,6 +372,7 @@ namespace CustomIconDashboarderPlugin
 			this.spc_mainSplitter.Panel2.ResumeLayout(false);
 			this.spc_mainSplitter.ResumeLayout(false);
 			this.tlp_left.ResumeLayout(false);
+			this.flp_buttons.ResumeLayout(false);
 			this.tlp_right.ResumeLayout(false);
 			this.tlp_right.PerformLayout();
 			this.tlp_upperRight.ResumeLayout(false);
@@ -346,6 +384,9 @@ namespace CustomIconDashboarderPlugin
 			this.tlp_usedGroups.ResumeLayout(false);
 			this.ResumeLayout(false);
 		}
+		private System.Windows.Forms.Button btn_removeIcons;
+		private System.Windows.Forms.Button btn_ModifyIcon;
+		private System.Windows.Forms.FlowLayoutPanel flp_buttons;
 		private System.Windows.Forms.CheckBox cb_allIconsSelection;
 		private System.Windows.Forms.SplitContainer spc_right;
 		private System.Windows.Forms.TableLayoutPanel tlp_usedGroups;
