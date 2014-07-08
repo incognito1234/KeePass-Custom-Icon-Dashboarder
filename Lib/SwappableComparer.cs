@@ -38,33 +38,33 @@ namespace LomsonLib.UI
 	/// </summary>
 	public interface ISwappableComparer<T>
 	{
-		int  compare(T obj1, T obj2);
-		void swap();
-		void revertSwapToDefault();
+		int  Compare(T obj1, T obj2);
+		void Swap();
+		void RevertSwapToDefault();
 	}
 	
 	public abstract class BaseSwappableComparer<T>: ISwappableComparer<T>
 	{
-		protected bool  m_defaultSwapped;
-		protected bool  m_isSwapped;
+		protected bool  DefaultSwapped  {get; set;}
+		protected bool  ManuallySwapped {get; set;}
 		
-		public abstract int compare(T obj1, T obj2);
+		public abstract int Compare(T obj1, T obj2);
 		
-		public BaseSwappableComparer( bool defaultSwapped ) {
-			m_defaultSwapped = defaultSwapped;
-			m_isSwapped = false;
+		protected BaseSwappableComparer( bool defaultSwapped ) {
+			DefaultSwapped = defaultSwapped;
+			ManuallySwapped = false;
 		}
 	
-		public void swap() {
-			m_isSwapped = !m_isSwapped;
+		public void Swap() {
+			ManuallySwapped = !ManuallySwapped;
 		}
 		
-		public void revertSwapToDefault() {
-			m_isSwapped = m_defaultSwapped;
+		public void RevertSwapToDefault() {
+			ManuallySwapped = DefaultSwapped;
 		}
 		
-		public bool isSwapped() {
-			return ( m_isSwapped ^ m_defaultSwapped );
+		public bool IsSwapped() {
+			return ( ManuallySwapped ^ DefaultSwapped );
 		}
 		
 	}
@@ -73,20 +73,19 @@ namespace LomsonLib.UI
 	
 	public interface ISwappableListViewItemComparer:ISwappableComparer<ListViewItem>{};
 	
-	
 	public abstract class BaseSwappableStringComparer:BaseSwappableComparer<String>, ISwappableStringComparer
 	{
 		public BaseSwappableStringComparer( bool defaultSwapped ): base(defaultSwapped) {
 		}
 		
-		public abstract override int compare(String str1, String str2);
+		public abstract override int Compare(String obj1, String obj2);
 		
-		protected String getString1(String str1, String str2) {
-			return isSwapped()?str2:str1;
+		protected String GetString1(String str1, String str2) {
+			return IsSwapped()?str2:str1;
 		}
 		
-		protected String getString2(String str1, String str2) {
-			return isSwapped()?str1:str2;
+		protected String GetString2(String str1, String str2) {
+			return IsSwapped()?str1:str2;
 		}
 		
 	}
@@ -101,10 +100,10 @@ namespace LomsonLib.UI
 			m_ignoreCase = ignoreCase;
 		}
 		
-		public override int compare(String str1, String str2)  {
+		public override int Compare(String obj1, String obj2)  {
 			
-			string cmpStr1 = getString1( str1, str2);
-			string cmpStr2 = getString2( str1, str2);
+			string cmpStr1 = GetString1( obj1, obj2);
+			string cmpStr2 = GetString2( obj1, obj2);
 			
 			return (String.Compare( cmpStr1, cmpStr2, m_ignoreCase) );
 		}
@@ -119,11 +118,11 @@ namespace LomsonLib.UI
 			
 		}
 		
-		public override int compare( String str1, String str2) {
+		public override int Compare( String obj1, String obj2) {
 			int compareResult;
 			
-			string cmpStr1 = getString1( str1, str2);
-			string cmpStr2 = getString2( str1, str2);
+			string cmpStr1 = GetString1( obj1, obj2);
+			string cmpStr2 = GetString2( obj1, obj2);
 			
 			bool parseOK;
 			int iComp1;

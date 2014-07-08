@@ -22,6 +22,9 @@
 /*
  * LomsonLib.UI
  * 
+ *    Version 1.2.1
+ *      Implement some FxCop considerations
+ * 
  *    Version 1.2 - 2014/07/07
  *        - Add Contextmenu to check and invert checkboxes of selected items
  *        - Take into account multichecking
@@ -44,6 +47,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 
 using KeePass.Util;
 using KeePass.UI;
@@ -55,20 +59,16 @@ namespace LomsonLib.UI
 	/// <summary>
 	/// Sorter for List.
 	/// </summary>
-	public class ListViewLayoutManager : IComparer, IDisposable
+	public sealed class ListViewLayoutManager : IComparer, IDisposable
 	{
-		public String Name;
+		public String Name { get; set; }
 		private ListView m_lvi;		
 		
 		#region Building, Initialization and Dispose
 		
 		// Initialize
 		public ListViewLayoutManager()
-		{
-			m_lvi = null;
-			m_boAutoWidthColumn = false;
-			m_boItemCheckedEnabled = false;
-			
+		{			
 			InitializeComparer();
 		}
 		
@@ -114,7 +114,7 @@ namespace LomsonLib.UI
 //			}
 		}
 		
-		private bool m_boItemCheckedEnabled = false;
+		private bool m_boItemCheckedEnabled;
 		public void RemoveCheckedItemEvent() {
 			Debug.Assert(m_lvi != null, "RemoveOnItemCheckedEvent::lvi is null");
 			//Debug.Assert(!m_boItemCheckedEnabled, "RemoveOnItemCheckedEvent::m_boItemCheckedEnabled is false");
@@ -275,7 +275,7 @@ namespace LomsonLib.UI
 		/// If layout manager is attached to a list, attach "all check" checkbox. Otherwise do noting.
 		/// </summary>
 		/// <returns><c>true</c> is checkbox was attached. Else <c>false</c></returns>
-		private bool m_boCheckAllCheckBoxIsAttached = false;
+		private bool m_boCheckAllCheckBoxIsAttached;
 		public bool AttachCheckAllCheckBox()
 		{
 			if ( (m_lvi != null) && ( m_cbCheckAllCheckBox != null ) ) {
@@ -321,7 +321,7 @@ namespace LomsonLib.UI
 		
 		#region Check Selected Menu Item
 		private ICollection<ToolStripItem> SelectMenuToolStripItemsToBeAdded { get; set; }
-		private bool m_SelectedmenuItemAlreadyAssigned = false;
+		private bool m_SelectedmenuItemAlreadyAssigned;
 		
 		/// <summary>
 		/// Add menu items Check/Uncheck checkboxes and Invert Checkboxes to contextual menu of Listview.
@@ -331,9 +331,9 @@ namespace LomsonLib.UI
 		/// <param name="menuItemInvertChecked">Menu item text for Invert checkboxes feature.
 		/// <c>null</c> if not needed</param>
 		/// <returns></returns>
-		public void AddCheckSelectedContextMenu(String menuItemCheckUncheck, String menuItemInvertCheckboxes)
+		public void AddCheckSelectedContextMenu(String menuItemCheckUncheck, String menuItemInvertCheckBoxes)
 		{
-			if ( (menuItemCheckUncheck == null) && (menuItemInvertCheckboxes == null ) ) { return; }
+			if ( (menuItemCheckUncheck == null) && (menuItemInvertCheckBoxes == null ) ) { return; }
 			
 			SelectMenuToolStripItemsToBeAdded = new List<ToolStripItem>();
 			
@@ -342,8 +342,8 @@ namespace LomsonLib.UI
 					menuItemCheckUncheck, null, new System.EventHandler(OnCheckUncheckboxesClick));
 				SelectMenuToolStripItemsToBeAdded.Add(tsi1);
 			}
-			if (menuItemInvertCheckboxes != null) {
-				ToolStripItem tsi2 = new ToolStripMenuItem(menuItemInvertCheckboxes,
+			if (menuItemInvertCheckBoxes != null) {
+				ToolStripItem tsi2 = new ToolStripMenuItem(menuItemInvertCheckBoxes,
 				                                           null, new System.EventHandler(OnInvertCheckboxesClick));
 				SelectMenuToolStripItemsToBeAdded.Add(tsi2);
 			}		
@@ -424,9 +424,9 @@ namespace LomsonLib.UI
 		#endregion
 		
 		#region Multi Checking Checkboxes
-		public delegate void dlgMultiCheckingCheckboxes( IList<ListViewItem> lst);
+		public delegate void dlgMultiCheckingCheckBoxes( IList<ListViewItem> lst);
 		
-		private dlgMultiCheckingCheckboxes m_launchOnItemChecked;
+		private dlgMultiCheckingCheckBoxes m_launchOnItemChecked;
 		private bool ManageMultiChecking {get; set; }
 		
 		private List<ListViewItem> m_itemsAboutToBeChanged;
@@ -459,7 +459,7 @@ namespace LomsonLib.UI
 		/// When multichecking management is enabled, it is not recommended to subscribe
 		///  to event "ItemChecked" without using ListViewLayoutManager.
 		/// </summary>
-		public void DefineMultiCheckingBehavior( dlgMultiCheckingCheckboxes launchOnItemChecked ) {
+		public void DefineMultiCheckingBehavior( dlgMultiCheckingCheckBoxes launchOnItemChecked ) {
 			m_launchOnItemChecked = launchOnItemChecked;
 		}
 		
@@ -471,7 +471,7 @@ namespace LomsonLib.UI
 			ManageMultiChecking = false;
 		}
 		
-		private bool m_multiCheckingIsStarted = false;
+		private bool m_multiCheckingIsStarted;
 		private int  m_countMultiChecking;
 		
 		private void MultiCheckOnItemCheck(object sender, ItemCheckEventArgs a) {
@@ -589,13 +589,13 @@ namespace LomsonLib.UI
 				if (!m_SortIsSuspended) {
 					if (value == SortOrder.Ascending) {
 						Debug.Assert( m_ColumnComparers.ContainsKey( CurrentSortedColumn ) );
-						m_ColumnComparers[CurrentSortedColumn].revertSwapToDefault();
+						m_ColumnComparers[CurrentSortedColumn].RevertSwapToDefault();
 						m_CurrentComparer = m_ColumnComparers[CurrentSortedColumn];
 					}
 					else if (value == SortOrder.Descending) {
 						Debug.Assert( m_ColumnComparers.ContainsKey( CurrentSortedColumn ) );
-						m_ColumnComparers[CurrentSortedColumn].revertSwapToDefault();
-						m_ColumnComparers[CurrentSortedColumn].swap();
+						m_ColumnComparers[CurrentSortedColumn].RevertSwapToDefault();
+						m_ColumnComparers[CurrentSortedColumn].Swap();
 						m_CurrentComparer = m_ColumnComparers[CurrentSortedColumn];
 					}
 					else { // value = SortOrder.None
@@ -682,7 +682,7 @@ namespace LomsonLib.UI
 				String str1 = lvX.SubItems[m_CurrentSortedColumn].Text;
 				String str2 = lvY.SubItems[m_CurrentSortedColumn].Text;
 				
-				return m_CurrentComparer.compare(str1, str2);
+				return m_CurrentComparer.Compare(str1, str2);
 			}
 		}
 		
@@ -696,7 +696,7 @@ namespace LomsonLib.UI
 			while ( (iKey < m_DefaultComparers.Count ) && (result == 0 ) ) {
 				readComparer = m_DefaultComparers[iKey];
 				
-				result = readComparer.compare( lvi1, lvi2);
+				result = readComparer.Compare( lvi1, lvi2);
 				iKey++;
 					
 			}
@@ -712,17 +712,17 @@ namespace LomsonLib.UI
 			public OrdererColumnComparer(int nColumn, bool defaultSwapped, ISwappableStringComparer issc):base(defaultSwapped) {
 				ColumnNumber = nColumn;
 				Comparer = issc;
-				Comparer.revertSwapToDefault();
-				if (defaultSwapped) Comparer.swap();
+				Comparer.RevertSwapToDefault();
+				if (defaultSwapped) Comparer.Swap();
 			}
 			
-			public override int compare(ListViewItem lvi1, ListViewItem lvi2){
+			public override int Compare(ListViewItem lvi1, ListViewItem lvi2){
 				
-				Comparer.revertSwapToDefault();
+				Comparer.RevertSwapToDefault();
 				
 				String str1 = lvi1.SubItems[ColumnNumber].Text;
 				String str2 = lvi2.SubItems[ColumnNumber].Text;
-				return Comparer.compare( str1, str2);
+				return Comparer.Compare( str1, str2);
 
 			}
 		}
@@ -805,7 +805,7 @@ namespace LomsonLib.UI
 		
 		#region AutoSizing
 		
-		private bool m_boAutoWidthColumn = false;
+		private bool m_boAutoWidthColumn;
 		public bool AutoWidthColumn {
 			get {
 				return m_boAutoWidthColumn;
@@ -826,7 +826,7 @@ namespace LomsonLib.UI
 			}
 		}
 	    // AutoSize feature
-		private bool Resizing = false;
+		private bool Resizing;
 	 
 		private void ListView_SizeChanged(object sender, EventArgs e)
 		{
@@ -895,7 +895,7 @@ namespace LomsonLib.UI
 		/// </summary>
 		public delegate void dlgStatisticMessageUpdater(String newText);
 		
-		private dlgStatisticMessageUpdater m_dlgStatisticMessageUpdater = null;
+		private dlgStatisticMessageUpdater m_dlgStatisticMessageUpdater;
 		private bool m_boLaunchWhenCheckItemsChanges;
 		private bool m_boLaunchWhenSelectedItemsChanges;
 			
@@ -909,9 +909,9 @@ namespace LomsonLib.UI
 			
 			// Compile text
 			String text = m_strTemplate;
-			text = text.Replace("%1", m_lvi.Items.Count.ToString());
-			text = text.Replace("%2", m_lvi.SelectedItems.Count.ToString());
-			text = text.Replace("%3", m_lvi.CheckedItems.Count.ToString());
+			text = text.Replace("%1", m_lvi.Items.Count.ToString(NumberFormatInfo.InvariantInfo));
+			text = text.Replace("%2", m_lvi.SelectedItems.Count.ToString(NumberFormatInfo.InvariantInfo));
+			text = text.Replace("%3", m_lvi.CheckedItems.Count.ToString(NumberFormatInfo.InvariantInfo));
 			
 			m_dlgStatisticMessageUpdater(text);
 		}

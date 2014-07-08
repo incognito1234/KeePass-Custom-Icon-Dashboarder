@@ -29,6 +29,9 @@ using System.Reflection;
 /*
  * LomsonLib.UI
  * 
+ *     Version 1.2.1
+ *      Implement some FxCop considerations
+ * 
  *     Version 1.1
  *      See ListViewLayoutManager.cs for release notes
  */
@@ -38,8 +41,12 @@ namespace LomsonLib.LomsonDebug
 	/// <summary>
 	/// Description of LomsonDebug.
 	/// </summary>
-	public class LomsonDebug
+	public sealed class LomsonDebug
 	{
+		private LomsonDebug() {
+			
+		}
+		
 		/// <summary>
 		/// Write a timestamp message on debug output
 		/// </summary>

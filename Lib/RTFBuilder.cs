@@ -46,12 +46,12 @@ namespace LomsonLib.UI
 	{
 		private StringBuilder m_sb = new StringBuilder();
 
-		private static List<RtfbTag> m_vTags = null;
+		private static List<RtfbTag> m_vTags;
 		
 		private List<OwnTag> m_ownTags = null;
 		
-		private static Random  m_myRandom = null;
-		private static bool    m_monoWorkaroundBug586901 = false;
+		private static Random  m_myRandom;
+		private static bool    m_monoWorkaroundBug586901;
 		public static void InitializeRTFBuilder(Random r, bool mwab586901) {
 			m_myRandom = r;
 			m_monoWorkaroundBug586901 = mwab586901;
@@ -110,7 +110,7 @@ namespace LomsonLib.UI
 				return sb.ToString();
 			}
 
-		private Font m_fDefault = null;
+		private Font m_fDefault;
 		public Font DefaultFont
 		{
 			get { return m_fDefault; }
