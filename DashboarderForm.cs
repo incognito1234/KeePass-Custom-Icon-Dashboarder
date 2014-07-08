@@ -125,6 +125,11 @@ namespace CustomIconDashboarderPlugin
 			m_lvIconsColumnSorter.AutoWidthColumn = true;
 			m_lvIconsColumnSorter.CheckAllCheckBox = cb_allIconsSelection;
 			
+			ListViewLayoutManager.dlgStatisticMessageUpdater  eh = delegate(String msg) {
+				tsl_nbIcons.Text = msg;
+			};
+			m_lvIconsColumnSorter.AssignStatisticMessageUpdater(eh, true, false, "%3 of %1 checked");
+			
 			m_lvIconsColumnSorter.ApplyToListView( this.m_lvViewIcon );
 					
 			CreateCustomIconList(ilCustom);
@@ -160,7 +165,7 @@ namespace CustomIconDashboarderPlugin
 			}
 			
 			m_lvViewIcon.EndUpdate();
-
+			m_lvIconsColumnSorter.UpdateStatistics();
 		}
 		
 		private void ResetDashboard() {
