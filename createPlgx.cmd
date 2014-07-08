@@ -18,8 +18,8 @@ del %TMP_PATH_PLUGIN%\%~nx0
 mkdir %TMP_PATH_PLUGIN%\Properties
 xcopy /S %SRC_PATH_PLUGIN%Properties %TMP_PATH_PLUGIN%\Properties
 
-mkdir %TMP_PATH_PLUGIN%\UI
-xcopy /S %SRC_PATH_PLUGIN%UI %TMP_PATH_PLUGIN%\UI
+mkdir %TMP_PATH_PLUGIN%\Lib
+xcopy /S %SRC_PATH_PLUGIN%Lib %TMP_PATH_PLUGIN%\Lib
 
 %PATH_KEEPASS%\keepass.exe --plgx-create %TMP_PATH_PLUGIN% ^
    --plgx-prereq-kp:2.0 ^
