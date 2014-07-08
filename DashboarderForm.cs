@@ -125,12 +125,27 @@ namespace CustomIconDashboarderPlugin
 			m_lvIconsColumnSorter.AutoWidthColumn = true;
 			m_lvIconsColumnSorter.CheckAllCheckBox = cb_allIconsSelection;
 			
-			ListViewLayoutManager.dlgStatisticMessageUpdater  eh = delegate(String msg) {
+			ListViewLayoutManager.dlgStatisticMessageUpdater  ehStats = delegate(String msg) {
 				tsl_nbIcons.Text = msg;
 			};
-			m_lvIconsColumnSorter.AssignStatisticMessageUpdater(eh, true, false, "%3 of %1 checked");
+			m_lvIconsColumnSorter.AssignStatisticMessageUpdater(ehStats, true, false, "%3 of %1 checked");
+			
+			ListViewLayoutManager.dlgMultiCheckingCheckboxes ehMulti = delegate(IList<ListViewItem> lst) {
+				//Disable button if no elements is checked
+				if (m_lvViewIcon.CheckedItems.Count == 0 ) {
+					btn_ModifyIcon.Enabled = false;
+					btn_removeIcons.Enabled = false;
+				}
+				else {
+					btn_ModifyIcon.Enabled = true;
+					btn_removeIcons.Enabled = true;
+				}
+			};
+			m_lvIconsColumnSorter.DefineMultiCheckingBehavior(ehMulti);
+			m_lvIconsColumnSorter.EnableMultiCheckingControl();
 			
 			m_lvIconsColumnSorter.ApplyToListView( this.m_lvViewIcon );
+			ehMulti(null); // Disable buttons
 					
 			CreateCustomIconList(ilCustom);
 			
