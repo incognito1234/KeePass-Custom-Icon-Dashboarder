@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.Globalization;
 
 using KeePass.UI;
 using KeePass.Plugins;
@@ -36,8 +37,8 @@ namespace CustomIconDashboarderPlugin
 	public partial class DashboarderForm : Form
 	{
 		private IPluginHost m_PluginHost;
-		private IconStatsHandler m_iconCounter = null;
-		private Dictionary<int, PwCustomIcon> m_iconIndexer = null;
+		private IconStatsHandler m_iconCounter;
+		private Dictionary<int, PwCustomIcon> m_iconIndexer;
 		private ImageList m_ilCustoms;
 
 		private ListViewLayoutManager  m_lvIconsColumnSorter;
@@ -167,13 +168,13 @@ namespace CustomIconDashboarderPlugin
 			
 			foreach(PwCustomIcon pwci in m_PluginHost.Database.CustomIcons)
 			{
-				ListViewItem lvi = new ListViewItem(j.ToString(), j);
+				ListViewItem lvi = new ListViewItem(j.ToString(NumberFormatInfo.InvariantInfo), j);
 				m_iconIndexer.Add(j, pwci);
 				
-				lvi.SubItems.Add(m_iconCounter.getNbUsageInEntries(pwci).ToString());
-				lvi.SubItems.Add(m_iconCounter.getNbUsageInGroups(pwci).ToString());
-				int nTotal = m_iconCounter.getNbUsageInEntries(pwci) + m_iconCounter.getNbUsageInGroups(pwci);
-				lvi.SubItems.Add( nTotal.ToString());
+				lvi.SubItems.Add(m_iconCounter.GetNbUsageInEntries(pwci).ToString(NumberFormatInfo.InvariantInfo));
+				lvi.SubItems.Add(m_iconCounter.GetNbUsageInGroups(pwci).ToString(NumberFormatInfo.InvariantInfo));
+				int nTotal = m_iconCounter.GetNbUsageInEntries(pwci) + m_iconCounter.GetNbUsageInGroups(pwci);
+				lvi.SubItems.Add( nTotal.ToString(NumberFormatInfo.InvariantInfo));
 				lvi.Tag = pwci.Uuid;
 				m_lvViewIcon.Items.Add(lvi);
 				++j;
@@ -219,7 +220,7 @@ namespace CustomIconDashboarderPlugin
 				
 				pbo_selectedIcon.Image = ResizedImage(readIcon.Image, 32,32);
 				
-				IEnumerator<PwEntry> myEntryEnumerator = m_iconCounter.getListEntries( readIcon ).GetEnumerator();
+				IEnumerator<PwEntry> myEntryEnumerator = m_iconCounter.GetListEntries( readIcon ).GetEnumerator();
 				
 				// Update entry and group list
 				// It is necessary to add all subitems to listView in a single oneshot.
@@ -234,7 +235,7 @@ namespace CustomIconDashboarderPlugin
 					m_lvUsedEntries.Items.Add(lvi);
 				}
 				
-				IEnumerator<PwGroup> myGroupEnumerator = m_iconCounter.getListGroups( readIcon ).GetEnumerator();
+				IEnumerator<PwGroup> myGroupEnumerator = m_iconCounter.GetListGroups( readIcon ).GetEnumerator();
 				while (myGroupEnumerator.MoveNext()) {
 					PwGroup readGroup = myGroupEnumerator.Current;
 					ListViewItem lvi = new ListViewItem( readGroup.Name );
@@ -247,7 +248,7 @@ namespace CustomIconDashboarderPlugin
 			}
 		}
 		
-		private Image ResizedImage(Image imgToBeConverted, int nWidth, int nHeight) {
+		private static Image ResizedImage(Image imgToBeConverted, int nWidth, int nHeight) {
 			
 				Image imgNew = imgToBeConverted;
 				if(imgToBeConverted == null) { Debug.Assert(false); }
@@ -264,7 +265,7 @@ namespace CustomIconDashboarderPlugin
 				m_lvViewIcon.CheckedItems[0].ImageIndex];
 			
 			IconPickerForm ipf = new IconPickerForm();
-			ListView lvEntriesOfMainForm = (ListView)get_control_from_form( m_PluginHost.MainWindow, "m_lvEntries");
+			ListView lvEntriesOfMainForm = (ListView)GetControlFromForm( m_PluginHost.MainWindow, "m_lvEntries");
 			ImageList il_allIcons = lvEntriesOfMainForm.SmallImageList; // Standard icons are the "PwIcon.Count"th first items
 			ipf.InitEx(
 				il_allIcons,
@@ -296,10 +297,10 @@ namespace CustomIconDashboarderPlugin
 			PwUuid dstCustomUuid ) {
 			
 				ICollection<PwEntry> myEntriesCollection =
-						m_iconCounter.getListEntriesFromUuid( srcCustomUuid );
+						m_iconCounter.GetListEntriesFromUuid( srcCustomUuid );
 				
 				ICollection<PwGroup> myGroupsCollection =
-						m_iconCounter.getListGroupsFromUuid( srcCustomUuid );
+						m_iconCounter.GetListGroupsFromUuid( srcCustomUuid );
 				
 				if(!dstCustomUuid.Equals(PwUuid.Zero)) // Custom icon
 				{
@@ -325,7 +326,7 @@ namespace CustomIconDashboarderPlugin
 		}
 		
 		
-		public static Control get_control_from_form(Form form, String name) {
+		public static Control GetControlFromForm(Control form, String name) {
 			Control[] cntrls = form.Controls.Find(name, true);
 			if (cntrls.Length == 0)
 				return null;
@@ -355,6 +356,7 @@ namespace CustomIconDashboarderPlugin
 			}
 			
 		}
+		
 		
 	}
 }

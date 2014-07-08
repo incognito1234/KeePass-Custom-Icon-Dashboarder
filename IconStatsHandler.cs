@@ -31,7 +31,7 @@ namespace CustomIconDashboarderPlugin
 	{
 		
 		private Dictionary<PwUuid, IconStats> m_dicIconStats = null;
-		private bool m_isInitialized = false;
+		private bool m_isInitialized;
 		
 		public IconStatsHandler()
 		{
@@ -83,7 +83,7 @@ namespace CustomIconDashboarderPlugin
 		/// </summary>
 		/// <param name="pci"></param>
 		/// <returns>number of usage of pci in groups</returns>
-		public int getNbUsageInGroups(PwCustomIcon pci) {
+		public int GetNbUsageInGroups(PwCustomIcon pci) {
 			Debug.Assert( m_isInitialized);
 			
 			if ( m_dicIconStats.ContainsKey( pci.Uuid ) ) {
@@ -100,7 +100,8 @@ namespace CustomIconDashboarderPlugin
 		/// </summary>
 		/// <param name="pci"></param>
 		/// <returns>number of usage of pci in entries</returns>
-		public int getNbUsageInEntries(PwCustomIcon pci) {
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Nb")]
+		public int GetNbUsageInEntries(PwCustomIcon pci) {
 			Debug.Assert( m_isInitialized);
 			
 			if ( m_dicIconStats.ContainsKey( pci.Uuid ) ) {
@@ -117,7 +118,7 @@ namespace CustomIconDashboarderPlugin
 		/// </summary>
 		/// <param name="pci"></param>
 		/// <returns>List of entries</returns>
-		public List<PwEntry> getListEntries( PwCustomIcon pci) {
+		public ICollection<PwEntry> GetListEntries( PwCustomIcon pci) {
 			Debug.Assert( m_isInitialized);
 			
 			if ( m_dicIconStats.ContainsKey( pci.Uuid ) ) {
@@ -134,7 +135,7 @@ namespace CustomIconDashboarderPlugin
 		/// </summary>
 		/// <param name="pci"></param>
 		/// <returns>List of entries</returns>
-		public List<PwEntry> getListEntriesFromUuid( PwUuid puuid) {
+		public ICollection<PwEntry> GetListEntriesFromUuid( PwUuid puuid) {
 			Debug.Assert( m_isInitialized);
 			
 			if ( m_dicIconStats.ContainsKey( puuid ) ) {
@@ -151,7 +152,7 @@ namespace CustomIconDashboarderPlugin
 		/// </summary>
 		/// <param name="pci"></param>
 		/// <returns>List of groups</returnGroupss>
-		public List<PwGroup> getListGroups( PwCustomIcon pci) {
+		public ICollection<PwGroup> GetListGroups( PwCustomIcon pci) {
 			Debug.Assert( m_isInitialized);
 			
 			if ( m_dicIconStats.ContainsKey( pci.Uuid ) ) {
@@ -163,7 +164,7 @@ namespace CustomIconDashboarderPlugin
 			}
 		}
 		
-		public List<PwGroup> getListGroupsFromUuid( PwUuid puuid) {
+		public ICollection<PwGroup> GetListGroupsFromUuid( PwUuid puuid) {
 			Debug.Assert( m_isInitialized);
 			
 			if ( m_dicIconStats.ContainsKey( puuid ) ) {

@@ -25,9 +25,10 @@ namespace CustomIconDashboarderPlugin
 	/// <summary>
 	/// Description of CustomIconCounterPlugin.
 	/// </summary>
-	public sealed class CustomIconDashboarderPluginExt : Plugin
+	public sealed class CustomIconDashboarderPluginExt : Plugin, IDisposable
 	{
-		private IPluginHost m_host = null;
+		
+		private IPluginHost m_host;
 		
 		public override string UpdateUrl
         {
@@ -35,8 +36,8 @@ namespace CustomIconDashboarderPlugin
         }
 
 		
-		private ToolStripSeparator m_tsSeparator = null;
-		private ToolStripMenuItem m_tsmiMenuItem = null;
+		private ToolStripSeparator m_tsSeparator;
+		private ToolStripMenuItem m_tsmiMenuItem;
 		
 		public override bool Initialize(IPluginHost host)
 		{
@@ -71,10 +72,17 @@ namespace CustomIconDashboarderPlugin
 			m_host.MainWindow.ToolsMenu.DropDownOpened -= this.OnToolsMenuOpen;
 			tsMenu.Remove(m_tsmiMenuItem);
 			tsMenu.Remove(m_tsSeparator);
+			Dispose();
 			
 		}
 		
-		public void OnToolsMenuOpen(object sender, EventArgs e)
+		public void Dispose()
+		{
+			m_tsSeparator.Dispose();
+			m_tsmiMenuItem.Dispose();
+		}
+		
+		private void OnToolsMenuOpen(object sender, EventArgs e)
 		{
 			m_tsmiMenuItem.Enabled = m_host.Database.IsOpen;
 		}
