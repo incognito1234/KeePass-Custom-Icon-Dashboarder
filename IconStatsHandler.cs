@@ -1,4 +1,9 @@
 ﻿/*
+ CustomIconDashboarder - KeePass Plugin to get some information and 
+  manage custom icons
+   
+ Copyright (C) 2014 Jareth Lomson <incognito1234@users.sourceforge.net>
+
  This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation; either version 2 of the License, or
@@ -83,6 +88,7 @@ namespace CustomIconDashboarderPlugin
 		/// </summary>
 		/// <param name="pci"></param>
 		/// <returns>number of usage of pci in groups</returns>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Nb")]
 		public int GetNbUsageInGroups(PwCustomIcon pci) {
 			Debug.Assert( m_isInitialized);
 			

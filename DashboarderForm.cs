@@ -1,4 +1,9 @@
 ﻿/*
+ CustomIconDashboarder - KeePass Plugin to get some information and 
+  manage custom icons
+
+ Copyright (C) 2014 Jareth Lomson <incognito1234@users.sourceforge.net>
+ 
  This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation; either version 2 of the License, or
@@ -131,7 +136,7 @@ namespace CustomIconDashboarderPlugin
 			};
 			m_lvIconsColumnSorter.AssignStatisticMessageUpdater(ehStats, true, false, "%3 of %1 checked");
 			
-			ListViewLayoutManager.dlgMultiCheckingCheckboxes ehMulti = delegate(IList<ListViewItem> lst) {
+			ListViewLayoutManager.dlgMultiCheckingCheckBoxes ehMulti = delegate(IList<ListViewItem> lst) {
 				//Disable button if no elements is checked
 				if (m_lvViewIcon.CheckedItems.Count == 0 ) {
 					btn_ModifyIcon.Enabled = false;
