@@ -194,6 +194,8 @@ namespace CustomIconDashboarderPlugin
 			m_iconCounter = new IconStatsHandler();
 			m_iconCounter.Initialize( m_PluginHost.Database);
 			
+			m_ilCustoms = UIUtil.BuildImageList(m_PluginHost.Database.CustomIcons, 16, 16);
+		
 			CreateCustomIconList(m_ilCustoms);
 			m_lvUsedEntries.Items.Clear();
 			m_lvUsedGroups.Items.Clear();
