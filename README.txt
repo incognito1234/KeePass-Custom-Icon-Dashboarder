@@ -4,13 +4,18 @@
 Pre-requisites
 --------------
 KeePass Password Safe 2.00+
-(latest version tested only on 2.26)
+(latest version tested only on 2.27)
 
 
 Installation instructions
 -------------------------
 Put the .plgx file into a folder called "plugins" inside your
 KeePass Password Safe installation folder
+
+Version 0.2.1
+-------------
+- Ensure that icon list is correctly rebuilt after a removal (Ticket #2)
+
 
 Version 0.2
 -----------

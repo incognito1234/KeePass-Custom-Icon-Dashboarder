@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Custom Icon Dashboarder")]
-[assembly: AssemblyDescription("Provides some statistics about custom icons")]
+[assembly: AssemblyDescription("Provides some statistics and management operations on custom icons")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Jareth Lomson")]
 [assembly: AssemblyProduct("KeePass Plugin")]
@@ -29,7 +29,7 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can use the default the Revision and 
 // Build Numbers by using the '*' as shown below:
-[assembly: AssemblyVersion("0.2")]
+[assembly: AssemblyVersion("0.2.1")]
 
 
 // Asked by fxCop
