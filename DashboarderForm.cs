@@ -291,7 +291,9 @@ namespace CustomIconDashboarderPlugin
 				
 				}
 				ResetDashboard();
+				m_PluginHost.Database.UINeedsIconUpdate = true;
 				m_PluginHost.Database.Modified = true;
+				m_PluginHost.MainWindow.UpdateUI(false, null, true, null, true, null, true);
 			}
 
 			UIUtil.DestroyForm(ipf);
@@ -360,6 +362,7 @@ namespace CustomIconDashboarderPlugin
 				m_PluginHost.Database.UINeedsIconUpdate = true;
 				m_PluginHost.Database.Modified = true;
 				ResetDashboard();
+				m_PluginHost.MainWindow.UpdateUI(false, null, true, null, true, null, true);
 			}
 			
 		}
