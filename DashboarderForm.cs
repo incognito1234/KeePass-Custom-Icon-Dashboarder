@@ -75,7 +75,9 @@ namespace CustomIconDashboarderPlugin
 			m_iconCounter = new IconStatsHandler();
 			m_iconCounter.Initialize( m_PluginHost.Database);
 			
-			m_ilCustoms = UIUtil.BuildImageList(m_PluginHost.Database.CustomIcons, 16, 16);
+			int cx = CompatibilityManager.ScaleIntX(16);
+			int cy = CompatibilityManager.ScaleIntX(16);
+			m_ilCustoms = UIUtil.BuildImageList(m_PluginHost.Database.CustomIcons, cx, cy);
 			BuildCustomListView(m_ilCustoms);
 		}
 		
