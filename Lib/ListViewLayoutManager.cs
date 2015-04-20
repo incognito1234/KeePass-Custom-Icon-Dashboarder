@@ -22,6 +22,9 @@
 /*
  * LomsonLib.UI
  * 
+ *    Version 1.3 - 2015/04/20
+ *      Add Compatibility Manager
+ * 
  *    Version 1.2.1
  *      Implement some FxCop considerations
  * 

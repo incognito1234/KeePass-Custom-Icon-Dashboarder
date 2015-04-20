@@ -63,6 +63,7 @@
     </Compile>
     <Compile Include="CustomIconDashboarderExt.cs" />
     <Compile Include="Lib\CollectionUtil.cs" />
+    <Compile Include="Lib\CompatibilityManager.cs" />
     <Compile Include="Lib\LomsonDebugLib.cs" />
     <Compile Include="Lib\RTFBuilder.cs" />
     <Compile Include="Lib\SwappableComparer.cs" />
