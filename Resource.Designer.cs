@@ -80,7 +80,16 @@ namespace CustomIconDashboarderPlugin {
 		}
 		
 		/// <summary>
-		///   Looks up a localized string similar to icon.
+		///   Looks up a localized string similar to Height.
+		/// </summary>
+		internal static string hdr_height {
+			get {
+				return ResourceManager.GetString("hdr_height", resourceCulture);
+			}
+		}
+		
+		/// <summary>
+		///   Looks up a localized string similar to Icon.
 		/// </summary>
 		internal static string hdr_icon {
 			get {
@@ -130,6 +139,15 @@ namespace CustomIconDashboarderPlugin {
 		internal static string hdr_userName {
 			get {
 				return ResourceManager.GetString("hdr_userName", resourceCulture);
+			}
+		}
+		
+		/// <summary>
+		///   Looks up a localized string similar to Width.
+		/// </summary>
+		internal static string hdr_width {
+			get {
+				return ResourceManager.GetString("hdr_width", resourceCulture);
 			}
 		}
 		

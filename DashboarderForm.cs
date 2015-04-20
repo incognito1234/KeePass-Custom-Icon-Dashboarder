@@ -118,6 +118,8 @@ namespace CustomIconDashboarderPlugin
 		
 			// List View Icon
 			m_lvViewIcon.Columns.Add( Resource.hdr_icon, 50 );
+			m_lvViewIcon.Columns.Add( Resource.hdr_width, 50, HorizontalAlignment.Center );
+			m_lvViewIcon.Columns.Add( Resource.hdr_height, 50, HorizontalAlignment.Center );
 			m_lvViewIcon.Columns.Add( Resource.hdr_nEntry, 50, HorizontalAlignment.Center);
 			m_lvViewIcon.Columns.Add( Resource.hdr_nGroup, 50, HorizontalAlignment.Center);
 			m_lvViewIcon.Columns.Add( Resource.hdr_nTotal, 50, HorizontalAlignment.Center);
@@ -127,6 +129,8 @@ namespace CustomIconDashboarderPlugin
 			m_lvIconsColumnSorter.AddColumnComparer(1, new IntegerAsStringComparer(false));
 			m_lvIconsColumnSorter.AddColumnComparer(2, new IntegerAsStringComparer(false));
 			m_lvIconsColumnSorter.AddColumnComparer(3, new IntegerAsStringComparer(false));
+			m_lvIconsColumnSorter.AddColumnComparer(4, new IntegerAsStringComparer(false));
+			m_lvIconsColumnSorter.AddColumnComparer(5, new IntegerAsStringComparer(false));
 			m_lvIconsColumnSorter.AddDefaultSortedColumn(0,false);
 
 			m_lvIconsColumnSorter.AutoWidthColumn = true;
@@ -175,8 +179,11 @@ namespace CustomIconDashboarderPlugin
 			foreach(PwCustomIcon pwci in m_PluginHost.Database.CustomIcons)
 			{
 				ListViewItem lvi = new ListViewItem(j.ToString(NumberFormatInfo.InvariantInfo), j);
-				m_iconIndexer.Add(j, pwci);
+				Image originalImage = CompatibilityManager.GetOriginalImage(pwci);
 				
+				m_iconIndexer.Add(j, pwci);
+				lvi.SubItems.Add(originalImage.Width.ToString(NumberFormatInfo.InvariantInfo));
+				lvi.SubItems.Add(originalImage.Height.ToString(NumberFormatInfo.InvariantInfo));
 				lvi.SubItems.Add(m_iconCounter.GetNbUsageInEntries(pwci).ToString(NumberFormatInfo.InvariantInfo));
 				lvi.SubItems.Add(m_iconCounter.GetNbUsageInGroups(pwci).ToString(NumberFormatInfo.InvariantInfo));
 				int nTotal = m_iconCounter.GetNbUsageInEntries(pwci) + m_iconCounter.GetNbUsageInGroups(pwci);

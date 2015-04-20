@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="hdr_icon" xml:space="preserve">
-    <value>icon</value>
+    <value>Icon</value>
   </data>
   <data name="hdr_nGroup" xml:space="preserve">
     <value>#Group</value>
@@ -1214,5 +1214,11 @@
   </data>
   <data name="hdr_nTotal" xml:space="preserve">
     <value>#Total</value>
+  </data>
+  <data name="hdr_width" xml:space="preserve">
+    <value>Width</value>
+  </data>
+  <data name="hdr_height" xml:space="preserve">
+    <value>Height</value>
   </data>
 </root>
