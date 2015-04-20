@@ -27,7 +27,6 @@ using System.Globalization;
 
 using KeePass.UI;
 using KeePass.Plugins;
-using KeePass.Util;
 using KeePass.Forms;
 
 using KeePassLib;
@@ -220,13 +219,25 @@ namespace CustomIconDashboarderPlugin
 			
 			m_lvUsedEntries.Items.Clear();
 			m_lvUsedGroups.Items.Clear();
-			
+	 
 			if (sItems.Count > 0 ) {
 				
 				PwCustomIcon readIcon = m_iconIndexer[sItems[0].ImageIndex];
 				
-				pbo_selectedIcon.Image = ResizedImage(readIcon.Image, 32,32);
-				
+				pbo_selectedIcon128.BackgroundImage = 
+					CompatibilityManager.GetScaledImage(readIcon, 128, 128);
+				pbo_selectedIcon64.BackgroundImage = 
+					CompatibilityManager.GetScaledImage(readIcon, 64, 64);
+				pbo_selectedIcon32.BackgroundImage =
+					CompatibilityManager.GetScaledImage(readIcon, 32, 32);					
+				pbo_selectedIcon16.BackgroundImage = 
+					CompatibilityManager.GetScaledImage(readIcon, 16, 16);
+				Image originalImage = CompatibilityManager.GetOriginalImage(readIcon);
+				lbl_originalSize.Text =
+					"Original Size : " +
+					originalImage.Width +
+					" x " +
+					originalImage.Height;
 				IEnumerator<PwEntry> myEntryEnumerator = m_iconCounter.GetListEntries( readIcon ).GetEnumerator();
 				
 				// Update entry and group list
@@ -251,19 +262,8 @@ namespace CustomIconDashboarderPlugin
 				}
 			}
 			else {
-				pbo_selectedIcon.Image = null;
+				pbo_selectedIcon128.Image = null;
 			}
-		}
-		
-		private static Image ResizedImage(Image imgToBeConverted, int nWidth, int nHeight) {
-			
-				Image imgNew = imgToBeConverted;
-				if(imgToBeConverted == null) { Debug.Assert(false); }
-
-				if((imgToBeConverted.Width != nWidth) || (imgToBeConverted.Height != nHeight))
-					imgNew = new Bitmap(imgToBeConverted, new Size(nWidth, nHeight));
-				
-				return imgNew;
 		}
 		
 		void OnModifyIconClick(object sender, EventArgs e)
