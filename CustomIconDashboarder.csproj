@@ -66,6 +66,7 @@
     <Compile Include="Lib\CompatibilityManager.cs" />
     <Compile Include="Lib\LomsonDebugLib.cs" />
     <Compile Include="Lib\RTFBuilder.cs" />
+    <Compile Include="Lib\ScaleControlTableLayoutPanel.cs" />
     <Compile Include="Lib\SwappableComparer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resource.Designer.cs">

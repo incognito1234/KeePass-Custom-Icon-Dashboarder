@@ -233,15 +233,16 @@ namespace CustomIconDashboarderPlugin
 				
 				PwCustomIcon readIcon = m_iconIndexer[sItems[0].ImageIndex];
 				
-				pbo_selectedIcon128.BackgroundImage = 
-					CompatibilityManager.GetScaledImage(readIcon, 128, 128);
-				pbo_selectedIcon64.BackgroundImage = 
-					CompatibilityManager.GetScaledImage(readIcon, 64, 64);
-				pbo_selectedIcon32.BackgroundImage =
-					CompatibilityManager.GetScaledImage(readIcon, 32, 32);					
-				pbo_selectedIcon16.BackgroundImage = 
-					CompatibilityManager.GetScaledImage(readIcon, 16, 16);
 				Image originalImage = CompatibilityManager.GetOriginalImage(readIcon);
+				
+				pbo_selectedIcon128.BackgroundImage = 
+					CompatibilityManager.ResizedImage(originalImage, 128, 128);
+				pbo_selectedIcon64.BackgroundImage = 
+					CompatibilityManager.ResizedImage(originalImage, 64, 64);
+				pbo_selectedIcon32.BackgroundImage =
+					CompatibilityManager.ResizedImage(originalImage, 32, 32);					
+				pbo_selectedIcon16.BackgroundImage = 
+					CompatibilityManager.ResizedImage(originalImage, 16, 16);
 				lbl_originalSize.Text =
 					"Original Size : " +
 					originalImage.Width +

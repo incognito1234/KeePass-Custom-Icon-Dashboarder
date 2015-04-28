@@ -62,15 +62,16 @@ namespace CustomIconDashboarderPlugin
 			this.cb_allIconsSelection = new System.Windows.Forms.CheckBox();
 			this.tlp_right = new System.Windows.Forms.TableLayoutPanel();
 			this.tlp_upperRight = new System.Windows.Forms.TableLayoutPanel();
+			this.lbl_originalSize = new System.Windows.Forms.Label();
+			this.lbl_selectedIcon = new System.Windows.Forms.Label();
 			this.lbl_128x128 = new System.Windows.Forms.Label();
 			this.lbl_64x64 = new System.Windows.Forms.Label();
 			this.lbl_32x32 = new System.Windows.Forms.Label();
 			this.lbl_16x16 = new System.Windows.Forms.Label();
+			this.scltp_icons = new LomsonLib.UI.ScaleControlTableLayoutPanel();
 			this.pbo_selectedIcon16 = new System.Windows.Forms.PictureBox();
 			this.pbo_selectedIcon32 = new System.Windows.Forms.PictureBox();
 			this.pbo_selectedIcon64 = new System.Windows.Forms.PictureBox();
-			this.lbl_originalSize = new System.Windows.Forms.Label();
-			this.lbl_selectedIcon = new System.Windows.Forms.Label();
 			this.spc_right = new System.Windows.Forms.SplitContainer();
 			this.tlp_usedEntries = new System.Windows.Forms.TableLayoutPanel();
 			this.tlp_usedGroups = new System.Windows.Forms.TableLayoutPanel();
@@ -86,6 +87,7 @@ namespace CustomIconDashboarderPlugin
 			this.flp_buttons.SuspendLayout();
 			this.tlp_right.SuspendLayout();
 			this.tlp_upperRight.SuspendLayout();
+			this.scltp_icons.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.pbo_selectedIcon16)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.pbo_selectedIcon32)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.pbo_selectedIcon64)).BeginInit();
@@ -129,7 +131,7 @@ namespace CustomIconDashboarderPlugin
 			this.m_lvUsedEntries.Location = new System.Drawing.Point(28, 36);
 			this.m_lvUsedEntries.Margin = new System.Windows.Forms.Padding(3, 15, 15, 15);
 			this.m_lvUsedEntries.Name = "m_lvUsedEntries";
-			this.m_lvUsedEntries.Size = new System.Drawing.Size(403, 74);
+			this.m_lvUsedEntries.Size = new System.Drawing.Size(403, 67);
 			this.m_lvUsedEntries.TabIndex = 2;
 			this.m_lvUsedEntries.UseCompatibleStateImageBehavior = false;
 			this.m_lvUsedEntries.View = System.Windows.Forms.View.Details;
@@ -140,7 +142,7 @@ namespace CustomIconDashboarderPlugin
 			this.m_lvUsedGroups.Location = new System.Drawing.Point(28, 36);
 			this.m_lvUsedGroups.Margin = new System.Windows.Forms.Padding(3, 15, 15, 15);
 			this.m_lvUsedGroups.Name = "m_lvUsedGroups";
-			this.m_lvUsedGroups.Size = new System.Drawing.Size(403, 89);
+			this.m_lvUsedGroups.Size = new System.Drawing.Size(403, 82);
 			this.m_lvUsedGroups.TabIndex = 3;
 			this.m_lvUsedGroups.UseCompatibleStateImageBehavior = false;
 			this.m_lvUsedGroups.View = System.Windows.Forms.View.Details;
@@ -176,7 +178,7 @@ namespace CustomIconDashboarderPlugin
 			this.pbo_selectedIcon128.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 			this.pbo_selectedIcon128.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
 			this.pbo_selectedIcon128.InitialImage = null;
-			this.pbo_selectedIcon128.Location = new System.Drawing.Point(46, 24);
+			this.pbo_selectedIcon128.Location = new System.Drawing.Point(46, 11);
 			this.pbo_selectedIcon128.Name = "pbo_selectedIcon128";
 			this.pbo_selectedIcon128.Size = new System.Drawing.Size(132, 132);
 			this.pbo_selectedIcon128.TabIndex = 6;
@@ -321,7 +323,7 @@ namespace CustomIconDashboarderPlugin
 			this.tlp_right.Location = new System.Drawing.Point(0, 0);
 			this.tlp_right.Name = "tlp_right";
 			this.tlp_right.RowCount = 3;
-			this.tlp_right.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 186F));
+			this.tlp_right.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tlp_right.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tlp_right.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
 			this.tlp_right.Size = new System.Drawing.Size(456, 499);
@@ -336,113 +338,23 @@ namespace CustomIconDashboarderPlugin
 			this.tlp_upperRight.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
 			this.tlp_upperRight.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
 			this.tlp_upperRight.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
+			this.tlp_upperRight.Controls.Add(this.lbl_originalSize, 1, 0);
+			this.tlp_upperRight.Controls.Add(this.lbl_selectedIcon, 0, 0);
 			this.tlp_upperRight.Controls.Add(this.lbl_128x128, 0, 2);
 			this.tlp_upperRight.Controls.Add(this.lbl_64x64, 1, 2);
 			this.tlp_upperRight.Controls.Add(this.lbl_32x32, 2, 2);
 			this.tlp_upperRight.Controls.Add(this.lbl_16x16, 3, 2);
-			this.tlp_upperRight.Controls.Add(this.pbo_selectedIcon16, 3, 1);
-			this.tlp_upperRight.Controls.Add(this.pbo_selectedIcon32, 2, 1);
-			this.tlp_upperRight.Controls.Add(this.pbo_selectedIcon64, 1, 1);
-			this.tlp_upperRight.Controls.Add(this.pbo_selectedIcon128, 0, 1);
-			this.tlp_upperRight.Controls.Add(this.lbl_originalSize, 1, 0);
-			this.tlp_upperRight.Controls.Add(this.lbl_selectedIcon, 0, 0);
+			this.tlp_upperRight.Controls.Add(this.scltp_icons, 0, 1);
 			this.tlp_upperRight.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tlp_upperRight.GrowStyle = System.Windows.Forms.TableLayoutPanelGrowStyle.AddColumns;
 			this.tlp_upperRight.Location = new System.Drawing.Point(3, 3);
 			this.tlp_upperRight.Name = "tlp_upperRight";
 			this.tlp_upperRight.RowCount = 3;
 			this.tlp_upperRight.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this.tlp_upperRight.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 140F));
-			this.tlp_upperRight.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tlp_upperRight.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tlp_upperRight.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this.tlp_upperRight.Size = new System.Drawing.Size(450, 180);
+			this.tlp_upperRight.Size = new System.Drawing.Size(450, 194);
 			this.tlp_upperRight.TabIndex = 1;
-			// 
-			// lbl_128x128
-			// 
-			this.lbl_128x128.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-			| System.Windows.Forms.AnchorStyles.Left) 
-			| System.Windows.Forms.AnchorStyles.Right)));
-			this.lbl_128x128.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lbl_128x128.Location = new System.Drawing.Point(3, 160);
-			this.lbl_128x128.Name = "lbl_128x128";
-			this.lbl_128x128.Size = new System.Drawing.Size(219, 20);
-			this.lbl_128x128.TabIndex = 10;
-			this.lbl_128x128.Text = "128 x 128";
-			this.lbl_128x128.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-			// 
-			// lbl_64x64
-			// 
-			this.lbl_64x64.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-			| System.Windows.Forms.AnchorStyles.Left) 
-			| System.Windows.Forms.AnchorStyles.Right)));
-			this.lbl_64x64.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lbl_64x64.Location = new System.Drawing.Point(228, 160);
-			this.lbl_64x64.Name = "lbl_64x64";
-			this.lbl_64x64.Size = new System.Drawing.Size(106, 20);
-			this.lbl_64x64.TabIndex = 13;
-			this.lbl_64x64.Text = "64x64";
-			this.lbl_64x64.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-			// 
-			// lbl_32x32
-			// 
-			this.lbl_32x32.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-			| System.Windows.Forms.AnchorStyles.Left) 
-			| System.Windows.Forms.AnchorStyles.Right)));
-			this.lbl_32x32.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lbl_32x32.Location = new System.Drawing.Point(340, 160);
-			this.lbl_32x32.Name = "lbl_32x32";
-			this.lbl_32x32.Size = new System.Drawing.Size(50, 20);
-			this.lbl_32x32.TabIndex = 9;
-			this.lbl_32x32.Text = "32x32";
-			this.lbl_32x32.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-			this.lbl_32x32.UseCompatibleTextRendering = true;
-			// 
-			// lbl_16x16
-			// 
-			this.lbl_16x16.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-			| System.Windows.Forms.AnchorStyles.Left) 
-			| System.Windows.Forms.AnchorStyles.Right)));
-			this.lbl_16x16.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lbl_16x16.Location = new System.Drawing.Point(396, 160);
-			this.lbl_16x16.Name = "lbl_16x16";
-			this.lbl_16x16.Size = new System.Drawing.Size(51, 20);
-			this.lbl_16x16.TabIndex = 15;
-			this.lbl_16x16.Text = "16x16";
-			this.lbl_16x16.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-			// 
-			// pbo_selectedIcon16
-			// 
-			this.pbo_selectedIcon16.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.pbo_selectedIcon16.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-			this.pbo_selectedIcon16.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.pbo_selectedIcon16.Location = new System.Drawing.Point(411, 80);
-			this.pbo_selectedIcon16.Name = "pbo_selectedIcon16";
-			this.pbo_selectedIcon16.Size = new System.Drawing.Size(20, 20);
-			this.pbo_selectedIcon16.TabIndex = 14;
-			this.pbo_selectedIcon16.TabStop = false;
-			// 
-			// pbo_selectedIcon32
-			// 
-			this.pbo_selectedIcon32.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.pbo_selectedIcon32.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-			this.pbo_selectedIcon32.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.pbo_selectedIcon32.Location = new System.Drawing.Point(347, 72);
-			this.pbo_selectedIcon32.Name = "pbo_selectedIcon32";
-			this.pbo_selectedIcon32.Size = new System.Drawing.Size(36, 36);
-			this.pbo_selectedIcon32.TabIndex = 11;
-			this.pbo_selectedIcon32.TabStop = false;
-			// 
-			// pbo_selectedIcon64
-			// 
-			this.pbo_selectedIcon64.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.pbo_selectedIcon64.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-			this.pbo_selectedIcon64.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.pbo_selectedIcon64.Location = new System.Drawing.Point(247, 56);
-			this.pbo_selectedIcon64.Name = "pbo_selectedIcon64";
-			this.pbo_selectedIcon64.Size = new System.Drawing.Size(68, 68);
-			this.pbo_selectedIcon64.TabIndex = 12;
-			this.pbo_selectedIcon64.TabStop = false;
 			// 
 			// lbl_originalSize
 			// 
@@ -469,11 +381,120 @@ namespace CustomIconDashboarderPlugin
 			this.lbl_selectedIcon.TabIndex = 17;
 			this.lbl_selectedIcon.Text = "Selected Icon";
 			// 
+			// lbl_128x128
+			// 
+			this.lbl_128x128.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+			| System.Windows.Forms.AnchorStyles.Left) 
+			| System.Windows.Forms.AnchorStyles.Right)));
+			this.lbl_128x128.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.lbl_128x128.Location = new System.Drawing.Point(3, 174);
+			this.lbl_128x128.Name = "lbl_128x128";
+			this.lbl_128x128.Size = new System.Drawing.Size(219, 20);
+			this.lbl_128x128.TabIndex = 10;
+			this.lbl_128x128.Text = "128x128";
+			this.lbl_128x128.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+			// 
+			// lbl_64x64
+			// 
+			this.lbl_64x64.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+			| System.Windows.Forms.AnchorStyles.Left) 
+			| System.Windows.Forms.AnchorStyles.Right)));
+			this.lbl_64x64.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.lbl_64x64.Location = new System.Drawing.Point(228, 174);
+			this.lbl_64x64.Name = "lbl_64x64";
+			this.lbl_64x64.Size = new System.Drawing.Size(106, 20);
+			this.lbl_64x64.TabIndex = 13;
+			this.lbl_64x64.Text = "64x64";
+			this.lbl_64x64.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+			// 
+			// lbl_32x32
+			// 
+			this.lbl_32x32.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+			| System.Windows.Forms.AnchorStyles.Left) 
+			| System.Windows.Forms.AnchorStyles.Right)));
+			this.lbl_32x32.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.lbl_32x32.Location = new System.Drawing.Point(340, 174);
+			this.lbl_32x32.Name = "lbl_32x32";
+			this.lbl_32x32.Size = new System.Drawing.Size(50, 20);
+			this.lbl_32x32.TabIndex = 9;
+			this.lbl_32x32.Text = "32x32";
+			this.lbl_32x32.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+			this.lbl_32x32.UseCompatibleTextRendering = true;
+			// 
+			// lbl_16x16
+			// 
+			this.lbl_16x16.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+			| System.Windows.Forms.AnchorStyles.Left) 
+			| System.Windows.Forms.AnchorStyles.Right)));
+			this.lbl_16x16.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.lbl_16x16.Location = new System.Drawing.Point(396, 174);
+			this.lbl_16x16.Name = "lbl_16x16";
+			this.lbl_16x16.Size = new System.Drawing.Size(51, 20);
+			this.lbl_16x16.TabIndex = 15;
+			this.lbl_16x16.Text = "16x16";
+			this.lbl_16x16.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+			// 
+			// scltp_icons
+			// 
+			this.scltp_icons.ColumnCount = 4;
+			this.tlp_upperRight.SetColumnSpan(this.scltp_icons, 4);
+			this.scltp_icons.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.scltp_icons.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+			this.scltp_icons.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
+			this.scltp_icons.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
+			this.scltp_icons.Controls.Add(this.pbo_selectedIcon16, 3, 0);
+			this.scltp_icons.Controls.Add(this.pbo_selectedIcon128, 0, 0);
+			this.scltp_icons.Controls.Add(this.pbo_selectedIcon32, 2, 0);
+			this.scltp_icons.Controls.Add(this.pbo_selectedIcon64, 1, 0);
+			this.scltp_icons.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.scltp_icons.Location = new System.Drawing.Point(0, 20);
+			this.scltp_icons.Margin = new System.Windows.Forms.Padding(0);
+			this.scltp_icons.Name = "scltp_icons";
+			this.scltp_icons.RowCount = 1;
+			this.scltp_icons.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.scltp_icons.ScaleHeight = false;
+			this.scltp_icons.ScaleWidth = true;
+			this.scltp_icons.Size = new System.Drawing.Size(450, 154);
+			this.scltp_icons.TabIndex = 18;
+			// 
+			// pbo_selectedIcon16
+			// 
+			this.pbo_selectedIcon16.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.pbo_selectedIcon16.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+			this.pbo_selectedIcon16.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+			this.pbo_selectedIcon16.Location = new System.Drawing.Point(411, 67);
+			this.pbo_selectedIcon16.Name = "pbo_selectedIcon16";
+			this.pbo_selectedIcon16.Size = new System.Drawing.Size(20, 20);
+			this.pbo_selectedIcon16.TabIndex = 14;
+			this.pbo_selectedIcon16.TabStop = false;
+			// 
+			// pbo_selectedIcon32
+			// 
+			this.pbo_selectedIcon32.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.pbo_selectedIcon32.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+			this.pbo_selectedIcon32.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+			this.pbo_selectedIcon32.Location = new System.Drawing.Point(347, 59);
+			this.pbo_selectedIcon32.Name = "pbo_selectedIcon32";
+			this.pbo_selectedIcon32.Size = new System.Drawing.Size(36, 36);
+			this.pbo_selectedIcon32.TabIndex = 11;
+			this.pbo_selectedIcon32.TabStop = false;
+			// 
+			// pbo_selectedIcon64
+			// 
+			this.pbo_selectedIcon64.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.pbo_selectedIcon64.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+			this.pbo_selectedIcon64.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+			this.pbo_selectedIcon64.Location = new System.Drawing.Point(247, 43);
+			this.pbo_selectedIcon64.Name = "pbo_selectedIcon64";
+			this.pbo_selectedIcon64.Size = new System.Drawing.Size(68, 68);
+			this.pbo_selectedIcon64.TabIndex = 12;
+			this.pbo_selectedIcon64.TabStop = false;
+			// 
 			// spc_right
 			// 
 			this.spc_right.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
 			this.spc_right.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.spc_right.Location = new System.Drawing.Point(3, 189);
+			this.spc_right.Location = new System.Drawing.Point(3, 203);
 			this.spc_right.Name = "spc_right";
 			this.spc_right.Orientation = System.Windows.Forms.Orientation.Horizontal;
 			// 
@@ -484,8 +505,8 @@ namespace CustomIconDashboarderPlugin
 			// spc_right.Panel2
 			// 
 			this.spc_right.Panel2.Controls.Add(this.tlp_usedGroups);
-			this.spc_right.Size = new System.Drawing.Size(450, 277);
-			this.spc_right.SplitterDistance = 129;
+			this.spc_right.Size = new System.Drawing.Size(450, 263);
+			this.spc_right.SplitterDistance = 122;
 			this.spc_right.TabIndex = 2;
 			// 
 			// tlp_usedEntries
@@ -502,7 +523,7 @@ namespace CustomIconDashboarderPlugin
 			this.tlp_usedEntries.RowCount = 2;
 			this.tlp_usedEntries.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 21F));
 			this.tlp_usedEntries.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.tlp_usedEntries.Size = new System.Drawing.Size(446, 125);
+			this.tlp_usedEntries.Size = new System.Drawing.Size(446, 118);
 			this.tlp_usedEntries.TabIndex = 0;
 			// 
 			// tlp_usedGroups
@@ -518,7 +539,7 @@ namespace CustomIconDashboarderPlugin
 			this.tlp_usedGroups.RowCount = 2;
 			this.tlp_usedGroups.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 21F));
 			this.tlp_usedGroups.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tlp_usedGroups.Size = new System.Drawing.Size(446, 140);
+			this.tlp_usedGroups.Size = new System.Drawing.Size(446, 133);
 			this.tlp_usedGroups.TabIndex = 0;
 			// 
 			// bto_OK
@@ -558,6 +579,7 @@ namespace CustomIconDashboarderPlugin
 			this.tlp_right.ResumeLayout(false);
 			this.tlp_right.PerformLayout();
 			this.tlp_upperRight.ResumeLayout(false);
+			this.scltp_icons.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.pbo_selectedIcon16)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.pbo_selectedIcon32)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.pbo_selectedIcon64)).EndInit();
@@ -603,6 +625,7 @@ namespace CustomIconDashboarderPlugin
 		private System.Windows.Forms.Label lbl_16x16;
 		private System.Windows.Forms.Label lbl_originalSize;
 		private System.Windows.Forms.Label lbl_selectedIcon;
+		private LomsonLib.UI.ScaleControlTableLayoutPanel scltp_icons;
 
 		
 		void DashboarderLoad(object sender, System.EventArgs e)
