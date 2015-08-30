@@ -1,7 +1,7 @@
 ﻿@echo off
 
 rem Uncomment this line if PATH_KEEPASS is not an environment variable
-rem set PATH_KEEPASS=C:\
+set PATH_KEEPASS=C:\workspace\KeePass\KeePass-2.29
 
 set SRC_PATH_PLUGIN=%~dp0
 
@@ -26,11 +26,15 @@ xcopy /S %SRC_PATH_PLUGIN%Lib %TMP_PATH_PLUGIN%\Lib
    --plgx-prereq-net:2.0
 
 copy %TEMP%\CustomIconDashboarder.plgx %~dp0
+copy %~dp0\CustomIconDashboarder.plgx C:\workspace\KeePass\KeePass-2.25\Plugins
+copy %~dp0\CustomIconDashboarder.plgx C:\workspace\KeePass\KeePass-2.26\Plugins
+copy %~dp0\CustomIconDashboarder.plgx C:\workspace\KeePass\KeePass-2.27\Plugins
+copy %~dp0\CustomIconDashboarder.plgx C:\workspace\KeePass\KeePass-2.28\Plugins
+copy %~dp0\CustomIconDashboarder.plgx C:\workspace\KeePass\KeePass-2.29\Plugins
+copy %~dp0\CustomIconDashboarder.plgx C:\workspace\KeePass\KeePass-2.30\Plugins
 
 echo Remove Temp files
 
 rmdir /s /q %TMP_PATH_PLUGIN%
-mkdir %TMP_PATH_PLUGIN%
-rm %TEMP%\CustomIconDashboarder.plgx
    
 
