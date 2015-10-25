@@ -21,9 +21,12 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Globalization;
+using System.Net;
 
 using KeePass.UI;
 using KeePass.Plugins;
@@ -32,6 +35,7 @@ using KeePass.Forms;
 using KeePassLib;
 
 using LomsonLib.UI;
+using LomsonLib.Utility;
 
 namespace CustomIconDashboarderPlugin
 {
@@ -44,6 +48,7 @@ namespace CustomIconDashboarderPlugin
 		private IconStatsHandler m_iconCounter;
 		private Dictionary<int, PwCustomIcon> m_iconIndexer;
 		private ImageList m_ilCustoms;
+		private Dictionary<PwUuid, BestIconFinder> m_bestIconFindersIndexer;
 
 		private ListViewLayoutManager  m_lvIconsColumnSorter;
 		private ListViewLayoutManager  m_lvGroupsColumnSorter;
@@ -66,8 +71,13 @@ namespace CustomIconDashboarderPlugin
 			Debug.Assert(m_PluginHost != null); if(m_PluginHost == null) throw new InvalidOperationException();
 			
 			GlobalWindowManager.AddWindow(this);
-			
-			InitEx();			
+			BestIconFinder.InitClass();
+			InitEx();		
+		}
+		
+		private void OnFormDispose()
+		{
+			BestIconFinder.DisposeClass();
 		}
 		
 		private void InitEx()
@@ -78,6 +88,7 @@ namespace CustomIconDashboarderPlugin
 			int cx = CompatibilityManager.ScaleIntX(16);
 			int cy = CompatibilityManager.ScaleIntX(16);
 			m_ilCustoms = UIUtil.BuildImageList(m_PluginHost.Database.CustomIcons, cx, cy);
+			m_bestIconFindersIndexer = new Dictionary<PwUuid, BestIconFinder>();
 			BuildCustomListView(m_ilCustoms);
 		}
 		
@@ -118,26 +129,28 @@ namespace CustomIconDashboarderPlugin
 		
 			// List View Icon
 			m_lvViewIcon.Columns.Add( Resource.hdr_icon, 50 );
-			m_lvViewIcon.Columns.Add( Resource.hdr_width, 50, HorizontalAlignment.Center );
-			m_lvViewIcon.Columns.Add( Resource.hdr_height, 50, HorizontalAlignment.Center );
+			m_lvViewIcon.Columns.Add( Resource.hdr_currentSize, 50, HorizontalAlignment.Center );
+			m_lvViewIcon.Columns.Add( Resource.hdr_newSize, 50, HorizontalAlignment.Center );
 			m_lvViewIcon.Columns.Add( Resource.hdr_nEntry, 50, HorizontalAlignment.Center);
 			m_lvViewIcon.Columns.Add( Resource.hdr_nGroup, 50, HorizontalAlignment.Center);
 			m_lvViewIcon.Columns.Add( Resource.hdr_nTotal, 50, HorizontalAlignment.Center);
+			m_lvViewIcon.Columns.Add( Resource.hdr_nURL, 50, HorizontalAlignment.Center );
 			m_lvIconsColumnSorter = new ListViewLayoutManager();
 			
 			m_lvIconsColumnSorter.AddColumnComparer(0, new IntegerAsStringComparer(false));
-			m_lvIconsColumnSorter.AddColumnComparer(1, new IntegerAsStringComparer(false));
-			m_lvIconsColumnSorter.AddColumnComparer(2, new IntegerAsStringComparer(false));
+			m_lvIconsColumnSorter.AddColumnComparer(1, new LomsonLib.UI.StringComparer(false,true));
+			m_lvIconsColumnSorter.AddColumnComparer(2, new LomsonLib.UI.StringComparer(false,true));
 			m_lvIconsColumnSorter.AddColumnComparer(3, new IntegerAsStringComparer(false));
 			m_lvIconsColumnSorter.AddColumnComparer(4, new IntegerAsStringComparer(false));
 			m_lvIconsColumnSorter.AddColumnComparer(5, new IntegerAsStringComparer(false));
+			m_lvIconsColumnSorter.AddColumnComparer(6, new IntegerAsStringComparer(false));
 			m_lvIconsColumnSorter.AddDefaultSortedColumn(0,false);
 
 			m_lvIconsColumnSorter.AutoWidthColumn = true;
 			m_lvIconsColumnSorter.CheckAllCheckBox = cb_allIconsSelection;
 			
 			ListViewLayoutManager.dlgStatisticMessageUpdater  ehStats = delegate(String msg) {
-				tsl_nbIcons.Text = msg;
+				//tsl_nbIcons.Text = msg;
 			};
 			m_lvIconsColumnSorter.AssignStatisticMessageUpdater(ehStats, true, false, "%3 of %1 checked");
 			
@@ -182,12 +195,18 @@ namespace CustomIconDashboarderPlugin
 				Image originalImage = CompatibilityManager.GetOriginalImage(pwci);
 				
 				m_iconIndexer.Add(j, pwci);
-				lvi.SubItems.Add(originalImage.Width.ToString(NumberFormatInfo.InvariantInfo));
-				lvi.SubItems.Add(originalImage.Height.ToString(NumberFormatInfo.InvariantInfo));
+				// Current Size
+				lvi.SubItems.Add(originalImage.Width.ToString(NumberFormatInfo.InvariantInfo)
+				                + " x " +
+				               originalImage.Height.ToString(NumberFormatInfo.InvariantInfo));
+				lvi.SubItems.Add("");
 				lvi.SubItems.Add(m_iconCounter.GetNbUsageInEntries(pwci).ToString(NumberFormatInfo.InvariantInfo));
 				lvi.SubItems.Add(m_iconCounter.GetNbUsageInGroups(pwci).ToString(NumberFormatInfo.InvariantInfo));
 				int nTotal = m_iconCounter.GetNbUsageInEntries(pwci) + m_iconCounter.GetNbUsageInGroups(pwci);
 				lvi.SubItems.Add( nTotal.ToString(NumberFormatInfo.InvariantInfo));
+				lvi.SubItems.Add(m_iconCounter.GetNbUrlsInEntries(pwci).ToString(NumberFormatInfo.InvariantInfo));
+				UpdateBestIconFinderResultForLvi(lvi);
+				
 				lvi.Tag = pwci.Uuid;
 				m_lvViewIcon.Items.Add(lvi);
 				++j;
@@ -202,7 +221,9 @@ namespace CustomIconDashboarderPlugin
 			m_iconCounter = new IconStatsHandler();
 			m_iconCounter.Initialize( m_PluginHost.Database);
 			
-			m_ilCustoms = UIUtil.BuildImageList(m_PluginHost.Database.CustomIcons, 16, 16);
+			int cx = CompatibilityManager.ScaleIntX(16);
+			int cy = CompatibilityManager.ScaleIntX(16);
+			m_ilCustoms = UIUtil.BuildImageList(m_PluginHost.Database.CustomIcons, cx, cy);
 		
 			CreateCustomIconList(m_ilCustoms);
 			m_lvUsedEntries.Items.Clear();
@@ -224,56 +245,8 @@ namespace CustomIconDashboarderPlugin
 		
 		void OnLvViewIconSelectedIndexChanged(object sender, EventArgs e)
 		{
-			ListView.SelectedListViewItemCollection sItems = m_lvViewIcon.SelectedItems;
-			
-			m_lvUsedEntries.Items.Clear();
-			m_lvUsedGroups.Items.Clear();
-	 
-			if (sItems.Count > 0 ) {
-				
-				PwCustomIcon readIcon = m_iconIndexer[sItems[0].ImageIndex];
-				
-				Image originalImage = CompatibilityManager.GetOriginalImage(readIcon);
-				
-				pbo_selectedIcon128.BackgroundImage = 
-					CompatibilityManager.ResizedImage(originalImage, 128, 128);
-				pbo_selectedIcon64.BackgroundImage = 
-					CompatibilityManager.ResizedImage(originalImage, 64, 64);
-				pbo_selectedIcon32.BackgroundImage =
-					CompatibilityManager.ResizedImage(originalImage, 32, 32);					
-				pbo_selectedIcon16.BackgroundImage = 
-					CompatibilityManager.ResizedImage(originalImage, 16, 16);
-				lbl_originalSize.Text =
-					"Original Size : " +
-					originalImage.Width +
-					" x " +
-					originalImage.Height;
-				IEnumerator<PwEntry> myEntryEnumerator = m_iconCounter.GetListEntries( readIcon ).GetEnumerator();
-				
-				// Update entry and group list
-				// It is necessary to add all subitems to listView in a single oneshot.
-				// On the other case, a runtime exception occurs when the listView is sorted
-				// and the sort condition take into account one of the nth column, n > 1
-				while (myEntryEnumerator.MoveNext()) {
-					PwEntry readEntry = myEntryEnumerator.Current;
-					
-					ListViewItem lvi = new ListViewItem( readEntry.Strings.ReadSafe( PwDefs.TitleField ) );
-					lvi.SubItems.Add( readEntry.Strings.ReadSafe( PwDefs.UserNameField ) );
-					lvi.SubItems.Add( readEntry.ParentGroup.GetFullPath(".", false) );
-					m_lvUsedEntries.Items.Add(lvi);
-				}
-				
-				IEnumerator<PwGroup> myGroupEnumerator = m_iconCounter.GetListGroups( readIcon ).GetEnumerator();
-				while (myGroupEnumerator.MoveNext()) {
-					PwGroup readGroup = myGroupEnumerator.Current;
-					ListViewItem lvi = new ListViewItem( readGroup.Name );
-					lvi.SubItems.Add( readGroup.GetFullPath() );
-					m_lvUsedGroups.Items.Add( lvi );
-				}
-			}
-			else {
-				pbo_selectedIcon128.Image = null;
-			}
+			UpdateFormFromSelectedIcon();
+			UpdateFormFromBestIconFinder();
 		}
 		
 		void OnModifyIconClick(object sender, EventArgs e)
@@ -377,6 +350,276 @@ namespace CustomIconDashboarderPlugin
 			
 		}
 		
+		void OnDownloadClick(object sender, EventArgs e)
+		{
+			ListView.CheckedListViewItemCollection lvsiChecked = m_lvViewIcon.CheckedItems;
+			foreach(ListViewItem lvi in lvsiChecked)
+			{
+				if (UpdateBestIconFinderAndLviFromListViewItem( lvi )) {
+				    System.Threading.Thread.Sleep(500);
+				}
+			   lvi.EnsureVisible();
+			   m_lvViewIcon.Refresh();
+			}
+			
+			UpdateFormFromBestIconFinder();
+		
+		}
+		
+		/// <summary>
+		/// Update bestIconFinder and size in List View Item
+		/// if icon has not already been downloaded
+		/// </summary>
+		/// <param name="lvi"></param>
+		/// <returns>true if an update has occured. false else</returns>
+		private bool UpdateBestIconFinderAndLviFromListViewItem(ListViewItem lvi) {
+			PwCustomIcon readIcon = m_iconIndexer[lvi.ImageIndex];
+			if ( !m_bestIconFindersIndexer.ContainsKey( readIcon.Uuid ) ) {
+				List<Uri> lstUris = new List<Uri>();
+				lstUris.AddRange( m_iconCounter.GetListUris( readIcon ) );
+				
+				// Retrieve images
+				if (lstUris.Count > 0) {
+					Uri uri1 = lstUris[0];
+					
+					BestIconFinder bif = new BestIconFinder( uri1 );
+				    bif.FindBestIcon();
+				    
+				    m_bestIconFindersIndexer.Add( readIcon.Uuid, bif);
+				    UpdateBestIconFinderResultForLvi( lvi);
+				}
+				return true;
+			}
+			return false;
+		}
+		
+		private void UpdateBestIconFinderResultForLvi( ListViewItem lvi) {
+			BestIconFinder bif = null;
+			PwCustomIcon readIcon = m_iconIndexer[lvi.ImageIndex];
+			if (m_bestIconFindersIndexer.ContainsKey(readIcon.Uuid)) {
+				bif = m_bestIconFindersIndexer[readIcon.Uuid];
+			}
+			else {
+				lvi.SubItems[2].Text = "";
+				return;
+			}
+			if (bif.BestImage != null) {
+		    	lvi.SubItems[2].Text = bif.BestImage.Width.ToString(NumberFormatInfo.InvariantInfo)
+                + " x " +
+               bif.BestImage.Height.ToString(NumberFormatInfo.InvariantInfo);
+		    }
+	    	else {
+		    	lvi.SubItems[2].Text = Resource.val_na;
+	    	}
+		}
+		
+		void UpdateFormFromSelectedIcon()
+		{
+			ListView.SelectedListViewItemCollection sItems = m_lvViewIcon.SelectedItems;
+			
+			m_lvUsedEntries.Items.Clear();
+			m_lvUsedGroups.Items.Clear();
+	 
+			if (sItems.Count > 0 ) {
+				
+				PwCustomIcon readIcon = m_iconIndexer[sItems[0].ImageIndex];
+				
+				Image originalImage = CompatibilityManager.GetOriginalImage(readIcon);
+				
+				pbo_selectedIcon128.BackgroundImage = 
+					CompatibilityManager.ResizedImage(originalImage, 128, 128);
+				pbo_selectedIcon64.BackgroundImage = 
+					CompatibilityManager.ResizedImage(originalImage, 64, 64);
+				pbo_selectedIcon32.BackgroundImage =
+					CompatibilityManager.ResizedImage(originalImage, 32, 32);					
+				pbo_selectedIcon16.BackgroundImage = 
+					CompatibilityManager.ResizedImage(originalImage, 16, 16);
+				lbl_originalSize.Text =
+					"Original Size : " +
+					originalImage.Width +
+					" x " +
+					originalImage.Height;
+				IEnumerator<PwEntry> myEntryEnumerator = m_iconCounter.GetListEntries( readIcon ).GetEnumerator();
+				
+				// Update entry and group list
+				// It is necessary to add all subitems to listView in a single oneshot.
+				// On the other case, a runtime exception occurs when the listView is sorted
+				// and the sort condition take into account one of the nth column, n > 1
+				while (myEntryEnumerator.MoveNext()) {
+					PwEntry readEntry = myEntryEnumerator.Current;
+					
+					ListViewItem lvi = new ListViewItem( readEntry.Strings.ReadSafe( PwDefs.TitleField ) );
+					lvi.SubItems.Add( readEntry.Strings.ReadSafe( PwDefs.UserNameField ) );
+					lvi.SubItems.Add( readEntry.ParentGroup.GetFullPath(".", false) );
+					m_lvUsedEntries.Items.Add(lvi);
+				}
+				
+				IEnumerator<PwGroup> myGroupEnumerator = m_iconCounter.GetListGroups( readIcon ).GetEnumerator();
+				while (myGroupEnumerator.MoveNext()) {
+					PwGroup readGroup = myGroupEnumerator.Current;
+					ListViewItem lvi = new ListViewItem( readGroup.Name );
+					lvi.SubItems.Add( readGroup.GetFullPath() );
+					m_lvUsedGroups.Items.Add( lvi );
+				}
+			}
+			else {
+				pbo_selectedIcon128.Image = null;
+			}	
+		}
+		
+		void UpdateFormFromBestIconFinder() 
+		{
+			ListView.SelectedListViewItemCollection sItems = m_lvViewIcon.SelectedItems;
+			if (sItems.Count > 0) {
+				ListViewItem lvi = sItems[0];
+				
+				PwUuid pu = (PwUuid)lvi.Tag;
+				bool cleanImage = false;
+				
+				if (m_bestIconFindersIndexer.ContainsKey(pu)) {
+					BestIconFinder bif = m_bestIconFindersIndexer[pu];
+					 
+					if (bif.BestImage != null) {
+						pbo_downloadedIcon128.BackgroundImage = 
+							CompatibilityManager.ResizedImage(bif.BestImage, 128, 128);
+						pbo_downloadedIcon64.BackgroundImage = 
+							CompatibilityManager.ResizedImage(bif.BestImage, 64, 64);
+						pbo_downloadedIcon32.BackgroundImage =
+							CompatibilityManager.ResizedImage(bif.BestImage, 32, 32);					
+						pbo_downloadedIcon16.BackgroundImage = 
+							CompatibilityManager.ResizedImage(bif.BestImage, 16, 16);
+						lbl_newSize.Text =
+							"New Size : " +
+							bif.BestImage.Width +
+							" x " +
+							bif.BestImage.Height;
+					}
+					else {
+						cleanImage = true;
+					}
+				    
+				}
+				else {
+					cleanImage = true;
+				}
+				
+				if (cleanImage) {
+					pbo_downloadedIcon128.BackgroundImage = null;
+					pbo_downloadedIcon64.BackgroundImage = null;
+					pbo_downloadedIcon32.BackgroundImage = null;
+					pbo_downloadedIcon16.BackgroundImage = null;
+					lbl_newSize.Text = "New Size :";
+				}
+			}
+		}
+		
+		void OnPickClick(object sender, EventArgs e)
+		{
+			ListView.CheckedListViewItemCollection lvsiChecked = m_lvViewIcon.CheckedItems;
+						
+			foreach(ListViewItem lvi in lvsiChecked) {
+				UpdateBestIconFinderAndLviFromListViewItem( lvi );
+				PwCustomIcon readIcon = m_iconIndexer[lvi.ImageIndex];
+				
+				Debug.Assert(m_bestIconFindersIndexer.ContainsKey( readIcon.Uuid ));
+				
+				BestIconFinder bif = m_bestIconFindersIndexer[readIcon.Uuid];
+				if (bif.BestImage != null) {
+					PwCustomIcon newIcon = UpdateCustomIconFromImage( readIcon, bif.BestImage, m_PluginHost.Database);
+					if ((newIcon != null ) && (!m_bestIconFindersIndexer.ContainsKey(newIcon.Uuid)) ) {
+						m_bestIconFindersIndexer.Add(newIcon.Uuid, bif);
+						UpdateBestIconFinderResultForLvi(lvi);
+					}
+					m_PluginHost.Database.Modified = true;
+				}
+			}
+			ResetDashboard();
+		}
+		
+		/// <summary>
+		/// Replace all reference to icon with image.
+		/// All entries and groups attached to refIcon will be attached to a custom icon that looks like img.
+		/// </summary>
+		/// <returns>PwCustomIcon if new icon has been created. null else.</returns>
+		private PwCustomIcon UpdateCustomIconFromImage( PwCustomIcon refIcon, Image img, PwDatabase kdb) {
+			PwCustomIcon targetIcon = GetCustomIconFromImageAndUpdateKdbIfNecessary( img, kdb);
+			
+			if (targetIcon == null) return null;
+			
+			ICollection<PwEntry> listEntries = m_iconCounter.GetListEntries( refIcon );
+			IEnumerator<PwEntry> myEntryEnumerator = listEntries.GetEnumerator();
+			while (myEntryEnumerator.MoveNext()) {
+				PwEntry readEntry = myEntryEnumerator.Current;
+				readEntry.CustomIconUuid = targetIcon.Uuid;
+				readEntry.Touch(true);
+			}
+			
+			ICollection<PwGroup> listGroups = m_iconCounter.GetListGroups( refIcon );
+			IEnumerator<PwGroup> myGroupEnumerator = listGroups.GetEnumerator();
+			while (myGroupEnumerator.MoveNext()) {
+				PwGroup readGroup = myGroupEnumerator.Current;
+				readGroup.CustomIconUuid = targetIcon.Uuid;
+			}
+			
+			if ( (listEntries.Count > 0) || (listGroups.Count > 0) ) {
+				kdb.UINeedsIconUpdate = true;
+				kdb.Modified = true;
+			}
+			
+			return targetIcon;
+			
+		}
+		
+		/// <summary>
+		/// Get Custom Icon from image
+		/// </summary>
+		/// <param name="img">Image to be compared</param>
+		/// <param name="kdb">Keepass database where custom icons are based.
+		/// This database will be updated if customIcons is missing.</param>
+		/// <returns>Custom Icon in database. null if an error occurs</returns>
+		private PwCustomIcon GetCustomIconFromImageAndUpdateKdbIfNecessary( Image img, PwDatabase kdb) {
+		 	MemoryStream ms = new MemoryStream();
+			const int wMax = 128;
+			const int hMax = 128;
+		 	try {
+   				 if((img.Width <= wMax) && (img.Height <= hMax))
+					img.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+				else
+				{
+					Image imgSc = KeePassLib.Utility.GfxUtil.ScaleImage(img, wMax, hMax);
+					imgSc.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+					imgSc.Dispose();
+				}
+				
+				byte[] msByteArray = ms.ToArray();
+	            foreach (PwCustomIcon item in kdb.CustomIcons)
+	            {
+	                // re-use existing custom icon if it's already in the database
+	                // (This will probably fail if database is used on 
+	                // both 32 bit and 64 bit machines - not sure why...)
+	                if (KeePassLib.Utility.MemUtil.ArraysEqual(msByteArray, item.ImageDataPng))
+	                {
+	                	return item;
+	                }
+	            }
+	
+	            // Create a new custom icon for use with this entry
+	            PwCustomIcon pwci = new PwCustomIcon(new PwUuid(true),
+	                ms.ToArray());
+	            kdb.CustomIcons.Add(pwci);
+	            ms.Close();
+				return pwci;
+		 	}
+		 	catch (Exception e) {
+		 		MessageBox.Show("Error while processing custom icon" + System.Environment.NewLine
+		 		                + e.Message+ System.Environment.NewLine
+		 		                + e.StackTrace, "Error");
+		 		ms.Close();
+				return null;
+		 	}
+			
+		}
 		
 	}
+	
 }

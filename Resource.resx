@@ -1215,10 +1215,16 @@
   <data name="hdr_nTotal" xml:space="preserve">
     <value>#Total</value>
   </data>
-  <data name="hdr_width" xml:space="preserve">
-    <value>Width</value>
+  <data name="hdr_nURL" xml:space="preserve">
+    <value>#URL</value>
   </data>
-  <data name="hdr_height" xml:space="preserve">
-    <value>Height</value>
+  <data name="hdr_currentSize" xml:space="preserve">
+    <value>Current Size</value>
+  </data>
+  <data name="hdr_newSize" xml:space="preserve">
+    <value>New Size</value>
+  </data>
+  <data name="val_na" xml:space="preserve">
+    <value>Not found</value>
   </data>
 </root>

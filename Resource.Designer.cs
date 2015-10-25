@@ -61,6 +61,15 @@ namespace CustomIconDashboarderPlugin {
 		}
 		
 		/// <summary>
+		///   Looks up a localized string similar to Current Size.
+		/// </summary>
+		internal static string hdr_currentSize {
+			get {
+				return ResourceManager.GetString("hdr_currentSize", resourceCulture);
+			}
+		}
+		
+		/// <summary>
 		///   Looks up a localized string similar to Full Path
 		///.
 		/// </summary>
@@ -76,15 +85,6 @@ namespace CustomIconDashboarderPlugin {
 		internal static string hdr_groupName {
 			get {
 				return ResourceManager.GetString("hdr_groupName", resourceCulture);
-			}
-		}
-		
-		/// <summary>
-		///   Looks up a localized string similar to Height.
-		/// </summary>
-		internal static string hdr_height {
-			get {
-				return ResourceManager.GetString("hdr_height", resourceCulture);
 			}
 		}
 		
@@ -107,6 +107,15 @@ namespace CustomIconDashboarderPlugin {
 		}
 		
 		/// <summary>
+		///   Looks up a localized string similar to New Size.
+		/// </summary>
+		internal static string hdr_newSize {
+			get {
+				return ResourceManager.GetString("hdr_newSize", resourceCulture);
+			}
+		}
+		
+		/// <summary>
 		///   Looks up a localized string similar to #Group.
 		/// </summary>
 		internal static string hdr_nGroup {
@@ -121,6 +130,15 @@ namespace CustomIconDashboarderPlugin {
 		internal static string hdr_nTotal {
 			get {
 				return ResourceManager.GetString("hdr_nTotal", resourceCulture);
+			}
+		}
+		
+		/// <summary>
+		///   Looks up a localized string similar to #URL.
+		/// </summary>
+		internal static string hdr_nURL {
+			get {
+				return ResourceManager.GetString("hdr_nURL", resourceCulture);
 			}
 		}
 		
@@ -143,15 +161,6 @@ namespace CustomIconDashboarderPlugin {
 		}
 		
 		/// <summary>
-		///   Looks up a localized string similar to Width.
-		/// </summary>
-		internal static string hdr_width {
-			get {
-				return ResourceManager.GetString("hdr_width", resourceCulture);
-			}
-		}
-		
-		/// <summary>
 		///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
 		/// </summary>
 		internal static System.Drawing.Icon KeePass {
@@ -167,6 +176,15 @@ namespace CustomIconDashboarderPlugin {
 		internal static string menu_customIcon {
 			get {
 				return ResourceManager.GetString("menu_customIcon", resourceCulture);
+			}
+		}
+		
+		/// <summary>
+		///   Looks up a localized string similar to Not found.
+		/// </summary>
+		internal static string val_na {
+			get {
+				return ResourceManager.GetString("val_na", resourceCulture);
 			}
 		}
 	}
