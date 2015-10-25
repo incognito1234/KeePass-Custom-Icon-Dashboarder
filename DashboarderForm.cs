@@ -138,8 +138,8 @@ namespace CustomIconDashboarderPlugin
 			m_lvIconsColumnSorter = new ListViewLayoutManager();
 			
 			m_lvIconsColumnSorter.AddColumnComparer(0, new IntegerAsStringComparer(false));
-			m_lvIconsColumnSorter.AddColumnComparer(1, new LomsonLib.UI.StringComparer(false,true));
-			m_lvIconsColumnSorter.AddColumnComparer(2, new LomsonLib.UI.StringComparer(false,true));
+			m_lvIconsColumnSorter.AddColumnComparer(1, new SizeComparer(false));
+			m_lvIconsColumnSorter.AddColumnComparer(2, new SizeComparer(false));
 			m_lvIconsColumnSorter.AddColumnComparer(3, new IntegerAsStringComparer(false));
 			m_lvIconsColumnSorter.AddColumnComparer(4, new IntegerAsStringComparer(false));
 			m_lvIconsColumnSorter.AddColumnComparer(5, new IntegerAsStringComparer(false));
@@ -478,7 +478,7 @@ namespace CustomIconDashboarderPlugin
 				
 				if (m_bestIconFindersIndexer.ContainsKey(pu)) {
 					BestIconFinder bif = m_bestIconFindersIndexer[pu];
-					 
+				    
 					if (bif.BestImage != null) {
 						pbo_downloadedIcon128.BackgroundImage = 
 							CompatibilityManager.ResizedImage(bif.BestImage, 128, 128);
@@ -618,8 +618,197 @@ namespace CustomIconDashboarderPlugin
 				return null;
 		 	}
 			
-		}
+		}	
 		
 	}
 	
+	/// <summary>
+	/// Class to compare size stored as width x height
+	/// compare only Width
+	/// </summary>
+	public class SizeComparer:BaseSwappableStringComparer
+	{
+		private enum OperandType { str, num, size };
+		
+		
+		public SizeComparer( bool defaultSwapped )
+			:base( defaultSwapped) {
+			
+		}
+		
+		public override int Compare( String obj1, String obj2) {
+			
+			string cmpStr1 = GetString1( obj1, obj2);
+			string cmpStr2 = GetString2( obj1, obj2);
+			
+			Operand op1 = new Operand( cmpStr1);
+			Operand op2 = new Operand( cmpStr2);
+			
+			if ( (op1.Ot == OperandType.size)
+			    && (op2.Ot == OperandType.size) ) {
+				int sum1 = op1.LeftInt + op1.RightInt;
+				int sum2 = op2.LeftInt + op2.RightInt;
+				return sum1.CompareTo(sum2);
+			}
+			
+			if (op1.Ot == OperandType.size) { return 1;  }
+			if (op2.Ot == OperandType.size) { return -1; }
+			
+			if ( (op1.Ot == OperandType.num)
+			    && (op2.Ot == OperandType.num) ) {
+				return op1.LeftInt.CompareTo(op2.LeftInt);
+			}
+			
+			if (op1.Ot == OperandType.num) { return 1;  }
+			if (op2.Ot == OperandType.num) { return -1; }
+			
+			// op1.Ot == OperandType.str
+			// op2.Ot == OperandType.str
+			return op1.InitialString.CompareTo( op2.InitialString);
+		}
+		
+		public int Compare2( String obj1, String obj2) {
+			
+			string cmpStr1 = GetString1( obj1, obj2);
+			string cmpStr2 = GetString2( obj1, obj2);
+			
+			string[] cmpStrInts1 = cmpStr1.Split('x');
+			string[] cmpStrInts2 = cmpStr2.Split('x');
+			
+			string cmpStrInt1_1 = cmpStrInts1[0].Trim();
+			string cmpStrInt2_1 = cmpStrInts2[0].Trim();
+			
+			// One string is empty or starts with x
+			if (string.IsNullOrEmpty(cmpStrInt2_1)) {
+				return 1;
+			} else if (string.IsNullOrEmpty(cmpStrInt1_1)) {
+				return -1;
+			}
+			
+			// One string does not have right operator
+			if (cmpStrInts2.Length <= 1) { return 1; }
+			string cmpStrInt2_2 = cmpStrInts2[1].Trim();
+			if (cmpStrInts1.Length <= 1) { return -1; }
+			string cmpStrInt1_2 = cmpStrInts1[1].Trim();
+			
+			
+			// Parse left operator. If not parsable, not parsable string is the first
+			bool parseOK;
+			int iComp2_1;	parseOK = int.TryParse(cmpStrInt2_1, out iComp2_1);
+			if (!parseOK) {	return 1; }
+			int iComp1_1;   parseOK = int.TryParse(cmpStrInt1_1, out iComp1_1);
+			if (!parseOK) {	return -1; }
+			
+			// Parse right operator.
+			int iComp2_2;	parseOK = int.TryParse(cmpStrInt2_2, out iComp2_2);
+			if (!parseOK) {	return 1; }
+			int iComp1_2;   parseOK = int.TryParse(cmpStrInt1_2, out iComp1_2);
+			if (!parseOK) {	return -1; }
+			int sum1 = iComp1_1 + iComp1_2;
+			int sum2 = iComp2_1 + iComp2_2;
+			if ( sum1 > sum2 ) { return 1; }
+			if ( sum1 < sum2 ) { return -1; }
+			
+			return 0; // sums are equals
+		}
+		
+		public static string basicTest() {
+			SizeComparer sc = new SizeComparer(false);
+			string result = "";
+			string nl = System.Environment.NewLine;
+			result += "  str1        str2         expected   effective" + nl;
+			result += nl;
+			result += " Nominal tests" + nl;
+			result += " 10 x 10       10 x 10         0        " + sc.Compare("10 x 10", "10 x 10") + nl;
+			result += " 20 x 20       10 x 10         1        " + sc.Compare("20 x 20", "10 x 10") + nl;
+			result += " 10 x 10       20 x 20        -1        " + sc.Compare("10 x 10", "10  x 20") + nl;
+			result += " 10 x 10       100 x 100      -1        " + sc.Compare("10 x 10", "100 x 100") + nl;
+			result += nl;
+			result += " Asymmetry" + nl;
+			result += " 109 x 10      101 x 9         0        " + sc.Compare("109 x 01", "101 x 9") + nl;
+			result += " 10 x 10       10 x 11        -1        " + sc.Compare("10 x 10", "10 x 11") + nl;
+			result += nl;
+			result += " Only Numbers" + nl;
+			result += " 10            20             -1        " + sc.Compare("10", "20") + nl;
+			result += " 20            10              1        " + sc.Compare("20", "10") + nl;
+			result += " 01            100            -1        " + sc.Compare("01", "100") + nl;
+			result += " 100           01              1        " + sc.Compare("100", "01") + nl;
+			result += nl;
+			result += " Exceptional" + nl;
+			result += " 10 x 10       10   x 10       0        " + sc.Compare("10 x 10", "10   x 10") + nl;
+			result += " 10 x 10       10              1        " + sc.Compare("10 x 10", "10") + nl;
+			result += " 10            10 x 10        -1        " + sc.Compare("10", "10 x 10") + nl;
+			result += nl;
+			result += " Compare with string" + nl;
+			result += " abcd          10 x 10        -1        " + sc.Compare("abcd", "10 x 10")  + nl;
+			result += " 10 x 10       abcd            1        " + sc.Compare("10 x 10", "abcd") + nl;
+			result += " abcd          defg           -1        " + sc.Compare("abcd", "defg") + nl;
+			result += " defg          abcd            1        " + sc.Compare("defg", "abcd") + nl;
+			result += " abxcd         defg           -1        " + sc.Compare("abxcd", "defg") + nl;
+			result += " defg          abxcd           1        " + sc.Compare("defg", "abxcd") + nl;
+			result += " dexfg         abxcd           1        " + sc.Compare("dexfg", "abxcd") + nl;
+			return result;
+		}
+		
+		private class Operand {
+			
+			// Properties
+			public String InitialString {get; private set;}
+			public OperandType Ot {get; private set; }
+			public int LeftInt {get; private set;}
+			public int RightInt {get; private set;}
+			
+			
+			public Operand(string str) {
+				InitialString = str.Trim();
+				computeType();
+			}
+			
+			private void computeType() {
+				
+				if (string.IsNullOrEmpty( this.InitialString )) {
+					Ot = OperandType.str;
+					return;
+				}
+				
+				string[] strs = this.InitialString.Split('x');
+				
+				if (strs.Length > 2) {
+					Ot = OperandType.str;
+					return;
+				}
+				
+				if (strs.Length == 1) {
+					int intResult;
+					bool parseOK = int.TryParse( strs[0], out intResult );
+					if (parseOK) {
+						Ot = OperandType.num;
+						this.LeftInt = intResult;
+						return;
+					}
+					else {
+						Ot = OperandType.str;
+						return;
+					}
+				}
+				
+				if (strs.Length == 2) {
+					int intResult1;
+					bool parseOK1 = int.TryParse( strs[0], out intResult1 );
+					int intResult2;
+					bool parseOK2 = int.TryParse( strs[1], out intResult2 );
+					if (parseOK1 && parseOK2) {
+						this.LeftInt  = intResult1;
+						this.RightInt = intResult2;
+						Ot = OperandType.size;
+					}
+					else {
+						Ot = OperandType.str;
+					}
+				}
+			}
+		}
+			
+		
+	}
 }
