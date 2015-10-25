@@ -75,7 +75,7 @@ namespace LomsonLib.UI
 	
 	public abstract class BaseSwappableStringComparer:BaseSwappableComparer<String>, ISwappableStringComparer
 	{
-		public BaseSwappableStringComparer( bool defaultSwapped ): base(defaultSwapped) {
+		protected BaseSwappableStringComparer( bool defaultSwapped ): base(defaultSwapped) {
 		}
 		
 		public abstract override int Compare(String obj1, String obj2);

@@ -101,6 +101,7 @@
     <Compile Include="Lib\CollectionUtil.cs" />
     <Compile Include="Lib\CompatibilityManager.cs" />
     <Compile Include="Lib\LomsonDebugLib.cs" />
+    <Compile Include="Lib\LomsonUtility.cs" />
     <Compile Include="Lib\RTFBuilder.cs" />
     <Compile Include="Lib\ScaleControlTableLayoutPanel.cs" />
     <Compile Include="Lib\SwappableComparer.cs" />
