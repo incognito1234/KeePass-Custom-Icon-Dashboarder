@@ -2,7 +2,7 @@
  CustomIconDashboarder - KeePass Plugin to get some information and 
   manage custom icons
 
- Copyright (C) 2014 Jareth Lomson <incognito1234@users.sourceforge.net>
+ Copyright (C) 2015 Jareth Lomson <incognito1234@users.sourceforge.net>
  
  This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -27,17 +27,25 @@ using System.Reflection;
 
 using KeePassLib;
 
-
 namespace LomsonLib.UI
 {
 	/// <summary>
 	/// Class to manage different version of Keepass.
 	/// Since version 2.29, HighDPI custom icons are taken into account.
-	/// New methods have appear and old methods became obsoletes.
+	/// New methods have appeared and old methods became obsoletes.
 	/// This class aims to use new methods when it is possible by avoiding
 	/// compilation errors.
 	///   
 	/// </summary>
+	
+	/* 
+	 * Version 1.1 - 26/10/2015
+     * Use ScaleImage in ResizedImage method
+	 * 
+     * Version 1.0
+     * Initial Version
+     */
+
 	public class CompatibilityManager
 	{
 		// KeePass.UI.DpiUtil from version >= 2.27
@@ -52,6 +60,9 @@ namespace LomsonLib.UI
 		// KeePass.UI.DpiUtil.ScaleIntY from version >= 2.27
 		private static MethodInfo METHOD_ScaleIntX = null;
 		private static MethodInfo METHOD_ScaleIntY = null;
+		
+		// KeePassLib.Utility.GfxUtil.ScaleImage from version >= 2.29
+		private static MethodInfo METHOD_ScaleImage = null;
 		
 		private static bool IS_INITIALIZED = false;
 		
@@ -96,12 +107,27 @@ namespace LomsonLib.UI
 						"ScaleIntY",
 						new []{ typeof(int) });
 				}
+				
+				
+				// Get ScaleImage
+				METHOD_ScaleImage = GetMethod(
+					typeof(KeePassLib.Utility.GfxUtil).AssemblyQualifiedName,
+					"ScaleImage",
+					new Type[]{ typeof(System.Drawing.Image), typeof(int), typeof(int) });
+				
 				IS_INITIALIZED = true;
 			}
 			
 			AppDomain.CurrentDomain.GetAssemblies();
 		}
 		
+		/// <summary>
+		/// Get Method from class Name, methodName and parameters
+		/// </summary>
+		/// <param name="className">Class Name</param>
+		/// <param name="methodName">Methode Name</param>
+		/// <param name="parameters">Type arrays of parameters</param>
+		/// <returns></returns>
 		private static MethodInfo GetMethod(string className, string methodName, Type[]parameters)
 		{
 			MethodInfo result;
@@ -230,12 +256,21 @@ namespace LomsonLib.UI
 				Image imgNew = imgToBeConverted;
 				if(imgToBeConverted == null) { Debug.Assert(false); }
 
-				if((imgToBeConverted.Width != nWidth) || (imgToBeConverted.Height != nHeight))
-					imgNew = new Bitmap(imgToBeConverted, new Size(nWidth, nHeight));
+				if((imgToBeConverted.Width != nWidth) || (imgToBeConverted.Height != nHeight)) {
+					
+					if ( METHOD_ScaleImage != null ) {
+						imgNew = METHOD_ScaleImage.Invoke(
+							null,
+							new Object[] { imgToBeConverted, nWidth, nHeight } )
+							as Image;	
+					}
+					else {
+						imgNew = new Bitmap(imgToBeConverted, new Size(nWidth, nHeight));
+					}
+				}
 				
 				return imgNew;
 		}
-		
 		
 	}
 }

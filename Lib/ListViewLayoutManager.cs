@@ -22,6 +22,9 @@
 /*
  * LomsonLib.UI
  * 
+ *    Version 1.5 - 2015/10/27
+ *      CompatibilityManager upgrade to v1.1 
+ * 
  *    Version 1.4 - 2015/10/18
  *      Add LomsonUtility
  * 
