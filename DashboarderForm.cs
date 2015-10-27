@@ -379,15 +379,18 @@ namespace CustomIconDashboarderPlugin
 				lstUris.AddRange( m_iconCounter.GetListUris( readIcon ) );
 				
 				// Retrieve images
+				BestIconFinder bif;
 				if (lstUris.Count > 0) {
 					Uri uri1 = lstUris[0];
-					
-					BestIconFinder bif = new BestIconFinder( uri1 );
-				    bif.FindBestIcon();
-				    
-				    m_bestIconFindersIndexer.Add( readIcon.Uuid, bif);
-				    UpdateBestIconFinderResultForLvi( lvi);
+					bif = new BestIconFinder( uri1 );
+					bif.FindBestIcon();
 				}
+				else {
+					bif = new BestIconFinder();
+				}
+				    
+			    m_bestIconFindersIndexer.Add( readIcon.Uuid, bif);
+			    UpdateBestIconFinderResultForLvi( lvi);
 				return true;
 			}
 			return false;
@@ -403,7 +406,10 @@ namespace CustomIconDashboarderPlugin
 				lvi.SubItems[2].Text = "";
 				return;
 			}
-			if (bif.BestImage != null) {
+			if (bif.Result.ResultCode == FinderResult.RESULT_NO_URL) {
+				lvi.SubItems[2].Text = Resource.val_nourl;
+			}
+			else if (bif.BestImage != null) {
 		    	lvi.SubItems[2].Text = bif.BestImage.Width.ToString(NumberFormatInfo.InvariantInfo)
                 + " x " +
                bif.BestImage.Height.ToString(NumberFormatInfo.InvariantInfo);

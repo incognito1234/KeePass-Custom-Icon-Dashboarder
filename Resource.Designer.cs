@@ -70,8 +70,7 @@ namespace CustomIconDashboarderPlugin {
 		}
 		
 		/// <summary>
-		///   Looks up a localized string similar to Full Path
-		///.
+		///   Looks up a localized string similar to Full Path.
 		/// </summary>
 		internal static string hdr_fullPath {
 			get {
@@ -185,6 +184,15 @@ namespace CustomIconDashboarderPlugin {
 		internal static string val_na {
 			get {
 				return ResourceManager.GetString("val_na", resourceCulture);
+			}
+		}
+		
+		/// <summary>
+		///   Looks up a localized string similar to No url.
+		/// </summary>
+		internal static string val_nourl {
+			get {
+				return ResourceManager.GetString("val_nourl", resourceCulture);
 			}
 		}
 	}

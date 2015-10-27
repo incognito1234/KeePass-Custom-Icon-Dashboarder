@@ -1206,8 +1206,7 @@
 </value>
   </data>
   <data name="hdr_fullPath" xml:space="preserve">
-    <value>Full Path
-</value>
+    <value>Full Path</value>
   </data>
   <data name="menu_customIcon" xml:space="preserve">
     <value>Custom Icon Dashboard</value>
@@ -1226,5 +1225,8 @@
   </data>
   <data name="val_na" xml:space="preserve">
     <value>Not found</value>
+  </data>
+  <data name="val_nourl" xml:space="preserve">
+    <value>No url</value>
   </data>
 </root>

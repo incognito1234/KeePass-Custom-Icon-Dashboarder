@@ -76,10 +76,19 @@ namespace CustomIconDashboarderPlugin
 			if ( (siteUri.Scheme.ToLower() == "http") ||
 			    (siteUri.Scheme.ToLower() == "https" ) ){
 				this.SiteUri = new Uri(siteUri.Scheme + "://" +siteUri.DnsSafeHost);
+				this.Result = new FinderResult(FinderResult.RESULT_NO_URL);
 			} else {
-			    	this.SiteUri = null;
+			    this.SiteUri = null;
+			    this.Result = new FinderResult(FinderResult.RESULT_NO_URL);
 			}
-			this.Result = new FinderResult(FinderResult.RESULT_NOT_YET_SEARCH);
+			this.myLogger = new MyLogger(this);
+			this.BestImage = null;
+		}
+		
+		public BestIconFinder()
+		{
+			this.SiteUri = null;
+			this.Result = new FinderResult(FinderResult.RESULT_NO_URL);
 			this.myLogger = new MyLogger(this);
 			this.BestImage = null;
 		}
@@ -511,6 +520,7 @@ namespace CustomIconDashboarderPlugin
 		public static int RESULT_OK = 1;
 		public static int RESULT_HTML_NOT_FOUND = 2;
 		public static int RESULT_HTML_PARSING = 3;
+		public static int RESULT_NO_URL = 4;
 		
 		public int ResultCode {get; private set; }
 		public FinderResult (int code) 
