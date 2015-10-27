@@ -578,6 +578,7 @@ namespace CustomIconDashboarderPlugin
 		/// This database will be updated if customIcons is missing.</param>
 		/// <returns>Custom Icon in database. null if an error occurs</returns>
 		private PwCustomIcon GetCustomIconFromImageAndUpdateKdbIfNecessary( Image img, PwDatabase kdb) {
+			// From IconPickerForm.OnBtnCustomAdd - Keepass v2.29
 		 	MemoryStream ms = new MemoryStream();
 			const int wMax = 128;
 			const int hMax = 128;
@@ -586,7 +587,7 @@ namespace CustomIconDashboarderPlugin
 					img.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
 				else
 				{
-					Image imgSc = KeePassLib.Utility.GfxUtil.ScaleImage(img, wMax, hMax);
+					Image imgSc = CompatibilityManager.ResizedImage(img, wMax, hMax);
 					imgSc.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
 					imgSc.Dispose();
 				}
