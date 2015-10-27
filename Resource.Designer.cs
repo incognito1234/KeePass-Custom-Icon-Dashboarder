@@ -160,16 +160,6 @@ namespace CustomIconDashboarderPlugin {
 		}
 		
 		/// <summary>
-		///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
-		/// </summary>
-		internal static System.Drawing.Icon KeePass {
-			get {
-				object obj = ResourceManager.GetObject("KeePass", resourceCulture);
-				return ((System.Drawing.Icon)(obj));
-			}
-		}
-		
-		/// <summary>
 		///   Looks up a localized string similar to Custom Icon Dashboard.
 		/// </summary>
 		internal static string menu_customIcon {

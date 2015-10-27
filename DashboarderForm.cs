@@ -63,6 +63,7 @@ namespace CustomIconDashboarderPlugin
 			InitializeComponent();
 			
 			m_PluginHost = pluginHost;
+			this.Icon = m_PluginHost.MainWindow.Icon;
 			
 		}
 		

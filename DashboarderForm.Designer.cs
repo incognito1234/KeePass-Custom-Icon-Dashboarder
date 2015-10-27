@@ -717,7 +717,6 @@ namespace CustomIconDashboarderPlugin
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(876, 562);
 			this.Controls.Add(this.tlp_main);
-			this.Icon = global::CustomIconDashboarderPlugin.Resource.KeePass;
 			this.Name = "DashboarderForm";
 			this.Text = "Custom Icon Dashboard";
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
