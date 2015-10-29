@@ -358,9 +358,6 @@ namespace CustomIconDashboarderPlugin
 			this.tlp_downloadResult.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
 			this.tlp_downloadResult.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
 			this.tlp_downloadResult.Controls.Add(this.scltp_downloadResult, 0, 1);
-			this.tlp_downloadResult.Controls.Add(this.pbo_downloadedIcon64, 1, 1);
-			this.tlp_downloadResult.Controls.Add(this.pbo_downloadedIcon32, 2, 1);
-			this.tlp_downloadResult.Controls.Add(this.pbo_downloadedIcon16, 3, 1);
 			this.tlp_downloadResult.Controls.Add(this.lbl_newSize, 1, 0);
 			this.tlp_downloadResult.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tlp_downloadResult.Location = new System.Drawing.Point(3, 3);
@@ -370,18 +367,21 @@ namespace CustomIconDashboarderPlugin
 			this.tlp_downloadResult.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tlp_downloadResult.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tlp_downloadResult.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this.tlp_downloadResult.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
 			this.tlp_downloadResult.Size = new System.Drawing.Size(501, 279);
 			this.tlp_downloadResult.TabIndex = 0;
 			// 
 			// scltp_downloadResult
 			// 
-			this.scltp_downloadResult.ColumnCount = 1;
-			this.scltp_downloadResult.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.scltp_downloadResult.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this.scltp_downloadResult.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this.scltp_downloadResult.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+			this.scltp_downloadResult.ColumnCount = 4;
+			this.tlp_downloadResult.SetColumnSpan(this.scltp_downloadResult, 4);
+			this.scltp_downloadResult.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.25126F));
+			this.scltp_downloadResult.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25.12563F));
+			this.scltp_downloadResult.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 12.31156F));
+			this.scltp_downloadResult.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 12.31156F));
 			this.scltp_downloadResult.Controls.Add(this.pbo_downloadedIcon128, 0, 0);
+			this.scltp_downloadResult.Controls.Add(this.pbo_downloadedIcon64, 1, 0);
+			this.scltp_downloadResult.Controls.Add(this.pbo_downloadedIcon16, 3, 0);
+			this.scltp_downloadResult.Controls.Add(this.pbo_downloadedIcon32, 2, 0);
 			this.scltp_downloadResult.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.scltp_downloadResult.Location = new System.Drawing.Point(0, 30);
 			this.scltp_downloadResult.Margin = new System.Windows.Forms.Padding(0);
@@ -390,7 +390,7 @@ namespace CustomIconDashboarderPlugin
 			this.scltp_downloadResult.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.scltp_downloadResult.ScaleHeight = false;
 			this.scltp_downloadResult.ScaleWidth = true;
-			this.scltp_downloadResult.Size = new System.Drawing.Size(250, 154);
+			this.scltp_downloadResult.Size = new System.Drawing.Size(501, 154);
 			this.scltp_downloadResult.TabIndex = 0;
 			// 
 			// pbo_downloadedIcon128
@@ -411,7 +411,7 @@ namespace CustomIconDashboarderPlugin
 			this.pbo_downloadedIcon64.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 			this.pbo_downloadedIcon64.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
 			this.pbo_downloadedIcon64.InitialImage = null;
-			this.pbo_downloadedIcon64.Location = new System.Drawing.Point(278, 73);
+			this.pbo_downloadedIcon64.Location = new System.Drawing.Point(279, 43);
 			this.pbo_downloadedIcon64.Name = "pbo_downloadedIcon64";
 			this.pbo_downloadedIcon64.Size = new System.Drawing.Size(68, 68);
 			this.pbo_downloadedIcon64.TabIndex = 1;
@@ -423,7 +423,7 @@ namespace CustomIconDashboarderPlugin
 			this.pbo_downloadedIcon32.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 			this.pbo_downloadedIcon32.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
 			this.pbo_downloadedIcon32.InitialImage = null;
-			this.pbo_downloadedIcon32.Location = new System.Drawing.Point(389, 90);
+			this.pbo_downloadedIcon32.Location = new System.Drawing.Point(389, 60);
 			this.pbo_downloadedIcon32.Name = "pbo_downloadedIcon32";
 			this.pbo_downloadedIcon32.Size = new System.Drawing.Size(34, 34);
 			this.pbo_downloadedIcon32.TabIndex = 2;
@@ -435,7 +435,7 @@ namespace CustomIconDashboarderPlugin
 			this.pbo_downloadedIcon16.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 			this.pbo_downloadedIcon16.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
 			this.pbo_downloadedIcon16.InitialImage = null;
-			this.pbo_downloadedIcon16.Location = new System.Drawing.Point(459, 97);
+			this.pbo_downloadedIcon16.Location = new System.Drawing.Point(459, 67);
 			this.pbo_downloadedIcon16.Name = "pbo_downloadedIcon16";
 			this.pbo_downloadedIcon16.Size = new System.Drawing.Size(20, 20);
 			this.pbo_downloadedIcon16.TabIndex = 3;
