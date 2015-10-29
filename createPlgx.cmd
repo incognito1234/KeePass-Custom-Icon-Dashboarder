@@ -1,7 +1,7 @@
 ﻿@echo off
 
 rem Uncomment this line if PATH_KEEPASS is not an environment variable
-set PATH_KEEPASS=C:\workspace\KeePass\KeePass-2.29
+set PATH_KEEPASS=C:\workspace\KeePass\KeePass-2.30
 
 set SRC_PATH_PLUGIN=%~dp0
 
@@ -14,6 +14,9 @@ mkdir %TMP_PATH_PLUGIN%
 
 xcopy %SRC_PATH_PLUGIN%*.* %TMP_PATH_PLUGIN%
 del %TMP_PATH_PLUGIN%\%~nx0
+
+mkdir %TMP_PATH_PLUGIN%\HtmlAgilityPack
+xcopy /S %SRC_PATH_PLUGIN%HtmlAgilityPack %TMP_PATH_PLUGIN%\HtmlAgilityPack
 
 mkdir %TMP_PATH_PLUGIN%\Properties
 xcopy /S %SRC_PATH_PLUGIN%Properties %TMP_PATH_PLUGIN%\Properties
