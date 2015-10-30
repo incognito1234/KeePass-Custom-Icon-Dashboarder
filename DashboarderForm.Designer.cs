@@ -65,9 +65,11 @@ namespace CustomIconDashboarderPlugin
 			this.scltp_downloadResult = new LomsonLib.UI.ScaleControlTableLayoutPanel();
 			this.pbo_downloadedIcon128 = new System.Windows.Forms.PictureBox();
 			this.pbo_downloadedIcon64 = new System.Windows.Forms.PictureBox();
-			this.pbo_downloadedIcon32 = new System.Windows.Forms.PictureBox();
 			this.pbo_downloadedIcon16 = new System.Windows.Forms.PictureBox();
+			this.pbo_downloadedIcon32 = new System.Windows.Forms.PictureBox();
 			this.lbl_newSize = new System.Windows.Forms.Label();
+			this.tpa_Debug = new System.Windows.Forms.TabPage();
+			this.rtb_details = new System.Windows.Forms.RichTextBox();
 			this.tlp_upperRight = new System.Windows.Forms.TableLayoutPanel();
 			this.lbl_originalSize = new System.Windows.Forms.Label();
 			this.lbl_selectedIcon = new System.Windows.Forms.Label();
@@ -105,8 +107,9 @@ namespace CustomIconDashboarderPlugin
 			this.scltp_downloadResult.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.pbo_downloadedIcon128)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.pbo_downloadedIcon64)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.pbo_downloadedIcon32)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.pbo_downloadedIcon16)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.pbo_downloadedIcon32)).BeginInit();
+			this.tpa_Debug.SuspendLayout();
 			this.tlp_upperRight.SuspendLayout();
 			this.scltp_icons.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.pbo_selectedIcon16)).BeginInit();
@@ -269,6 +272,7 @@ namespace CustomIconDashboarderPlugin
 			// 
 			this.tco_right.Controls.Add(this.tpa_IconUsage);
 			this.tco_right.Controls.Add(this.tpa_DownloadResult);
+			this.tco_right.Controls.Add(this.tpa_Debug);
 			this.tco_right.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tco_right.Location = new System.Drawing.Point(3, 203);
 			this.tco_right.Multiline = true;
@@ -417,18 +421,6 @@ namespace CustomIconDashboarderPlugin
 			this.pbo_downloadedIcon64.TabIndex = 1;
 			this.pbo_downloadedIcon64.TabStop = false;
 			// 
-			// pbo_downloadedIcon32
-			// 
-			this.pbo_downloadedIcon32.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.pbo_downloadedIcon32.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-			this.pbo_downloadedIcon32.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.pbo_downloadedIcon32.InitialImage = null;
-			this.pbo_downloadedIcon32.Location = new System.Drawing.Point(389, 60);
-			this.pbo_downloadedIcon32.Name = "pbo_downloadedIcon32";
-			this.pbo_downloadedIcon32.Size = new System.Drawing.Size(34, 34);
-			this.pbo_downloadedIcon32.TabIndex = 2;
-			this.pbo_downloadedIcon32.TabStop = false;
-			// 
 			// pbo_downloadedIcon16
 			// 
 			this.pbo_downloadedIcon16.Anchor = System.Windows.Forms.AnchorStyles.None;
@@ -440,6 +432,18 @@ namespace CustomIconDashboarderPlugin
 			this.pbo_downloadedIcon16.Size = new System.Drawing.Size(20, 20);
 			this.pbo_downloadedIcon16.TabIndex = 3;
 			this.pbo_downloadedIcon16.TabStop = false;
+			// 
+			// pbo_downloadedIcon32
+			// 
+			this.pbo_downloadedIcon32.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.pbo_downloadedIcon32.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+			this.pbo_downloadedIcon32.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+			this.pbo_downloadedIcon32.InitialImage = null;
+			this.pbo_downloadedIcon32.Location = new System.Drawing.Point(389, 60);
+			this.pbo_downloadedIcon32.Name = "pbo_downloadedIcon32";
+			this.pbo_downloadedIcon32.Size = new System.Drawing.Size(34, 34);
+			this.pbo_downloadedIcon32.TabIndex = 2;
+			this.pbo_downloadedIcon32.TabStop = false;
 			// 
 			// lbl_newSize
 			// 
@@ -455,6 +459,27 @@ namespace CustomIconDashboarderPlugin
 			this.lbl_newSize.TabIndex = 4;
 			this.lbl_newSize.Text = "New Size :";
 			this.lbl_newSize.TextAlign = System.Drawing.ContentAlignment.TopRight;
+			// 
+			// tpa_Debug
+			// 
+			this.tpa_Debug.Controls.Add(this.rtb_details);
+			this.tpa_Debug.Location = new System.Drawing.Point(4, 22);
+			this.tpa_Debug.Name = "tpa_Debug";
+			this.tpa_Debug.Padding = new System.Windows.Forms.Padding(3);
+			this.tpa_Debug.Size = new System.Drawing.Size(507, 285);
+			this.tpa_Debug.TabIndex = 2;
+			this.tpa_Debug.Text = "Debug";
+			this.tpa_Debug.UseVisualStyleBackColor = true;
+			// 
+			// rtb_details
+			// 
+			this.rtb_details.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.rtb_details.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.rtb_details.Location = new System.Drawing.Point(3, 3);
+			this.rtb_details.Name = "rtb_details";
+			this.rtb_details.Size = new System.Drawing.Size(501, 279);
+			this.rtb_details.TabIndex = 0;
+			this.rtb_details.Text = "";
 			// 
 			// tlp_upperRight
 			// 
@@ -741,8 +766,9 @@ namespace CustomIconDashboarderPlugin
 			this.scltp_downloadResult.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.pbo_downloadedIcon128)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.pbo_downloadedIcon64)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.pbo_downloadedIcon32)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.pbo_downloadedIcon16)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.pbo_downloadedIcon32)).EndInit();
+			this.tpa_Debug.ResumeLayout(false);
 			this.tlp_upperRight.ResumeLayout(false);
 			this.scltp_icons.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.pbo_selectedIcon16)).EndInit();
@@ -798,6 +824,8 @@ namespace CustomIconDashboarderPlugin
 		private System.Windows.Forms.Button bto_choose;
 		private System.Windows.Forms.TableLayoutPanel tlp_main;
 		private System.Windows.Forms.TableLayoutPanel tlp_bottom;
+		private System.Windows.Forms.RichTextBox rtb_details;
+		private System.Windows.Forms.TabPage tpa_Debug;
 
 		
 		void DashboarderLoad(object sender, System.EventArgs e)

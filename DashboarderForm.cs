@@ -73,7 +73,9 @@ namespace CustomIconDashboarderPlugin
 			
 			GlobalWindowManager.AddWindow(this);
 			BestIconFinder.InitClass();
-			InitEx();		
+			InitEx();
+			// Comment to debug
+			this.tco_right.TabPages.Remove(tpa_Debug);
 		}
 		
 		private void OnFormDispose()
@@ -500,23 +502,26 @@ namespace CustomIconDashboarderPlugin
 							bif.BestImage.Width +
 							" x " +
 							bif.BestImage.Height;
+						}
+						else {
+							cleanImage = true;
+					
+						}
+				     rtb_details.Text=bif.Details;
+			
 					}
 					else {
 						cleanImage = true;
 					}
-				    
-				}
-				else {
-					cleanImage = true;
-				}
 				
-				if (cleanImage) {
-					pbo_downloadedIcon128.BackgroundImage = null;
-					pbo_downloadedIcon64.BackgroundImage = null;
-					pbo_downloadedIcon32.BackgroundImage = null;
-					pbo_downloadedIcon16.BackgroundImage = null;
-					lbl_newSize.Text = "New Size :";
-				}
+					if (cleanImage) {
+						pbo_downloadedIcon128.BackgroundImage = null;
+						pbo_downloadedIcon64.BackgroundImage = null;
+						pbo_downloadedIcon32.BackgroundImage = null;
+						pbo_downloadedIcon16.BackgroundImage = null;
+						lbl_newSize.Text = "New Size :";
+						
+					}
 			}
 		}
 		
