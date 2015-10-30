@@ -38,16 +38,20 @@ namespace CustomIconDashboarderPlugin
 		/// <summary>
 		/// STATIC Section
 		/// </summary>
-		private static WebClient client;
+		private static MyWebClient client;
 		
 		
 		public static void InitClass() {
-			client = new WebClient();
+			client = new MyWebClient();
 		}
 		
 		public static void DisposeClass() {
 			client.Dispose();
 		}
+		
+		private const string REQUEST_USER_AGENT = "Mozilla/5.0 (Windows 6.1; rv:27.0) Gecko/20100101 Firefox/27.0";
+		private const string REQUEST_HEADER_ACCEPT = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
+		private const int REQUEST_TIMEOUT = 10000;
 		
 		private const string alphabetUC = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 		private const string alphabetLC = "abcdefghijklmnopqrstuvwxyz";
@@ -330,7 +334,7 @@ namespace CustomIconDashboarderPlugin
         private Uri GetURIOfSite(Uri initialURI, out HtmlDocument hdoc) 
         {
         	HtmlWeb hw = new HtmlWeb();
-            hw.UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0";
+            hw.UserAgent = REQUEST_USER_AGENT;
             hdoc = null;
             Uri responseURI = null; 
 			
@@ -406,9 +410,9 @@ namespace CustomIconDashboarderPlugin
 		private bool PreRequest_EventHandler(HttpWebRequest request)
         {
             request.CookieContainer = new System.Net.CookieContainer();
-            request.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
+            request.Accept = REQUEST_HEADER_ACCEPT;
             request.Headers.Add(HttpRequestHeader.AcceptLanguage, "*");
-            request.Timeout = 5000;
+            request.Timeout = REQUEST_TIMEOUT;
             
             return true;
         }
@@ -512,6 +516,30 @@ namespace CustomIconDashboarderPlugin
 //		  return false;
 //		} 
 //
+	
+		public class MyWebClient : WebClient
+		{
+			private readonly CookieContainer m_container = new CookieContainer();
+	
+			protected override WebRequest GetWebRequest(Uri address)
+			{
+				// enhance chance to get favicon by setting some specifics parameters in request
+				// Sample of web site and parameters
+				//    Header Accept  - usefull for www dot akamai dot com
+				WebRequest request = base.GetWebRequest(address);
+				var webRequest = request as HttpWebRequest;
+				if (webRequest != null) {
+					webRequest.Accept = REQUEST_HEADER_ACCEPT;
+		            webRequest.UserAgent = REQUEST_USER_AGENT;
+		            webRequest.Headers.Add(HttpRequestHeader.AcceptLanguage, "*");
+		            webRequest.Timeout = REQUEST_TIMEOUT;
+					webRequest.CookieContainer = m_container;
+				}
+				return request;
+			}
+		}
+	
+	
 	}
 	
 	public sealed class FinderResult {
