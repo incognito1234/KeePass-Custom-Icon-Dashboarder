@@ -151,6 +151,15 @@ namespace CustomIconDashboarderPlugin {
 		}
 		
 		/// <summary>
+		///   Looks up a localized string similar to Url.
+		/// </summary>
+		internal static string hdr_url {
+			get {
+				return ResourceManager.GetString("hdr_url", resourceCulture);
+			}
+		}
+		
+		/// <summary>
 		///   Looks up a localized string similar to User Name.
 		/// </summary>
 		internal static string hdr_userName {

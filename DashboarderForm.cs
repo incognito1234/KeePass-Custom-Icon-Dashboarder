@@ -102,12 +102,14 @@ namespace CustomIconDashboarderPlugin
 			// List View Used Entries
 			m_lvUsedEntries.Columns.Add( Resource.hdr_titleEntry, 85 );
 			m_lvUsedEntries.Columns.Add( Resource.hdr_userName, 85);
-			m_lvUsedEntries.Columns.Add( Resource.hdr_groupName, 190 );
+			m_lvUsedEntries.Columns.Add( Resource.hdr_url, 140);
+			m_lvUsedEntries.Columns.Add( Resource.hdr_groupName, 140);
 			
 			m_lvEntriesColumnSorter = new ListViewLayoutManager();
 			m_lvEntriesColumnSorter.AddColumnComparer(0, new LomsonLib.UI.StringComparer(false,true) );
 			m_lvEntriesColumnSorter.AddColumnComparer(1, new LomsonLib.UI.StringComparer(false,true) );
 			m_lvEntriesColumnSorter.AddColumnComparer(2, new LomsonLib.UI.StringComparer(false,true) );
+			m_lvEntriesColumnSorter.AddColumnComparer(3, new LomsonLib.UI.StringComparer(false,true) );
 			
 			m_lvEntriesColumnSorter.AddDefaultSortedColumn(2,false);
 			m_lvEntriesColumnSorter.AddDefaultSortedColumn(0,false);
@@ -459,6 +461,7 @@ namespace CustomIconDashboarderPlugin
 					
 					ListViewItem lvi = new ListViewItem( readEntry.Strings.ReadSafe( PwDefs.TitleField ) );
 					lvi.SubItems.Add( readEntry.Strings.ReadSafe( PwDefs.UserNameField ) );
+					lvi.SubItems.Add( readEntry.Strings.ReadSafe( PwDefs.UrlField ) );
 					lvi.SubItems.Add( readEntry.ParentGroup.GetFullPath(".", false) );
 					m_lvUsedEntries.Items.Add(lvi);
 				}

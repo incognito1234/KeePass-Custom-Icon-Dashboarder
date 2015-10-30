@@ -159,4 +159,7 @@
   <data name="val_nourl" xml:space="preserve">
     <value>No url</value>
   </data>
+  <data name="hdr_url" xml:space="preserve">
+    <value>Url</value>
+  </data>
 </root>
