@@ -205,7 +205,9 @@ namespace CustomIconDashboarderPlugin
 			Image downloadedImage = null;
 			
 			try {
-			   pictureData = client.DownloadData( uriToBeTested);
+				pictureData = client.DownloadData( uriToBeTested);
+				pictureData = PreparedIconBytesArrayToBeParsed( pictureData );
+					
 			   try {
 			   	downloadedImage = KeePassLib.Utility.GfxUtil.LoadImage( pictureData );
 			   }
@@ -415,6 +417,77 @@ namespace CustomIconDashboarderPlugin
             return new Uri(uri, redirect);
         }
        
+        
+		/// <summary>
+		/// Prepare bytes array representing an icon to be parsed by libraries
+		///  (provided by KP and MS)
+		/// </summary>
+		/// <description>
+		/// Pad with zero if length of array is not sufficient according to header.
+		/// </description>
+		/// <param name="batbp">Byte array to be parsed</param>
+		/// <returns></returns>
+		/// Inspired by the method KeePassLib.Utility.GsfxUtil.UnpackIco of KeePass v2.30
+		private byte[] PreparedIconBytesArrayToBeParsed(byte[] batbp) {
+			if (batbp == null) { 
+				myLogger.LogWarn("PreparedIconBytesArrayToBeParsed: Byte array to be prepared is Null");
+				return batbp;
+			}
+
+			const int SizeICONDIR = 6;
+			const int SizeICONDIRENTRY = 16;
+
+			if (BitConverter.ToInt32(new byte[] { 1, 2, 3, 4 },
+			                         0) != 0x04030201) {
+				myLogger.LogWarn("PreparedIconBytesArrayToBeParsed: Not Little Endian detected");
+			}
+
+			if (batbp.Length < SizeICONDIR) return null;
+			if (BitConverter.ToUInt16(batbp, 0) != 0)	return batbp; // Reserved, 0 if icon
+			if (BitConverter.ToUInt16(batbp, 2) != 1)	return batbp; // ICO type, 1 if icon
+
+			int nbIcon = BitConverter.ToUInt16(batbp, 4);
+			if (nbIcon < 0) { 
+				myLogger.LogWarn("PreparedIconBytesArrayToBeParsed: nb of Icons is not positive");;
+			}
+
+			int cbDir = SizeICONDIR + (nbIcon * SizeICONDIRENTRY);
+			if (batbp.Length < cbDir)
+				return null;
+
+			int iOffset = SizeICONDIR;
+			int padLength = 0;
+			for (int i = 0; i < nbIcon; ++i) {
+				int dataSize = BitConverter.ToInt32(batbp, iOffset + 8);
+				int iStartImgData = BitConverter.ToInt32(batbp, iOffset + 12);
+				
+				if ((iStartImgData + dataSize) > batbp.Length) {
+					padLength = iStartImgData + dataSize - batbp.Length;
+					
+				}
+				
+				iOffset += SizeICONDIRENTRY;
+			}
+			
+			if (padLength == 0 ) {
+				return batbp;
+			}
+			else {
+				myLogger.LogWarn("PreparedIconBytesArrayToBeParsed: Padding file with "
+				                 + padLength.ToString() + " leading zero(s)");;
+			
+				var padArray = new byte[padLength];
+				for (int ii = 0; ii < padLength; ii++) {
+					padArray[ii] = 0;
+				}
+				var result = new byte[batbp.Length + padLength];
+				Array.Copy(batbp, 0, result, 0, batbp.Length);
+				Array.Copy(padArray, 0, result, batbp.Length, padLength);
+				
+				return result;				
+			}
+			
+		}
         
 		private bool PreRequest_EventHandler(HttpWebRequest request)
         {
