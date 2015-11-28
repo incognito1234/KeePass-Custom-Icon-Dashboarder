@@ -355,7 +355,7 @@ namespace CustomIconDashboarderPlugin
                     // A cookie container is needed for some sites to work
                     hw.PreRequest += PreRequest_EventHandler;
 
-                    // HtmlWeb.Load will follow 302 and 302 redirects to alternate URIs
+                    // HtmlWeb.Load will follow 301 and 302 redirects to alternate URIs
                    hdoc = hw.Load(nextUri.AbsoluteUri);
                    responseURI = hw.ResponseUri;
 
