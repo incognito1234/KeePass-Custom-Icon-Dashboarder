@@ -28,6 +28,7 @@ using LomsonLib.Utility;
 
 namespace CustomIconDashboarderPlugin
 {
+
 	/// <summary>
 	/// Find the best icon of a web site from its url.
 	/// </summary>
@@ -67,6 +68,7 @@ namespace CustomIconDashboarderPlugin
 		#endregion		
 		
 		public Uri SiteUri {get; private set;}
+		public Uri OriginalSiteUri {get; private set;}
 		public Uri RootUriForIco {get; private set;}
 		public FinderResult Result {get; private set; }
 		public List<Uri> ListUriIcons {get; private set;}
@@ -77,6 +79,7 @@ namespace CustomIconDashboarderPlugin
 		
 		public BestIconFinder(Uri siteUri)
 		{
+			this.OriginalSiteUri = siteUri;
 			if ( (siteUri.Scheme.ToLower() == "http") ||
 			    (siteUri.Scheme.ToLower() == "https" ) ){
 				this.SiteUri = new Uri(siteUri.Scheme + "://" +siteUri.DnsSafeHost);
@@ -138,6 +141,10 @@ namespace CustomIconDashboarderPlugin
 					FindBestIconForURI( new Uri (
 						this.RootUriForIco.Scheme + "://www." + this.RootUriForIco.Host));
 				}
+			}
+			
+			if (this.BestImage == null) {
+				FindBestIconForURI( this.OriginalSiteUri );
 			}
 			
 		}
@@ -335,6 +342,7 @@ namespace CustomIconDashboarderPlugin
         {
         	HtmlWeb hw = new HtmlWeb();
             hw.UserAgent = REQUEST_USER_AGENT;
+           
             hdoc = null;
             Uri responseURI = null; 
 			
@@ -407,6 +415,7 @@ namespace CustomIconDashboarderPlugin
             return new Uri(uri, redirect);
         }
        
+        
 		private bool PreRequest_EventHandler(HttpWebRequest request)
         {
             request.CookieContainer = new System.Net.CookieContainer();
@@ -482,6 +491,7 @@ namespace CustomIconDashboarderPlugin
 				this.BestImage.Dispose();
 			}
 		}
+		
 	
 //       // Set "UnsafeHeaderParsing" flags. Usefull to retrieve information from several sites
 //       // try www dot geni dot com    
