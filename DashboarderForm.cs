@@ -279,9 +279,7 @@ namespace CustomIconDashboarderPlugin
 				
 				}
 				ResetDashboard();
-				m_PluginHost.Database.UINeedsIconUpdate = true;
-				m_PluginHost.Database.Modified = true;
-				m_PluginHost.MainWindow.UpdateUI(false, null, true, null, true, null, true);
+				NotifyDatabaseModificationAndUpdateMainForm();
 			}
 
 			UIUtil.DestroyForm(ipf);
@@ -347,10 +345,8 @@ namespace CustomIconDashboarderPlugin
 
 			if(vUuidsToDelete.Count > 0)
 			{
-				m_PluginHost.Database.UINeedsIconUpdate = true;
-				m_PluginHost.Database.Modified = true;
 				ResetDashboard();
-				m_PluginHost.MainWindow.UpdateUI(false, null, true, null, true, null, true);
+				NotifyDatabaseModificationAndUpdateMainForm();
 			}
 			
 		}
@@ -545,7 +541,7 @@ namespace CustomIconDashboarderPlugin
 						m_bestIconFindersIndexer.Add(newIcon.Uuid, bif);
 						UpdateBestIconFinderResultForLvi(lvi);
 					}
-					m_PluginHost.Database.Modified = true;
+					NotifyDatabaseModificationAndUpdateMainForm();
 				}
 			}
 			ResetDashboard();
@@ -636,7 +632,14 @@ namespace CustomIconDashboarderPlugin
 			
 		}	
 		
+		private void NotifyDatabaseModificationAndUpdateMainForm() {
+			m_PluginHost.Database.Modified = true;
+			m_PluginHost.MainWindow.UpdateUI(true, null, false, null, true, null, true);
+		}
+		
 	}
+	
+	
 	
 	/// <summary>
 	/// Class to compare size stored as width x height

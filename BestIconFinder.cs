@@ -280,6 +280,7 @@ namespace CustomIconDashboarderPlugin
 			
 			// Get XPath
 			HtmlNode hnn = htmlPage.DocumentNode;
+			//this.myLogger.LogDebugIndented(hnn.OuterHtml);
 			this.ListUriIcons = new List<Uri>();
 			foreach (String currentXpath in xPathToTest) 
 			{
@@ -546,6 +547,14 @@ namespace CustomIconDashboarderPlugin
 			public void LogDebug(String what) {
 				if ( this.logLevel >= 4)
 					myBestIf.Details += indent + what + System.Environment.NewLine;
+			}
+			
+			public void LogDebugIndented(String what) {
+				if ( this.logLevel >= 4) {
+					what = what.Replace("\n", System.Environment.NewLine + indent);
+					
+					myBestIf.Details += indent + what + System.Environment.NewLine;
+				}
 			}
 			
 			public void LogWarn(String what) {
