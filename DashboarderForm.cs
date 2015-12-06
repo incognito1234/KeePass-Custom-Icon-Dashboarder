@@ -164,10 +164,14 @@ namespace CustomIconDashboarderPlugin
 				if (m_lvViewIcon.CheckedItems.Count == 0 ) {
 					btn_ModifyIcon.Enabled = false;
 					btn_removeIcons.Enabled = false;
+					btn_download.Enabled = false;
+					btn_choose.Enabled = false;					
 				}
 				else {
 					btn_ModifyIcon.Enabled = true;
 					btn_removeIcons.Enabled = true;
+					btn_download.Enabled = true;
+					btn_choose.Enabled = true;
 				}
 			};
 			m_lvIconsColumnSorter.DefineMultiCheckingBehavior(ehMulti);

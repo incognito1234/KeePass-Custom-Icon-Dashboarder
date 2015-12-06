@@ -85,7 +85,7 @@ namespace CustomIconDashboarderPlugin
 			this.btn_ModifyIcon = new System.Windows.Forms.Button();
 			this.btn_removeIcons = new System.Windows.Forms.Button();
 			this.btn_download = new System.Windows.Forms.Button();
-			this.bto_choose = new System.Windows.Forms.Button();
+			this.btn_choose = new System.Windows.Forms.Button();
 			this.bto_OK = new System.Windows.Forms.Button();
 			this.tlp_main = new System.Windows.Forms.TableLayoutPanel();
 			this.tlp_bottom = new System.Windows.Forms.TableLayoutPanel();
@@ -647,7 +647,7 @@ namespace CustomIconDashboarderPlugin
 			this.flp_buttons.Controls.Add(this.btn_ModifyIcon);
 			this.flp_buttons.Controls.Add(this.btn_removeIcons);
 			this.flp_buttons.Controls.Add(this.btn_download);
-			this.flp_buttons.Controls.Add(this.bto_choose);
+			this.flp_buttons.Controls.Add(this.btn_choose);
 			this.flp_buttons.Location = new System.Drawing.Point(0, 0);
 			this.flp_buttons.Margin = new System.Windows.Forms.Padding(0);
 			this.flp_buttons.Name = "flp_buttons";
@@ -684,15 +684,15 @@ namespace CustomIconDashboarderPlugin
 			this.btn_download.UseVisualStyleBackColor = true;
 			this.btn_download.Click += new System.EventHandler(this.OnDownloadClick);
 			// 
-			// bto_choose
+			// btn_choose
 			// 
-			this.bto_choose.Location = new System.Drawing.Point(339, 3);
-			this.bto_choose.Name = "bto_choose";
-			this.bto_choose.Size = new System.Drawing.Size(100, 23);
-			this.bto_choose.TabIndex = 3;
-			this.bto_choose.Text = "&Pick Best Icon";
-			this.bto_choose.UseVisualStyleBackColor = true;
-			this.bto_choose.Click += new System.EventHandler(this.OnPickClick);
+			this.btn_choose.Location = new System.Drawing.Point(339, 3);
+			this.btn_choose.Name = "btn_choose";
+			this.btn_choose.Size = new System.Drawing.Size(100, 23);
+			this.btn_choose.TabIndex = 3;
+			this.btn_choose.Text = "&Pick Best Icon";
+			this.btn_choose.UseVisualStyleBackColor = true;
+			this.btn_choose.Click += new System.EventHandler(this.OnPickClick);
 			// 
 			// bto_OK
 			// 
@@ -821,7 +821,7 @@ namespace CustomIconDashboarderPlugin
 		private System.Windows.Forms.PictureBox pbo_downloadedIcon32;
 		private System.Windows.Forms.PictureBox pbo_downloadedIcon16;
 		private System.Windows.Forms.Label lbl_newSize;
-		private System.Windows.Forms.Button bto_choose;
+		private System.Windows.Forms.Button btn_choose;
 		private System.Windows.Forms.TableLayoutPanel tlp_main;
 		private System.Windows.Forms.TableLayoutPanel tlp_bottom;
 		private System.Windows.Forms.RichTextBox rtb_details;
