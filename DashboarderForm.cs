@@ -235,6 +235,7 @@ namespace CustomIconDashboarderPlugin
 			m_ilCustoms = UIUtil.BuildImageList(m_PluginHost.Database.CustomIcons, cx, cy);
 		
 			CreateCustomIconList(m_ilCustoms);
+			m_lvIconsColumnSorter.UpdateCheckAllCheckBox(false);
 			m_lvUsedEntries.Items.Clear();
 			m_lvUsedGroups.Items.Clear();
 		}
