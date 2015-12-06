@@ -620,7 +620,7 @@ namespace CustomIconDashboarderPlugin
 	            }
 	
 	            // Create a new custom icon for use with this entry
-	            PwCustomIcon pwci = new PwCustomIcon(new PwUuid(true),
+	            var pwci = new PwCustomIcon(new PwUuid(true),
 	                ms.ToArray());
 	            kdb.CustomIcons.Add(pwci);
 	            ms.Close();
@@ -664,8 +664,8 @@ namespace CustomIconDashboarderPlugin
 			string cmpStr1 = GetString1( obj1, obj2);
 			string cmpStr2 = GetString2( obj1, obj2);
 			
-			Operand op1 = new Operand( cmpStr1);
-			Operand op2 = new Operand( cmpStr2);
+			var op1 = new Operand( cmpStr1);
+			var op2 = new Operand( cmpStr2);
 			
 			if ( (op1.Ot == OperandType.size)
 			    && (op2.Ot == OperandType.size) ) {
@@ -687,7 +687,7 @@ namespace CustomIconDashboarderPlugin
 			
 			// op1.Ot == OperandType.str
 			// op2.Ot == OperandType.str
-			return op1.InitialString.CompareTo( op2.InitialString);
+			return string.Compare(op1.InitialString, op2.InitialString, StringComparison.CurrentCulture);
 		}
 		
 		public int Compare2( String obj1, String obj2) {
@@ -736,7 +736,7 @@ namespace CustomIconDashboarderPlugin
 		}
 		
 		public static string basicTest() {
-			SizeComparer sc = new SizeComparer(false);
+			var sc = new SizeComparer(false);
 			string result = "";
 			string nl = System.Environment.NewLine;
 			result += "  str1        str2         expected   effective" + nl;
