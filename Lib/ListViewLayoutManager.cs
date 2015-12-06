@@ -193,7 +193,7 @@ namespace LomsonLib.UI
 		/// Update checkall checkbox status
 		/// </summary>
 		/// <param name="updateCheckboxesItem">is <b>true</b> if checkboxes of item will be updated</param>
-		private void UpdateCheckAllCheckBox(bool updateCheckboxesItem) {
+		public void UpdateCheckAllCheckBox(bool updateCheckboxesItem) {
 			if (m_lvi == null) { Debug.Assert(false); throw new InvalidOperationException("UpdateSelectAllCheckbox::SelectAllCheckBox is null"); }
 			
 			if ( CheckAllCheckBox == null) return;
