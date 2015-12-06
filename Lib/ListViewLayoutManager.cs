@@ -192,7 +192,7 @@ namespace LomsonLib.UI
 		/// <summary>
 		/// Update checkall checkbox status
 		/// </summary>
-		/// <param name="updateAllCheckboxes">is <b>true</b> if checkboxes of item will be updated</param>
+		/// <param name="updateCheckboxesItem">is <b>true</b> if checkboxes of item will be updated</param>
 		private void UpdateCheckAllCheckBox(bool updateCheckboxesItem) {
 			if (m_lvi == null) { Debug.Assert(false); throw new InvalidOperationException("UpdateSelectAllCheckbox::SelectAllCheckBox is null"); }
 			
@@ -338,7 +338,7 @@ namespace LomsonLib.UI
 		/// </summary>
 		/// <param name="menuItemCheckUncheck">Menu item text for Check/Unselected feature.
 		/// <c>null</c> if not needed</param>
-		/// <param name="menuItemInvertChecked">Menu item text for Invert checkboxes feature.
+		/// <param name="menuItemInvertCheckBoxes">Menu item text for Invert checkboxes feature.
 		/// <c>null</c> if not needed</param>
 		/// <returns></returns>
 		public void AddCheckSelectedContextMenu(String menuItemCheckUncheck, String menuItemInvertCheckBoxes)
@@ -426,7 +426,7 @@ namespace LomsonLib.UI
         
         private void DisposeSelectedContextMenu() {
         	if (SelectMenuToolStripItemsToBeAdded != null) {
-        		foreach (ToolStripMenuItem tsmi in SelectMenuToolStripItemsToBeAdded) {
+        		foreach (var tsmi in SelectMenuToolStripItemsToBeAdded) {
         			tsmi.Dispose();
         		}
         	}
@@ -465,7 +465,7 @@ namespace LomsonLib.UI
 		/// <summary>
 		/// If multichecking management is enabled and a checkbox status is changed for
 		///  several items, the event launchOnItemChecked will be launched after
-		///  item will be Checked or Unchecked.
+		///  item will be Checked or Unchecked.<br/>
 		/// When multichecking management is enabled, it is not recommended to subscribe
 		///  to event "ItemChecked" without using ListViewLayoutManager.
 		/// </summary>
@@ -726,12 +726,12 @@ namespace LomsonLib.UI
 				if (defaultSwapped) Comparer.Swap();
 			}
 			
-			public override int Compare(ListViewItem lvi1, ListViewItem lvi2){
+			public override int Compare(ListViewItem obj1, ListViewItem obj2){
 				
 				Comparer.RevertSwapToDefault();
 				
-				String str1 = lvi1.SubItems[ColumnNumber].Text;
-				String str2 = lvi2.SubItems[ColumnNumber].Text;
+				String str1 = obj1.SubItems[ColumnNumber].Text;
+				String str2 = obj2.SubItems[ColumnNumber].Text;
 				return Comparer.Compare( str1, str2);
 
 			}
@@ -791,7 +791,7 @@ namespace LomsonLib.UI
 			{
 				string strCur = ch.Text, strNew = null;
 
-				if(strCur.EndsWith(strAsc) || strCur.EndsWith(strDsc))
+				if(strCur.EndsWith(strAsc, StringComparison.CurrentCulture) || strCur.EndsWith(strDsc, StringComparison.CurrentCulture))
 				{
 					strNew = strCur.Substring(0, strCur.Length - strAsc.Length);
 					strCur = strNew;
@@ -893,15 +893,16 @@ namespace LomsonLib.UI
 		/// This delegate will be launched each time:
 		/// <list type="bullet">
 		///  <item>
-		///     <description>an item will be checked/unchecked</description>
+		///     <description>an item is checked/unchecked</description>
 		///  </item>
 		///  <item>
-		///     <description>an item will selected/unselected</description>
+		///     <description>an item is selected/unselected</description>
 		///  </item>
 		/// </list>
-        ///  %1 will be replaced by number of Items.
-        ///  %2 will be replaced by number of Selected Items
-        ///  %3 will be replace by number of Checked Items
+		/// <br/>
+        ///  %1 will be replaced by number of Items.<br/>
+        ///  %2 will be replaced by number of Selected Items<br/>
+        ///  %3 will be replace by number of Checked Items<br/>
 		/// </summary>
 		public delegate void dlgStatisticMessageUpdater(String newText);
 		
@@ -929,9 +930,9 @@ namespace LomsonLib.UI
 		/// <summary>
 		/// Assign an delegate that will be launched to update statistics message
 		/// </summary>
-		/// <param name="statAdapter"></param>
+		/// <param name="statMessageAdapter"></param>
 		/// <param name="launchWhenCheckItemsChanges"></param>
-		/// <param name="launchWhenSelected_ItemsChanges"></param>
+		/// <param name="launchWhenSelectedItemsChanges"></param>
 		/// <param name="strTemplate"></param>
 		public void AssignStatisticMessageUpdater( dlgStatisticMessageUpdater statMessageAdapter,
 		  bool launchWhenCheckItemsChanges,
