@@ -12,6 +12,11 @@ Installation instructions
 Put the .plgx file into a folder called "plugins" inside your
 KeePass Password Safe installation folder
 
+
+Version 1.0.0
+-------------
+- Add support for downloading icons from url of entries
+
 Version 0.3.0
 -------------
 - Display size of icons in the list icon view
