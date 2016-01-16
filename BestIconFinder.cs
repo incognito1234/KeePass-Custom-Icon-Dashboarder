@@ -67,13 +67,17 @@ namespace CustomIconDashboarderPlugin
 		
 		#endregion		
 		
+		
+		public Image BestImage {get; private set; }
+		
 		public Uri SiteUri {get; private set;}
 		public Uri OriginalSiteUri {get; private set;}
 		public Uri RootUriForIco {get; private set;}
 		public FinderResult Result {get; private set; }
 		public List<Uri> ListUriIcons {get; private set;}
 		public string Details {get;set; }
-		public Image BestImage {get; private set; }
+		
+		public List<ImageInfo> ListImageInfo {get; private set;}
 		
 		private MyLogger myLogger;
 		
@@ -90,6 +94,7 @@ namespace CustomIconDashboarderPlugin
 			}
 			this.myLogger = new MyLogger(this);
 			this.BestImage = null;
+			this.ListImageInfo = new List<ImageInfo>();
 		}
 		
 		public BestIconFinder()
@@ -98,6 +103,7 @@ namespace CustomIconDashboarderPlugin
 			this.Result = new FinderResult(FinderResult.RESULT_NO_URL);
 			this.myLogger = new MyLogger(this);
 			this.BestImage = null;
+			this.ListImageInfo = new List<ImageInfo>();
 		}
 		
 		
@@ -218,7 +224,7 @@ namespace CustomIconDashboarderPlugin
 			   
 			   if (downloadedImage != null) {
 				   this.myLogger.LogDebug( "Size " + downloadedImage.Width + " x " + downloadedImage.Height );
-				   
+				   this.ListImageInfo.Add( new ImageInfo( downloadedImage,uriToBeTested.AbsolutePath) );
 				   if ( (this.BestImage == null ) ||
 				       (CompareImageQuality( downloadedImage, this.BestImage) == 1) ) {
 					   	this.BestImage = downloadedImage;

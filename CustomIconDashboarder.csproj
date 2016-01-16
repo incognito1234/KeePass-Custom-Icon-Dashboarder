@@ -99,6 +99,7 @@
       <DependentUpon>DashboarderForm.cs</DependentUpon>
     </Compile>
     <Compile Include="CustomIconDashboarderExt.cs" />
+    <Compile Include="ImageInfo.cs" />
     <Compile Include="Lib\CollectionUtil.cs" />
     <Compile Include="Lib\CompatibilityManager.cs" />
     <Compile Include="Lib\LomsonDebugLib.cs" />
