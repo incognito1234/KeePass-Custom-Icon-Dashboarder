@@ -68,6 +68,7 @@ namespace CustomIconDashboarderPlugin
 			this.pbo_downloadedIcon16 = new System.Windows.Forms.PictureBox();
 			this.pbo_downloadedIcon32 = new System.Windows.Forms.PictureBox();
 			this.lbl_newSize = new System.Windows.Forms.Label();
+			this.m_lvDownloadResult = new System.Windows.Forms.ListView();
 			this.tpa_Debug = new System.Windows.Forms.TabPage();
 			this.rtb_details = new System.Windows.Forms.RichTextBox();
 			this.tlp_upperRight = new System.Windows.Forms.TableLayoutPanel();
@@ -89,6 +90,9 @@ namespace CustomIconDashboarderPlugin
 			this.bto_OK = new System.Windows.Forms.Button();
 			this.tlp_main = new System.Windows.Forms.TableLayoutPanel();
 			this.tlp_bottom = new System.Windows.Forms.TableLayoutPanel();
+			this.lbl_alldownloadedicons = new System.Windows.Forms.Label();
+			this.rbu_icons = new System.Windows.Forms.RadioButton();
+			this.rbu_details = new System.Windows.Forms.RadioButton();
 			((System.ComponentModel.ISupportInitialize)(this.pbo_selectedIcon128)).BeginInit();
 			this.spc_mainSplitter.Panel1.SuspendLayout();
 			this.spc_mainSplitter.Panel2.SuspendLayout();
@@ -363,14 +367,19 @@ namespace CustomIconDashboarderPlugin
 			this.tlp_downloadResult.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
 			this.tlp_downloadResult.Controls.Add(this.scltp_downloadResult, 0, 1);
 			this.tlp_downloadResult.Controls.Add(this.lbl_newSize, 1, 0);
+			this.tlp_downloadResult.Controls.Add(this.m_lvDownloadResult, 0, 4);
+			this.tlp_downloadResult.Controls.Add(this.lbl_alldownloadedicons, 0, 3);
+			this.tlp_downloadResult.Controls.Add(this.rbu_icons, 1, 3);
+			this.tlp_downloadResult.Controls.Add(this.rbu_details, 2, 3);
 			this.tlp_downloadResult.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tlp_downloadResult.Location = new System.Drawing.Point(3, 3);
 			this.tlp_downloadResult.Name = "tlp_downloadResult";
-			this.tlp_downloadResult.RowCount = 3;
+			this.tlp_downloadResult.RowCount = 5;
 			this.tlp_downloadResult.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
 			this.tlp_downloadResult.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tlp_downloadResult.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tlp_downloadResult.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+			this.tlp_downloadResult.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+			this.tlp_downloadResult.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tlp_downloadResult.Size = new System.Drawing.Size(501, 279);
 			this.tlp_downloadResult.TabIndex = 0;
 			// 
@@ -459,6 +468,17 @@ namespace CustomIconDashboarderPlugin
 			this.lbl_newSize.TabIndex = 4;
 			this.lbl_newSize.Text = "New Size :";
 			this.lbl_newSize.TextAlign = System.Drawing.ContentAlignment.TopRight;
+			// 
+			// m_lvDownloadResult
+			// 
+			this.tlp_downloadResult.SetColumnSpan(this.m_lvDownloadResult, 4);
+			this.m_lvDownloadResult.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.m_lvDownloadResult.FullRowSelect = true;
+			this.m_lvDownloadResult.Location = new System.Drawing.Point(3, 227);
+			this.m_lvDownloadResult.Name = "m_lvDownloadResult";
+			this.m_lvDownloadResult.Size = new System.Drawing.Size(495, 49);
+			this.m_lvDownloadResult.TabIndex = 5;
+			this.m_lvDownloadResult.UseCompatibleStateImageBehavior = false;
 			// 
 			// tpa_Debug
 			// 
@@ -736,6 +756,44 @@ namespace CustomIconDashboarderPlugin
 			this.tlp_bottom.Size = new System.Drawing.Size(870, 29);
 			this.tlp_bottom.TabIndex = 9;
 			// 
+			// lbl_alldownloadedicons
+			// 
+			this.lbl_alldownloadedicons.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.lbl_alldownloadedicons.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.lbl_alldownloadedicons.Location = new System.Drawing.Point(3, 204);
+			this.lbl_alldownloadedicons.Name = "lbl_alldownloadedicons";
+			this.lbl_alldownloadedicons.Size = new System.Drawing.Size(244, 20);
+			this.lbl_alldownloadedicons.TabIndex = 6;
+			this.lbl_alldownloadedicons.Text = "All downloaded icons";
+			// 
+			// rbu_icons
+			// 
+			this.rbu_icons.Checked = true;
+			this.rbu_icons.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.rbu_icons.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.rbu_icons.Location = new System.Drawing.Point(250, 204);
+			this.rbu_icons.Margin = new System.Windows.Forms.Padding(0);
+			this.rbu_icons.Name = "rbu_icons";
+			this.rbu_icons.Size = new System.Drawing.Size(125, 20);
+			this.rbu_icons.TabIndex = 7;
+			this.rbu_icons.TabStop = true;
+			this.rbu_icons.Text = "Icons only";
+			this.rbu_icons.UseVisualStyleBackColor = true;
+			// 
+			// rbu_details
+			// 
+			this.tlp_downloadResult.SetColumnSpan(this.rbu_details, 2);
+			this.rbu_details.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.rbu_details.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.rbu_details.Location = new System.Drawing.Point(375, 204);
+			this.rbu_details.Margin = new System.Windows.Forms.Padding(0);
+			this.rbu_details.Name = "rbu_details";
+			this.rbu_details.Size = new System.Drawing.Size(126, 20);
+			this.rbu_details.TabIndex = 8;
+			this.rbu_details.Text = "Icons + Details";
+			this.rbu_details.UseVisualStyleBackColor = true;
+			this.rbu_details.CheckedChanged += new System.EventHandler(this.OnDetailsCheckedChanged);
+			// 
 			// DashboarderForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -826,6 +884,10 @@ namespace CustomIconDashboarderPlugin
 		private System.Windows.Forms.TableLayoutPanel tlp_bottom;
 		private System.Windows.Forms.RichTextBox rtb_details;
 		private System.Windows.Forms.TabPage tpa_Debug;
+		private System.Windows.Forms.ListView m_lvDownloadResult;
+		private System.Windows.Forms.Label lbl_alldownloadedicons;
+		private System.Windows.Forms.RadioButton rbu_icons;
+		private System.Windows.Forms.RadioButton rbu_details;
 
 		
 		void DashboarderLoad(object sender, System.EventArgs e)

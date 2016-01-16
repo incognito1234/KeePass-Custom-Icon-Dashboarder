@@ -53,6 +53,7 @@ namespace CustomIconDashboarderPlugin
 		private ListViewLayoutManager  m_lvIconsColumnSorter;
 		private ListViewLayoutManager  m_lvGroupsColumnSorter;
 		private ListViewLayoutManager  m_lvEntriesColumnSorter;
+		private ListViewLayoutManager  m_lvDownloadResultColumnSorter;
 		
 		public DashboarderForm(IPluginHost pluginHost)
 		{
@@ -178,7 +179,23 @@ namespace CustomIconDashboarderPlugin
 			m_lvIconsColumnSorter.EnableMultiCheckingControl();
 			
 			m_lvIconsColumnSorter.ApplyToListView( this.m_lvViewIcon );
+			
 			ehMulti(null); // Disable buttons
+			
+			// List DownloadResult
+			m_lvDownloadResult.Columns.Add("id", 40);
+			m_lvDownloadResult.Columns.Add("Size", 40);
+			m_lvDownloadResult.Columns.Add("URL", 150, HorizontalAlignment.Left );
+		
+			m_lvDownloadResultColumnSorter = new ListViewLayoutManager();
+			m_lvDownloadResultColumnSorter.AddColumnComparer(0, new IntegerAsStringComparer(false) );
+			m_lvDownloadResultColumnSorter.AddColumnComparer(1, new SizeComparer(false) );
+			m_lvDownloadResultColumnSorter.AddColumnComparer(2, new LomsonLib.UI.StringComparer(false,true) );
+			
+			m_lvDownloadResultColumnSorter.AutoWidthColumn = true;
+			m_lvDownloadResultColumnSorter.AddDefaultSortedColumn(0,false);
+			m_lvDownloadResultColumnSorter.ApplyToListView(m_lvDownloadResult);
+			
 					
 			CreateCustomIconList(ilCustom);
 			
@@ -506,11 +523,42 @@ namespace CustomIconDashboarderPlugin
 							bif.BestImage.Width +
 							" x " +
 							bif.BestImage.Height;
+						
+						
+						m_lvDownloadResult.Items.Clear();
+						IEnumerator<ImageInfo> enumImageInfo = bif.ListImageInfo.GetEnumerator();
+						m_lvDownloadResult.LargeImageList = new ImageList();
+						m_lvDownloadResult.SmallImageList = new ImageList();
+						m_lvDownloadResult.LargeImageList.ImageSize = new Size(32, 32);
+						m_lvDownloadResult.LargeImageList.ColorDepth = ColorDepth.Depth32Bit;
+						m_lvDownloadResult.SmallImageList.ImageSize = new Size(32, 32);
+						m_lvDownloadResult.SmallImageList.ColorDepth = ColorDepth.Depth32Bit;
+						
+						int ii = 0;
+						while (enumImageInfo.MoveNext()) {
+							ImageInfo myImageInfo = enumImageInfo.Current;
+							ii++;
+							ListViewItem lviImageInfo = 
+								new ListViewItem( ii.ToString(NumberFormatInfo.InvariantInfo )
+								                 );
+							lviImageInfo.SubItems.Add( myImageInfo.ImgData.Width.ToString(NumberFormatInfo.InvariantInfo)
+								              + "x" 
+								              + myImageInfo.ImgData.Height.ToString(NumberFormatInfo.InvariantInfo));
+							lviImageInfo.SubItems.Add( myImageInfo.Url );
+							lviImageInfo.ImageIndex = ii-1;
+							Image smallImage = CompatibilityManager.ResizedImage(
+								myImageInfo.ImgData,
+								32, 32);
+							m_lvDownloadResult.LargeImageList.Images.Add( smallImage );
+							m_lvDownloadResult.SmallImageList.Images.Add( smallImage );
+							m_lvDownloadResult.Items.Add(lviImageInfo);
+							
 						}
-						else {
-							cleanImage = true;
-					
-						}
+					}
+					else {
+						cleanImage = true;
+						m_lvDownloadResult.Items.Clear();
+					}
 				     rtb_details.Text=bif.Details;
 			
 					}
@@ -523,6 +571,7 @@ namespace CustomIconDashboarderPlugin
 						pbo_downloadedIcon64.BackgroundImage = null;
 						pbo_downloadedIcon32.BackgroundImage = null;
 						pbo_downloadedIcon16.BackgroundImage = null;
+						m_lvDownloadResult.Items.Clear();
 						lbl_newSize.Text = "New Size :";
 						
 					}
@@ -640,6 +689,15 @@ namespace CustomIconDashboarderPlugin
 		private void NotifyDatabaseModificationAndUpdateMainForm() {
 			m_PluginHost.Database.Modified = true;
 			m_PluginHost.MainWindow.UpdateUI(true, null, false, null, true, null, true);
+		}
+		void OnDetailsCheckedChanged(object sender, EventArgs e)
+		{
+			if (rbu_details.Checked) {
+				m_lvDownloadResult.View = View.Details;
+			}
+			else {
+				m_lvDownloadResult.View = View.LargeIcon;
+			}
 		}
 		
 	}
