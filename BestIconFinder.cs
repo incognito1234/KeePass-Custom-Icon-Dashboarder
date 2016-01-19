@@ -70,16 +70,16 @@ namespace CustomIconDashboarderPlugin
 		
 		public Image BestImage {get; private set; }
 		
-		public Uri SiteUri {get; private set;}
-		public Uri OriginalSiteUri {get; private set;}
+		public Uri SiteUri {get; private set;} // Uri without path - eg http://www.sample.com
+		public Uri OriginalSiteUri {get; private set;} // Original URI with all path - eg http://www.sample.com/folder/subfolder
 		public Uri RootUriForIco {get; private set;}
 		public FinderResult Result {get; private set; }
-		public List<Uri> ListUriIcons {get; private set;}
 		public string Details {get;set; }
 		
 		public List<ImageInfo> ListImageInfo {get; private set;}
 		
 		private MyLogger myLogger;
+		private List<Uri> ListUriIcons {get; set;}
 		
 		public BestIconFinder(Uri siteUri)
 		{
@@ -642,16 +642,27 @@ namespace CustomIconDashboarderPlugin
 	
 	public sealed class FinderResult {
 		
-		public static int RESULT_NOT_YET_SEARCH = 0;
-		public static int RESULT_OK = 1;
-		public static int RESULT_HTML_NOT_FOUND = 2;
-		public static int RESULT_HTML_PARSING = 3;
-		public static int RESULT_NO_URL = 4;
+		public const int RESULT_NOT_YET_SEARCH = 0;
+		public const int RESULT_OK = 1;
+		public const int RESULT_HTML_NOT_FOUND = 2;
+		public const int RESULT_HTML_PARSING = 3;
+		public const int RESULT_NO_URL = 4;
 		
 		public int ResultCode {get; private set; }
 		public FinderResult (int code) 
 		{
 			ResultCode = code;
+		}
+		
+		public override string ToString() {
+			switch (this.ResultCode) {
+				case FinderResult.RESULT_NOT_YET_SEARCH : return "Not Yet Search";
+				case RESULT_OK : return "OK";
+				case RESULT_HTML_NOT_FOUND : return "Html not found";
+				case RESULT_HTML_PARSING : return "Errot Html parsing";
+				case RESULT_NO_URL : return "No URL";
+				default : return "";
+			}
 		}
 	}
 	
