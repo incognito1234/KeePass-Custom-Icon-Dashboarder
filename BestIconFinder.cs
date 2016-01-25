@@ -39,14 +39,12 @@ namespace CustomIconDashboarderPlugin
 		/// <summary>
 		/// STATIC Section
 		/// </summary>
-		private static MyWebClient client;
 		
 		
 		public static void InitClass() {
-			client = new MyWebClient();
 		}
 		
-		public static void DisposeClass() {
+		~BestIconFinder() {
 			client.Dispose();
 		}
 		
@@ -75,6 +73,7 @@ namespace CustomIconDashboarderPlugin
 		public Uri RootUriForIco {get; private set;}
 		public FinderResult Result {get; private set; }
 		public string Details {get;set; }
+		private MyWebClient client;
 		
 		public List<ImageInfo> ListImageInfo {get; private set;}
 		
@@ -95,6 +94,7 @@ namespace CustomIconDashboarderPlugin
 			this.myLogger = new MyLogger(this);
 			this.BestImage = null;
 			this.ListImageInfo = new List<ImageInfo>();
+			client = new MyWebClient();
 		}
 		
 		public BestIconFinder()
@@ -104,6 +104,7 @@ namespace CustomIconDashboarderPlugin
 			this.myLogger = new MyLogger(this);
 			this.BestImage = null;
 			this.ListImageInfo = new List<ImageInfo>();
+			client = new MyWebClient();
 		}
 		
 		

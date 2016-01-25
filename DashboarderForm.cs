@@ -81,7 +81,6 @@ namespace CustomIconDashboarderPlugin
 		
 		private void OnFormDispose()
 		{
-			BestIconFinder.DisposeClass();
 		}
 		
 		private void InitEx()
