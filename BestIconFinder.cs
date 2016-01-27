@@ -307,8 +307,12 @@ namespace CustomIconDashboarderPlugin
 							this.myLogger.LogWarn("Zero Length URL found for xpath ");
 						}
 						else {
-							Uri uriPicture = new Uri( this.RootUriForIco, relativeUrlPicture);
-							this.ListUriIcons.Add( uriPicture);
+							var uriPicture = new Uri(this.RootUriForIco, relativeUrlPicture);
+							
+							if (!this.ListUriIcons.Exists((Uri myUri) => myUri == uriPicture)) {
+								this.ListUriIcons.Add( uriPicture);
+							}
+							
 							this.myLogger.LogDebug("URL = '" + uriPicture.AbsoluteUri + "'");
 						}
 					}
