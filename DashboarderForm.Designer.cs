@@ -45,7 +45,6 @@ namespace CustomIconDashboarderPlugin
 		private void InitializeComponent()
 		{
 			this.m_lvViewIcon = new KeePass.UI.CustomListViewEx();
-			this.lbl_title = new System.Windows.Forms.Label();
 			this.m_lvUsedEntries = new KeePass.UI.CustomListViewEx();
 			this.m_lvUsedGroups = new KeePass.UI.CustomListViewEx();
 			this.lbl_usedinentries = new System.Windows.Forms.Label();
@@ -53,8 +52,27 @@ namespace CustomIconDashboarderPlugin
 			this.pbo_selectedIcon128 = new System.Windows.Forms.PictureBox();
 			this.spc_mainSplitter = new System.Windows.Forms.SplitContainer();
 			this.tlp_topright = new System.Windows.Forms.TableLayoutPanel();
+			this.tco_lists = new System.Windows.Forms.TabControl();
+			this.tpa_listAllIcons = new System.Windows.Forms.TabPage();
+			this.tlp_allIcons = new System.Windows.Forms.TableLayoutPanel();
 			this.cb_allIconsSelection = new System.Windows.Forms.CheckBox();
+			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+			this.cbo_actionSelector = new System.Windows.Forms.ComboBox();
+			this.btn_perform = new System.Windows.Forms.Button();
+			this.tpa_listAllEntries = new System.Windows.Forms.TabPage();
 			this.tlp_right = new System.Windows.Forms.TableLayoutPanel();
+			this.tlp_upperRight = new System.Windows.Forms.TableLayoutPanel();
+			this.lbl_originalSize = new System.Windows.Forms.Label();
+			this.lbl_selectedIcon = new System.Windows.Forms.Label();
+			this.lbl_128x128 = new System.Windows.Forms.Label();
+			this.lbl_64x64 = new System.Windows.Forms.Label();
+			this.lbl_32x32 = new System.Windows.Forms.Label();
+			this.lbl_16x16 = new System.Windows.Forms.Label();
+			this.scltp_icons = new LomsonLib.UI.ScaleControlTableLayoutPanel();
+			this.pbo_selectedIcon16 = new System.Windows.Forms.PictureBox();
+			this.pbo_selectedIcon32 = new System.Windows.Forms.PictureBox();
+			this.pbo_selectedIcon64 = new System.Windows.Forms.PictureBox();
+			this.bto_OK = new System.Windows.Forms.Button();
 			this.tco_right = new System.Windows.Forms.TabControl();
 			this.tpa_IconUsage = new System.Windows.Forms.TabPage();
 			this.spc_right = new System.Windows.Forms.SplitContainer();
@@ -69,36 +87,27 @@ namespace CustomIconDashboarderPlugin
 			this.pbo_downloadedIcon32 = new System.Windows.Forms.PictureBox();
 			this.lbl_newSize = new System.Windows.Forms.Label();
 			this.m_lvDownloadResult = new System.Windows.Forms.ListView();
-			this.tpa_Debug = new System.Windows.Forms.TabPage();
-			this.rtb_details = new System.Windows.Forms.RichTextBox();
-			this.tlp_upperRight = new System.Windows.Forms.TableLayoutPanel();
-			this.lbl_originalSize = new System.Windows.Forms.Label();
-			this.lbl_selectedIcon = new System.Windows.Forms.Label();
-			this.lbl_128x128 = new System.Windows.Forms.Label();
-			this.lbl_64x64 = new System.Windows.Forms.Label();
-			this.lbl_32x32 = new System.Windows.Forms.Label();
-			this.lbl_16x16 = new System.Windows.Forms.Label();
-			this.scltp_icons = new LomsonLib.UI.ScaleControlTableLayoutPanel();
-			this.pbo_selectedIcon16 = new System.Windows.Forms.PictureBox();
-			this.pbo_selectedIcon32 = new System.Windows.Forms.PictureBox();
-			this.pbo_selectedIcon64 = new System.Windows.Forms.PictureBox();
-			this.flp_buttons = new System.Windows.Forms.FlowLayoutPanel();
-			this.btn_ModifyIcon = new System.Windows.Forms.Button();
-			this.btn_removeIcons = new System.Windows.Forms.Button();
-			this.btn_download = new System.Windows.Forms.Button();
-			this.btn_choose = new System.Windows.Forms.Button();
-			this.bto_OK = new System.Windows.Forms.Button();
-			this.tlp_main = new System.Windows.Forms.TableLayoutPanel();
-			this.tlp_bottom = new System.Windows.Forms.TableLayoutPanel();
 			this.lbl_alldownloadedicons = new System.Windows.Forms.Label();
 			this.rbu_icons = new System.Windows.Forms.RadioButton();
 			this.rbu_details = new System.Windows.Forms.RadioButton();
+			this.tpa_Debug = new System.Windows.Forms.TabPage();
+			this.rtb_details = new System.Windows.Forms.RichTextBox();
+			this.tlp_main = new System.Windows.Forms.TableLayoutPanel();
 			((System.ComponentModel.ISupportInitialize)(this.pbo_selectedIcon128)).BeginInit();
 			this.spc_mainSplitter.Panel1.SuspendLayout();
 			this.spc_mainSplitter.Panel2.SuspendLayout();
 			this.spc_mainSplitter.SuspendLayout();
 			this.tlp_topright.SuspendLayout();
+			this.tco_lists.SuspendLayout();
+			this.tpa_listAllIcons.SuspendLayout();
+			this.tlp_allIcons.SuspendLayout();
+			this.flowLayoutPanel1.SuspendLayout();
 			this.tlp_right.SuspendLayout();
+			this.tlp_upperRight.SuspendLayout();
+			this.scltp_icons.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.pbo_selectedIcon16)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.pbo_selectedIcon32)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.pbo_selectedIcon64)).BeginInit();
 			this.tco_right.SuspendLayout();
 			this.tpa_IconUsage.SuspendLayout();
 			this.spc_right.Panel1.SuspendLayout();
@@ -114,42 +123,27 @@ namespace CustomIconDashboarderPlugin
 			((System.ComponentModel.ISupportInitialize)(this.pbo_downloadedIcon16)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.pbo_downloadedIcon32)).BeginInit();
 			this.tpa_Debug.SuspendLayout();
-			this.tlp_upperRight.SuspendLayout();
-			this.scltp_icons.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.pbo_selectedIcon16)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.pbo_selectedIcon32)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.pbo_selectedIcon64)).BeginInit();
-			this.flp_buttons.SuspendLayout();
 			this.tlp_main.SuspendLayout();
-			this.tlp_bottom.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// m_lvViewIcon
 			// 
+			this.m_lvViewIcon.Activation = System.Windows.Forms.ItemActivation.OneClick;
 			this.m_lvViewIcon.AllowColumnReorder = true;
+			this.m_lvViewIcon.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.m_lvViewIcon.CheckBoxes = true;
 			this.m_lvViewIcon.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.m_lvViewIcon.FullRowSelect = true;
+			this.m_lvViewIcon.GridLines = true;
 			this.m_lvViewIcon.HideSelection = false;
-			this.m_lvViewIcon.Location = new System.Drawing.Point(15, 28);
-			this.m_lvViewIcon.Margin = new System.Windows.Forms.Padding(15, 3, 15, 2);
+			this.m_lvViewIcon.Location = new System.Drawing.Point(0, 0);
+			this.m_lvViewIcon.Margin = new System.Windows.Forms.Padding(0);
 			this.m_lvViewIcon.Name = "m_lvViewIcon";
-			this.m_lvViewIcon.Size = new System.Drawing.Size(307, 457);
+			this.m_lvViewIcon.Size = new System.Drawing.Size(316, 464);
 			this.m_lvViewIcon.TabIndex = 0;
 			this.m_lvViewIcon.UseCompatibleStateImageBehavior = false;
 			this.m_lvViewIcon.View = System.Windows.Forms.View.Details;
 			this.m_lvViewIcon.SelectedIndexChanged += new System.EventHandler(this.OnLvViewIconSelectedIndexChanged);
-			// 
-			// lbl_title
-			// 
-			this.lbl_title.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.lbl_title.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lbl_title.Location = new System.Drawing.Point(3, 0);
-			this.lbl_title.Name = "lbl_title";
-			this.lbl_title.Size = new System.Drawing.Size(331, 25);
-			this.lbl_title.TabIndex = 1;
-			this.lbl_title.Text = "Custom Icon Statistics";
-			this.lbl_title.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// m_lvUsedEntries
 			// 
@@ -157,8 +151,8 @@ namespace CustomIconDashboarderPlugin
 			this.m_lvUsedEntries.Location = new System.Drawing.Point(28, 36);
 			this.m_lvUsedEntries.Margin = new System.Windows.Forms.Padding(3, 15, 15, 15);
 			this.m_lvUsedEntries.Name = "m_lvUsedEntries";
-			this.m_lvUsedEntries.Size = new System.Drawing.Size(458, 86);
-			this.m_lvUsedEntries.TabIndex = 2;
+			this.m_lvUsedEntries.Size = new System.Drawing.Size(465, 80);
+			this.m_lvUsedEntries.TabIndex = 0;
 			this.m_lvUsedEntries.UseCompatibleStateImageBehavior = false;
 			this.m_lvUsedEntries.View = System.Windows.Forms.View.Details;
 			// 
@@ -168,7 +162,7 @@ namespace CustomIconDashboarderPlugin
 			this.m_lvUsedGroups.Location = new System.Drawing.Point(28, 36);
 			this.m_lvUsedGroups.Margin = new System.Windows.Forms.Padding(3, 15, 15, 15);
 			this.m_lvUsedGroups.Name = "m_lvUsedGroups";
-			this.m_lvUsedGroups.Size = new System.Drawing.Size(458, 87);
+			this.m_lvUsedGroups.Size = new System.Drawing.Size(465, 102);
 			this.m_lvUsedGroups.TabIndex = 3;
 			this.m_lvUsedGroups.UseCompatibleStateImageBehavior = false;
 			this.m_lvUsedGroups.View = System.Windows.Forms.View.Details;
@@ -181,7 +175,7 @@ namespace CustomIconDashboarderPlugin
 			this.lbl_usedinentries.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.lbl_usedinentries.Location = new System.Drawing.Point(3, 0);
 			this.lbl_usedinentries.Name = "lbl_usedinentries";
-			this.lbl_usedinentries.Size = new System.Drawing.Size(495, 21);
+			this.lbl_usedinentries.Size = new System.Drawing.Size(502, 21);
 			this.lbl_usedinentries.TabIndex = 4;
 			this.lbl_usedinentries.Text = "Used by entries";
 			this.lbl_usedinentries.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -193,7 +187,7 @@ namespace CustomIconDashboarderPlugin
 			this.lbl_usedInGroups.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.lbl_usedInGroups.Location = new System.Drawing.Point(3, 0);
 			this.lbl_usedInGroups.Name = "lbl_usedInGroups";
-			this.lbl_usedInGroups.Size = new System.Drawing.Size(495, 21);
+			this.lbl_usedInGroups.Size = new System.Drawing.Size(502, 21);
 			this.lbl_usedInGroups.TabIndex = 5;
 			this.lbl_usedInGroups.Text = "Used by groups";
 			this.lbl_usedInGroups.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -204,7 +198,7 @@ namespace CustomIconDashboarderPlugin
 			this.pbo_selectedIcon128.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 			this.pbo_selectedIcon128.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
 			this.pbo_selectedIcon128.InitialImage = null;
-			this.pbo_selectedIcon128.Location = new System.Drawing.Point(62, 11);
+			this.pbo_selectedIcon128.Location = new System.Drawing.Point(67, 11);
 			this.pbo_selectedIcon128.Name = "pbo_selectedIcon128";
 			this.pbo_selectedIcon128.Size = new System.Drawing.Size(132, 132);
 			this.pbo_selectedIcon128.TabIndex = 6;
@@ -214,292 +208,151 @@ namespace CustomIconDashboarderPlugin
 			// 
 			this.spc_mainSplitter.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
 			this.spc_mainSplitter.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.spc_mainSplitter.Location = new System.Drawing.Point(3, 3);
+			this.spc_mainSplitter.Location = new System.Drawing.Point(0, 0);
+			this.spc_mainSplitter.Margin = new System.Windows.Forms.Padding(0);
 			this.spc_mainSplitter.Name = "spc_mainSplitter";
 			// 
 			// spc_mainSplitter.Panel1
 			// 
 			this.spc_mainSplitter.Panel1.Controls.Add(this.tlp_topright);
-			this.spc_mainSplitter.Panel1MinSize = 110;
+			this.spc_mainSplitter.Panel1MinSize = 300;
 			// 
 			// spc_mainSplitter.Panel2
 			// 
 			this.spc_mainSplitter.Panel2.Controls.Add(this.tlp_right);
 			this.spc_mainSplitter.Panel2MinSize = 110;
-			this.spc_mainSplitter.Size = new System.Drawing.Size(870, 521);
-			this.spc_mainSplitter.SplitterDistance = 341;
+			this.spc_mainSplitter.Size = new System.Drawing.Size(876, 557);
+			this.spc_mainSplitter.SplitterDistance = 328;
 			this.spc_mainSplitter.TabIndex = 8;
 			// 
 			// tlp_topright
 			// 
+			this.tlp_topright.BackColor = System.Drawing.SystemColors.Control;
 			this.tlp_topright.ColumnCount = 1;
 			this.tlp_topright.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tlp_topright.Controls.Add(this.m_lvViewIcon, 0, 1);
-			this.tlp_topright.Controls.Add(this.lbl_title, 0, 0);
-			this.tlp_topright.Controls.Add(this.cb_allIconsSelection, 0, 2);
+			this.tlp_topright.Controls.Add(this.tco_lists, 0, 0);
 			this.tlp_topright.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tlp_topright.Location = new System.Drawing.Point(0, 0);
 			this.tlp_topright.Name = "tlp_topright";
-			this.tlp_topright.RowCount = 3;
-			this.tlp_topright.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
+			this.tlp_topright.RowCount = 1;
 			this.tlp_topright.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tlp_topright.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
-			this.tlp_topright.Size = new System.Drawing.Size(337, 517);
+			this.tlp_topright.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 553F));
+			this.tlp_topright.Size = new System.Drawing.Size(324, 553);
 			this.tlp_topright.TabIndex = 0;
+			// 
+			// tco_lists
+			// 
+			this.tco_lists.Appearance = System.Windows.Forms.TabAppearance.FlatButtons;
+			this.tco_lists.Controls.Add(this.tpa_listAllIcons);
+			this.tco_lists.Controls.Add(this.tpa_listAllEntries);
+			this.tco_lists.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.tco_lists.Location = new System.Drawing.Point(0, 0);
+			this.tco_lists.Margin = new System.Windows.Forms.Padding(0);
+			this.tco_lists.Name = "tco_lists";
+			this.tco_lists.SelectedIndex = 0;
+			this.tco_lists.Size = new System.Drawing.Size(324, 553);
+			this.tco_lists.TabIndex = 3;
+			// 
+			// tpa_listAllIcons
+			// 
+			this.tpa_listAllIcons.BackColor = System.Drawing.SystemColors.Control;
+			this.tpa_listAllIcons.Controls.Add(this.tlp_allIcons);
+			this.tpa_listAllIcons.Location = new System.Drawing.Point(4, 25);
+			this.tpa_listAllIcons.Margin = new System.Windows.Forms.Padding(0);
+			this.tpa_listAllIcons.Name = "tpa_listAllIcons";
+			this.tpa_listAllIcons.Size = new System.Drawing.Size(316, 524);
+			this.tpa_listAllIcons.TabIndex = 0;
+			this.tpa_listAllIcons.Text = "All Icons";
+			// 
+			// tlp_allIcons
+			// 
+			this.tlp_allIcons.ColumnCount = 1;
+			this.tlp_allIcons.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tlp_allIcons.Controls.Add(this.m_lvViewIcon, 0, 0);
+			this.tlp_allIcons.Controls.Add(this.cb_allIconsSelection, 0, 1);
+			this.tlp_allIcons.Controls.Add(this.flowLayoutPanel1, 0, 2);
+			this.tlp_allIcons.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.tlp_allIcons.Location = new System.Drawing.Point(0, 0);
+			this.tlp_allIcons.Name = "tlp_allIcons";
+			this.tlp_allIcons.RowCount = 3;
+			this.tlp_allIcons.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tlp_allIcons.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+			this.tlp_allIcons.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+			this.tlp_allIcons.Size = new System.Drawing.Size(316, 524);
+			this.tlp_allIcons.TabIndex = 0;
 			// 
 			// cb_allIconsSelection
 			// 
-			this.cb_allIconsSelection.Location = new System.Drawing.Point(15, 487);
-			this.cb_allIconsSelection.Margin = new System.Windows.Forms.Padding(15, 0, 0, 0);
+			this.cb_allIconsSelection.Location = new System.Drawing.Point(3, 464);
+			this.cb_allIconsSelection.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
 			this.cb_allIconsSelection.Name = "cb_allIconsSelection";
 			this.cb_allIconsSelection.Size = new System.Drawing.Size(129, 29);
 			this.cb_allIconsSelection.TabIndex = 2;
 			this.cb_allIconsSelection.Text = "&Check/Uncheck All";
 			this.cb_allIconsSelection.UseVisualStyleBackColor = true;
 			// 
+			// flowLayoutPanel1
+			// 
+			this.flowLayoutPanel1.Controls.Add(this.cbo_actionSelector);
+			this.flowLayoutPanel1.Controls.Add(this.btn_perform);
+			this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 497);
+			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+			this.flowLayoutPanel1.Size = new System.Drawing.Size(310, 24);
+			this.flowLayoutPanel1.TabIndex = 3;
+			// 
+			// cbo_actionSelector
+			// 
+			this.cbo_actionSelector.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.cbo_actionSelector.FormattingEnabled = true;
+			this.cbo_actionSelector.Items.AddRange(new object[] {
+			"-- Choose an action --",
+			"Modify",
+			"Remove",
+			"Download Best Icon",
+			"Pick Best Icon"});
+			this.cbo_actionSelector.Location = new System.Drawing.Point(3, 3);
+			this.cbo_actionSelector.Name = "cbo_actionSelector";
+			this.cbo_actionSelector.Size = new System.Drawing.Size(140, 21);
+			this.cbo_actionSelector.TabIndex = 3;
+			this.cbo_actionSelector.SelectedIndexChanged += new System.EventHandler(this.OnActionSelectorSelectedIndexChanged);
+			// 
+			// btn_perform
+			// 
+			this.btn_perform.Location = new System.Drawing.Point(149, 3);
+			this.btn_perform.Name = "btn_perform";
+			this.btn_perform.Size = new System.Drawing.Size(61, 21);
+			this.btn_perform.TabIndex = 4;
+			this.btn_perform.Text = "Go";
+			this.btn_perform.UseVisualStyleBackColor = true;
+			this.btn_perform.Click += new System.EventHandler(this.OnPerformClick);
+			// 
+			// tpa_listAllEntries
+			// 
+			this.tpa_listAllEntries.Location = new System.Drawing.Point(4, 25);
+			this.tpa_listAllEntries.Name = "tpa_listAllEntries";
+			this.tpa_listAllEntries.Padding = new System.Windows.Forms.Padding(3);
+			this.tpa_listAllEntries.Size = new System.Drawing.Size(316, 524);
+			this.tpa_listAllEntries.TabIndex = 1;
+			this.tpa_listAllEntries.Text = "All Entries";
+			this.tpa_listAllEntries.UseVisualStyleBackColor = true;
+			// 
 			// tlp_right
 			// 
 			this.tlp_right.ColumnCount = 1;
 			this.tlp_right.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tlp_right.Controls.Add(this.tco_right, 0, 1);
 			this.tlp_right.Controls.Add(this.tlp_upperRight, 0, 0);
+			this.tlp_right.Controls.Add(this.bto_OK, 0, 2);
+			this.tlp_right.Controls.Add(this.tco_right, 0, 1);
 			this.tlp_right.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tlp_right.Location = new System.Drawing.Point(0, 0);
 			this.tlp_right.Name = "tlp_right";
-			this.tlp_right.RowCount = 2;
+			this.tlp_right.RowCount = 3;
 			this.tlp_right.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tlp_right.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tlp_right.Size = new System.Drawing.Size(521, 517);
+			this.tlp_right.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 27F));
+			this.tlp_right.Size = new System.Drawing.Size(540, 553);
 			this.tlp_right.TabIndex = 0;
-			// 
-			// tco_right
-			// 
-			this.tco_right.Controls.Add(this.tpa_IconUsage);
-			this.tco_right.Controls.Add(this.tpa_DownloadResult);
-			this.tco_right.Controls.Add(this.tpa_Debug);
-			this.tco_right.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.tco_right.Location = new System.Drawing.Point(3, 203);
-			this.tco_right.Multiline = true;
-			this.tco_right.Name = "tco_right";
-			this.tco_right.SelectedIndex = 0;
-			this.tco_right.Size = new System.Drawing.Size(515, 311);
-			this.tco_right.TabIndex = 5;
-			// 
-			// tpa_IconUsage
-			// 
-			this.tpa_IconUsage.BackColor = System.Drawing.SystemColors.Control;
-			this.tpa_IconUsage.Controls.Add(this.spc_right);
-			this.tpa_IconUsage.Location = new System.Drawing.Point(4, 22);
-			this.tpa_IconUsage.Name = "tpa_IconUsage";
-			this.tpa_IconUsage.Padding = new System.Windows.Forms.Padding(3);
-			this.tpa_IconUsage.Size = new System.Drawing.Size(507, 285);
-			this.tpa_IconUsage.TabIndex = 0;
-			this.tpa_IconUsage.Text = "Icon Usage";
-			// 
-			// spc_right
-			// 
-			this.spc_right.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.spc_right.Location = new System.Drawing.Point(3, 3);
-			this.spc_right.Name = "spc_right";
-			this.spc_right.Orientation = System.Windows.Forms.Orientation.Horizontal;
-			// 
-			// spc_right.Panel1
-			// 
-			this.spc_right.Panel1.Controls.Add(this.tlp_usedEntries);
-			// 
-			// spc_right.Panel2
-			// 
-			this.spc_right.Panel2.Controls.Add(this.tlp_usedGroups);
-			this.spc_right.Size = new System.Drawing.Size(501, 279);
-			this.spc_right.SplitterDistance = 137;
-			this.spc_right.TabIndex = 2;
-			// 
-			// tlp_usedEntries
-			// 
-			this.tlp_usedEntries.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.tlp_usedEntries.ColumnCount = 2;
-			this.tlp_usedEntries.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-			this.tlp_usedEntries.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tlp_usedEntries.Controls.Add(this.lbl_usedinentries, 0, 0);
-			this.tlp_usedEntries.Controls.Add(this.m_lvUsedEntries, 1, 1);
-			this.tlp_usedEntries.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.tlp_usedEntries.Location = new System.Drawing.Point(0, 0);
-			this.tlp_usedEntries.Name = "tlp_usedEntries";
-			this.tlp_usedEntries.RowCount = 2;
-			this.tlp_usedEntries.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 21F));
-			this.tlp_usedEntries.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.tlp_usedEntries.Size = new System.Drawing.Size(501, 137);
-			this.tlp_usedEntries.TabIndex = 0;
-			// 
-			// tlp_usedGroups
-			// 
-			this.tlp_usedGroups.ColumnCount = 2;
-			this.tlp_usedGroups.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-			this.tlp_usedGroups.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tlp_usedGroups.Controls.Add(this.m_lvUsedGroups, 1, 1);
-			this.tlp_usedGroups.Controls.Add(this.lbl_usedInGroups, 0, 0);
-			this.tlp_usedGroups.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.tlp_usedGroups.Location = new System.Drawing.Point(0, 0);
-			this.tlp_usedGroups.Name = "tlp_usedGroups";
-			this.tlp_usedGroups.RowCount = 2;
-			this.tlp_usedGroups.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 21F));
-			this.tlp_usedGroups.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tlp_usedGroups.Size = new System.Drawing.Size(501, 138);
-			this.tlp_usedGroups.TabIndex = 0;
-			// 
-			// tpa_DownloadResult
-			// 
-			this.tpa_DownloadResult.BackColor = System.Drawing.SystemColors.Control;
-			this.tpa_DownloadResult.Controls.Add(this.tlp_downloadResult);
-			this.tpa_DownloadResult.Location = new System.Drawing.Point(4, 22);
-			this.tpa_DownloadResult.Name = "tpa_DownloadResult";
-			this.tpa_DownloadResult.Padding = new System.Windows.Forms.Padding(3);
-			this.tpa_DownloadResult.Size = new System.Drawing.Size(507, 285);
-			this.tpa_DownloadResult.TabIndex = 1;
-			this.tpa_DownloadResult.Text = "Download Result";
-			// 
-			// tlp_downloadResult
-			// 
-			this.tlp_downloadResult.ColumnCount = 4;
-			this.tlp_downloadResult.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.tlp_downloadResult.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
-			this.tlp_downloadResult.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
-			this.tlp_downloadResult.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
-			this.tlp_downloadResult.Controls.Add(this.scltp_downloadResult, 0, 1);
-			this.tlp_downloadResult.Controls.Add(this.lbl_newSize, 1, 0);
-			this.tlp_downloadResult.Controls.Add(this.m_lvDownloadResult, 0, 4);
-			this.tlp_downloadResult.Controls.Add(this.lbl_alldownloadedicons, 0, 3);
-			this.tlp_downloadResult.Controls.Add(this.rbu_icons, 1, 3);
-			this.tlp_downloadResult.Controls.Add(this.rbu_details, 2, 3);
-			this.tlp_downloadResult.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.tlp_downloadResult.Location = new System.Drawing.Point(3, 3);
-			this.tlp_downloadResult.Name = "tlp_downloadResult";
-			this.tlp_downloadResult.RowCount = 5;
-			this.tlp_downloadResult.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
-			this.tlp_downloadResult.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tlp_downloadResult.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this.tlp_downloadResult.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this.tlp_downloadResult.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tlp_downloadResult.Size = new System.Drawing.Size(501, 279);
-			this.tlp_downloadResult.TabIndex = 0;
-			// 
-			// scltp_downloadResult
-			// 
-			this.scltp_downloadResult.ColumnCount = 4;
-			this.tlp_downloadResult.SetColumnSpan(this.scltp_downloadResult, 4);
-			this.scltp_downloadResult.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.25126F));
-			this.scltp_downloadResult.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25.12563F));
-			this.scltp_downloadResult.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 12.31156F));
-			this.scltp_downloadResult.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 12.31156F));
-			this.scltp_downloadResult.Controls.Add(this.pbo_downloadedIcon128, 0, 0);
-			this.scltp_downloadResult.Controls.Add(this.pbo_downloadedIcon64, 1, 0);
-			this.scltp_downloadResult.Controls.Add(this.pbo_downloadedIcon16, 3, 0);
-			this.scltp_downloadResult.Controls.Add(this.pbo_downloadedIcon32, 2, 0);
-			this.scltp_downloadResult.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.scltp_downloadResult.Location = new System.Drawing.Point(0, 30);
-			this.scltp_downloadResult.Margin = new System.Windows.Forms.Padding(0);
-			this.scltp_downloadResult.Name = "scltp_downloadResult";
-			this.scltp_downloadResult.RowCount = 1;
-			this.scltp_downloadResult.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.scltp_downloadResult.ScaleHeight = false;
-			this.scltp_downloadResult.ScaleWidth = true;
-			this.scltp_downloadResult.Size = new System.Drawing.Size(501, 154);
-			this.scltp_downloadResult.TabIndex = 0;
-			// 
-			// pbo_downloadedIcon128
-			// 
-			this.pbo_downloadedIcon128.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.pbo_downloadedIcon128.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-			this.pbo_downloadedIcon128.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.pbo_downloadedIcon128.InitialImage = null;
-			this.pbo_downloadedIcon128.Location = new System.Drawing.Point(59, 11);
-			this.pbo_downloadedIcon128.Name = "pbo_downloadedIcon128";
-			this.pbo_downloadedIcon128.Size = new System.Drawing.Size(132, 132);
-			this.pbo_downloadedIcon128.TabIndex = 0;
-			this.pbo_downloadedIcon128.TabStop = false;
-			// 
-			// pbo_downloadedIcon64
-			// 
-			this.pbo_downloadedIcon64.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.pbo_downloadedIcon64.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-			this.pbo_downloadedIcon64.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.pbo_downloadedIcon64.InitialImage = null;
-			this.pbo_downloadedIcon64.Location = new System.Drawing.Point(279, 43);
-			this.pbo_downloadedIcon64.Name = "pbo_downloadedIcon64";
-			this.pbo_downloadedIcon64.Size = new System.Drawing.Size(68, 68);
-			this.pbo_downloadedIcon64.TabIndex = 1;
-			this.pbo_downloadedIcon64.TabStop = false;
-			// 
-			// pbo_downloadedIcon16
-			// 
-			this.pbo_downloadedIcon16.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.pbo_downloadedIcon16.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-			this.pbo_downloadedIcon16.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.pbo_downloadedIcon16.InitialImage = null;
-			this.pbo_downloadedIcon16.Location = new System.Drawing.Point(459, 67);
-			this.pbo_downloadedIcon16.Name = "pbo_downloadedIcon16";
-			this.pbo_downloadedIcon16.Size = new System.Drawing.Size(20, 20);
-			this.pbo_downloadedIcon16.TabIndex = 3;
-			this.pbo_downloadedIcon16.TabStop = false;
-			// 
-			// pbo_downloadedIcon32
-			// 
-			this.pbo_downloadedIcon32.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.pbo_downloadedIcon32.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-			this.pbo_downloadedIcon32.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.pbo_downloadedIcon32.InitialImage = null;
-			this.pbo_downloadedIcon32.Location = new System.Drawing.Point(389, 60);
-			this.pbo_downloadedIcon32.Name = "pbo_downloadedIcon32";
-			this.pbo_downloadedIcon32.Size = new System.Drawing.Size(34, 34);
-			this.pbo_downloadedIcon32.TabIndex = 2;
-			this.pbo_downloadedIcon32.TabStop = false;
-			// 
-			// lbl_newSize
-			// 
-			this.lbl_newSize.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-			| System.Windows.Forms.AnchorStyles.Left) 
-			| System.Windows.Forms.AnchorStyles.Right)));
-			this.tlp_downloadResult.SetColumnSpan(this.lbl_newSize, 3);
-			this.lbl_newSize.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lbl_newSize.Location = new System.Drawing.Point(253, 0);
-			this.lbl_newSize.Margin = new System.Windows.Forms.Padding(3, 0, 30, 0);
-			this.lbl_newSize.Name = "lbl_newSize";
-			this.lbl_newSize.Size = new System.Drawing.Size(218, 30);
-			this.lbl_newSize.TabIndex = 4;
-			this.lbl_newSize.Text = "New Size :";
-			this.lbl_newSize.TextAlign = System.Drawing.ContentAlignment.TopRight;
-			// 
-			// m_lvDownloadResult
-			// 
-			this.tlp_downloadResult.SetColumnSpan(this.m_lvDownloadResult, 4);
-			this.m_lvDownloadResult.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.m_lvDownloadResult.FullRowSelect = true;
-			this.m_lvDownloadResult.Location = new System.Drawing.Point(3, 227);
-			this.m_lvDownloadResult.Name = "m_lvDownloadResult";
-			this.m_lvDownloadResult.Size = new System.Drawing.Size(495, 49);
-			this.m_lvDownloadResult.TabIndex = 5;
-			this.m_lvDownloadResult.UseCompatibleStateImageBehavior = false;
-			// 
-			// tpa_Debug
-			// 
-			this.tpa_Debug.Controls.Add(this.rtb_details);
-			this.tpa_Debug.Location = new System.Drawing.Point(4, 22);
-			this.tpa_Debug.Name = "tpa_Debug";
-			this.tpa_Debug.Padding = new System.Windows.Forms.Padding(3);
-			this.tpa_Debug.Size = new System.Drawing.Size(507, 285);
-			this.tpa_Debug.TabIndex = 2;
-			this.tpa_Debug.Text = "Debug";
-			this.tpa_Debug.UseVisualStyleBackColor = true;
-			// 
-			// rtb_details
-			// 
-			this.rtb_details.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.rtb_details.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.rtb_details.Location = new System.Drawing.Point(3, 3);
-			this.rtb_details.Name = "rtb_details";
-			this.rtb_details.Size = new System.Drawing.Size(501, 279);
-			this.rtb_details.TabIndex = 0;
-			this.rtb_details.Text = "";
 			// 
 			// tlp_upperRight
 			// 
@@ -525,7 +378,7 @@ namespace CustomIconDashboarderPlugin
 			this.tlp_upperRight.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
 			this.tlp_upperRight.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tlp_upperRight.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this.tlp_upperRight.Size = new System.Drawing.Size(515, 194);
+			this.tlp_upperRight.Size = new System.Drawing.Size(534, 194);
 			this.tlp_upperRight.TabIndex = 1;
 			// 
 			// lbl_originalSize
@@ -535,11 +388,11 @@ namespace CustomIconDashboarderPlugin
 			| System.Windows.Forms.AnchorStyles.Right)));
 			this.tlp_upperRight.SetColumnSpan(this.lbl_originalSize, 3);
 			this.lbl_originalSize.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lbl_originalSize.Location = new System.Drawing.Point(260, 0);
+			this.lbl_originalSize.Location = new System.Drawing.Point(270, 0);
 			this.lbl_originalSize.Margin = new System.Windows.Forms.Padding(3, 0, 30, 0);
 			this.lbl_originalSize.Name = "lbl_originalSize";
 			this.lbl_originalSize.RightToLeft = System.Windows.Forms.RightToLeft.No;
-			this.lbl_originalSize.Size = new System.Drawing.Size(225, 20);
+			this.lbl_originalSize.Size = new System.Drawing.Size(234, 20);
 			this.lbl_originalSize.TabIndex = 16;
 			this.lbl_originalSize.Text = "Original Size :";
 			this.lbl_originalSize.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -561,7 +414,7 @@ namespace CustomIconDashboarderPlugin
 			this.lbl_128x128.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.lbl_128x128.Location = new System.Drawing.Point(3, 174);
 			this.lbl_128x128.Name = "lbl_128x128";
-			this.lbl_128x128.Size = new System.Drawing.Size(251, 20);
+			this.lbl_128x128.Size = new System.Drawing.Size(261, 20);
 			this.lbl_128x128.TabIndex = 10;
 			this.lbl_128x128.Text = "128x128";
 			this.lbl_128x128.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -572,10 +425,10 @@ namespace CustomIconDashboarderPlugin
 			| System.Windows.Forms.AnchorStyles.Left) 
 			| System.Windows.Forms.AnchorStyles.Right)));
 			this.lbl_64x64.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lbl_64x64.Location = new System.Drawing.Point(260, 174);
+			this.lbl_64x64.Location = new System.Drawing.Point(270, 174);
 			this.lbl_64x64.Name = "lbl_64x64";
-			this.lbl_64x64.Size = new System.Drawing.Size(122, 20);
-			this.lbl_64x64.TabIndex = 13;
+			this.lbl_64x64.Size = new System.Drawing.Size(127, 20);
+			this.lbl_64x64.TabIndex = 0;
 			this.lbl_64x64.Text = "64x64";
 			this.lbl_64x64.TextAlign = System.Drawing.ContentAlignment.TopCenter;
 			// 
@@ -585,9 +438,9 @@ namespace CustomIconDashboarderPlugin
 			| System.Windows.Forms.AnchorStyles.Left) 
 			| System.Windows.Forms.AnchorStyles.Right)));
 			this.lbl_32x32.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lbl_32x32.Location = new System.Drawing.Point(388, 174);
+			this.lbl_32x32.Location = new System.Drawing.Point(403, 174);
 			this.lbl_32x32.Name = "lbl_32x32";
-			this.lbl_32x32.Size = new System.Drawing.Size(58, 20);
+			this.lbl_32x32.Size = new System.Drawing.Size(60, 20);
 			this.lbl_32x32.TabIndex = 9;
 			this.lbl_32x32.Text = "32x32";
 			this.lbl_32x32.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -599,9 +452,9 @@ namespace CustomIconDashboarderPlugin
 			| System.Windows.Forms.AnchorStyles.Left) 
 			| System.Windows.Forms.AnchorStyles.Right)));
 			this.lbl_16x16.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lbl_16x16.Location = new System.Drawing.Point(452, 174);
+			this.lbl_16x16.Location = new System.Drawing.Point(469, 174);
 			this.lbl_16x16.Name = "lbl_16x16";
-			this.lbl_16x16.Size = new System.Drawing.Size(60, 20);
+			this.lbl_16x16.Size = new System.Drawing.Size(62, 20);
 			this.lbl_16x16.TabIndex = 15;
 			this.lbl_16x16.Text = "16x16";
 			this.lbl_16x16.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -626,7 +479,7 @@ namespace CustomIconDashboarderPlugin
 			this.scltp_icons.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.scltp_icons.ScaleHeight = false;
 			this.scltp_icons.ScaleWidth = true;
-			this.scltp_icons.Size = new System.Drawing.Size(515, 154);
+			this.scltp_icons.Size = new System.Drawing.Size(534, 154);
 			this.scltp_icons.TabIndex = 18;
 			// 
 			// pbo_selectedIcon16
@@ -634,7 +487,7 @@ namespace CustomIconDashboarderPlugin
 			this.pbo_selectedIcon16.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.pbo_selectedIcon16.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 			this.pbo_selectedIcon16.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.pbo_selectedIcon16.Location = new System.Drawing.Point(472, 67);
+			this.pbo_selectedIcon16.Location = new System.Drawing.Point(490, 67);
 			this.pbo_selectedIcon16.Name = "pbo_selectedIcon16";
 			this.pbo_selectedIcon16.Size = new System.Drawing.Size(20, 20);
 			this.pbo_selectedIcon16.TabIndex = 14;
@@ -645,7 +498,7 @@ namespace CustomIconDashboarderPlugin
 			this.pbo_selectedIcon32.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.pbo_selectedIcon32.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 			this.pbo_selectedIcon32.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.pbo_selectedIcon32.Location = new System.Drawing.Point(399, 59);
+			this.pbo_selectedIcon32.Location = new System.Drawing.Point(415, 59);
 			this.pbo_selectedIcon32.Name = "pbo_selectedIcon32";
 			this.pbo_selectedIcon32.Size = new System.Drawing.Size(36, 36);
 			this.pbo_selectedIcon32.TabIndex = 11;
@@ -656,105 +509,232 @@ namespace CustomIconDashboarderPlugin
 			this.pbo_selectedIcon64.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.pbo_selectedIcon64.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 			this.pbo_selectedIcon64.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.pbo_selectedIcon64.Location = new System.Drawing.Point(287, 43);
+			this.pbo_selectedIcon64.Location = new System.Drawing.Point(299, 43);
 			this.pbo_selectedIcon64.Name = "pbo_selectedIcon64";
 			this.pbo_selectedIcon64.Size = new System.Drawing.Size(68, 68);
 			this.pbo_selectedIcon64.TabIndex = 12;
 			this.pbo_selectedIcon64.TabStop = false;
 			// 
-			// flp_buttons
-			// 
-			this.flp_buttons.Controls.Add(this.btn_ModifyIcon);
-			this.flp_buttons.Controls.Add(this.btn_removeIcons);
-			this.flp_buttons.Controls.Add(this.btn_download);
-			this.flp_buttons.Controls.Add(this.btn_choose);
-			this.flp_buttons.Location = new System.Drawing.Point(0, 0);
-			this.flp_buttons.Margin = new System.Windows.Forms.Padding(0);
-			this.flp_buttons.Name = "flp_buttons";
-			this.flp_buttons.Size = new System.Drawing.Size(640, 30);
-			this.flp_buttons.TabIndex = 3;
-			// 
-			// btn_ModifyIcon
-			// 
-			this.btn_ModifyIcon.Location = new System.Drawing.Point(3, 3);
-			this.btn_ModifyIcon.Name = "btn_ModifyIcon";
-			this.btn_ModifyIcon.Size = new System.Drawing.Size(100, 23);
-			this.btn_ModifyIcon.TabIndex = 0;
-			this.btn_ModifyIcon.Text = "&Modify";
-			this.btn_ModifyIcon.UseVisualStyleBackColor = true;
-			this.btn_ModifyIcon.Click += new System.EventHandler(this.OnModifyIconClick);
-			// 
-			// btn_removeIcons
-			// 
-			this.btn_removeIcons.Location = new System.Drawing.Point(109, 3);
-			this.btn_removeIcons.Name = "btn_removeIcons";
-			this.btn_removeIcons.Size = new System.Drawing.Size(100, 23);
-			this.btn_removeIcons.TabIndex = 1;
-			this.btn_removeIcons.Text = "&Remove";
-			this.btn_removeIcons.UseVisualStyleBackColor = true;
-			this.btn_removeIcons.Click += new System.EventHandler(this.OnRemoveIconsClick);
-			// 
-			// btn_download
-			// 
-			this.btn_download.Location = new System.Drawing.Point(215, 3);
-			this.btn_download.Name = "btn_download";
-			this.btn_download.Size = new System.Drawing.Size(118, 23);
-			this.btn_download.TabIndex = 2;
-			this.btn_download.Text = "&Download Best Icon";
-			this.btn_download.UseVisualStyleBackColor = true;
-			this.btn_download.Click += new System.EventHandler(this.OnDownloadClick);
-			// 
-			// btn_choose
-			// 
-			this.btn_choose.Location = new System.Drawing.Point(339, 3);
-			this.btn_choose.Name = "btn_choose";
-			this.btn_choose.Size = new System.Drawing.Size(100, 23);
-			this.btn_choose.TabIndex = 3;
-			this.btn_choose.Text = "&Pick Best Icon";
-			this.btn_choose.UseVisualStyleBackColor = true;
-			this.btn_choose.Click += new System.EventHandler(this.OnPickClick);
-			// 
 			// bto_OK
 			// 
 			this.bto_OK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.bto_OK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.bto_OK.Location = new System.Drawing.Point(765, 3);
+			this.bto_OK.Location = new System.Drawing.Point(435, 529);
 			this.bto_OK.Margin = new System.Windows.Forms.Padding(3, 3, 30, 3);
 			this.bto_OK.Name = "bto_OK";
-			this.bto_OK.Size = new System.Drawing.Size(75, 23);
+			this.bto_OK.Size = new System.Drawing.Size(75, 21);
 			this.bto_OK.TabIndex = 6;
 			this.bto_OK.Text = "&Close";
 			this.bto_OK.UseVisualStyleBackColor = true;
 			// 
-			// tlp_main
+			// tco_right
 			// 
-			this.tlp_main.ColumnCount = 1;
-			this.tlp_main.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tlp_main.Controls.Add(this.spc_mainSplitter, 0, 0);
-			this.tlp_main.Controls.Add(this.tlp_bottom, 0, 1);
-			this.tlp_main.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.tlp_main.Location = new System.Drawing.Point(0, 0);
-			this.tlp_main.Name = "tlp_main";
-			this.tlp_main.RowCount = 2;
-			this.tlp_main.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tlp_main.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35F));
-			this.tlp_main.Size = new System.Drawing.Size(876, 562);
-			this.tlp_main.TabIndex = 9;
+			this.tco_right.Controls.Add(this.tpa_IconUsage);
+			this.tco_right.Controls.Add(this.tpa_DownloadResult);
+			this.tco_right.Controls.Add(this.tpa_Debug);
+			this.tco_right.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.tco_right.Location = new System.Drawing.Point(15, 203);
+			this.tco_right.Margin = new System.Windows.Forms.Padding(15, 3, 3, 3);
+			this.tco_right.Multiline = true;
+			this.tco_right.Name = "tco_right";
+			this.tco_right.SelectedIndex = 0;
+			this.tco_right.Size = new System.Drawing.Size(522, 320);
+			this.tco_right.TabIndex = 5;
 			// 
-			// tlp_bottom
+			// tpa_IconUsage
 			// 
-			this.tlp_bottom.ColumnCount = 2;
-			this.tlp_bottom.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 73.5901F));
-			this.tlp_bottom.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 26.4099F));
-			this.tlp_bottom.Controls.Add(this.bto_OK, 1, 0);
-			this.tlp_bottom.Controls.Add(this.flp_buttons, 0, 0);
-			this.tlp_bottom.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.tlp_bottom.Location = new System.Drawing.Point(3, 530);
-			this.tlp_bottom.Name = "tlp_bottom";
-			this.tlp_bottom.RowCount = 1;
-			this.tlp_bottom.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
-			this.tlp_bottom.Size = new System.Drawing.Size(870, 29);
-			this.tlp_bottom.TabIndex = 9;
+			this.tpa_IconUsage.BackColor = System.Drawing.SystemColors.Control;
+			this.tpa_IconUsage.Controls.Add(this.spc_right);
+			this.tpa_IconUsage.Location = new System.Drawing.Point(4, 22);
+			this.tpa_IconUsage.Name = "tpa_IconUsage";
+			this.tpa_IconUsage.Padding = new System.Windows.Forms.Padding(3);
+			this.tpa_IconUsage.Size = new System.Drawing.Size(514, 294);
+			this.tpa_IconUsage.TabIndex = 0;
+			this.tpa_IconUsage.Text = "Icon Usage";
+			// 
+			// spc_right
+			// 
+			this.spc_right.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.spc_right.Location = new System.Drawing.Point(3, 3);
+			this.spc_right.Name = "spc_right";
+			this.spc_right.Orientation = System.Windows.Forms.Orientation.Horizontal;
+			// 
+			// spc_right.Panel1
+			// 
+			this.spc_right.Panel1.Controls.Add(this.tlp_usedEntries);
+			// 
+			// spc_right.Panel2
+			// 
+			this.spc_right.Panel2.Controls.Add(this.tlp_usedGroups);
+			this.spc_right.Size = new System.Drawing.Size(508, 288);
+			this.spc_right.SplitterDistance = 131;
+			this.spc_right.TabIndex = 2;
+			// 
+			// tlp_usedEntries
+			// 
+			this.tlp_usedEntries.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.tlp_usedEntries.ColumnCount = 2;
+			this.tlp_usedEntries.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 25F));
+			this.tlp_usedEntries.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tlp_usedEntries.Controls.Add(this.lbl_usedinentries, 0, 0);
+			this.tlp_usedEntries.Controls.Add(this.m_lvUsedEntries, 1, 1);
+			this.tlp_usedEntries.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.tlp_usedEntries.Location = new System.Drawing.Point(0, 0);
+			this.tlp_usedEntries.Name = "tlp_usedEntries";
+			this.tlp_usedEntries.RowCount = 2;
+			this.tlp_usedEntries.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 21F));
+			this.tlp_usedEntries.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.tlp_usedEntries.Size = new System.Drawing.Size(508, 131);
+			this.tlp_usedEntries.TabIndex = 0;
+			// 
+			// tlp_usedGroups
+			// 
+			this.tlp_usedGroups.ColumnCount = 2;
+			this.tlp_usedGroups.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 25F));
+			this.tlp_usedGroups.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tlp_usedGroups.Controls.Add(this.m_lvUsedGroups, 1, 1);
+			this.tlp_usedGroups.Controls.Add(this.lbl_usedInGroups, 0, 0);
+			this.tlp_usedGroups.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.tlp_usedGroups.Location = new System.Drawing.Point(0, 0);
+			this.tlp_usedGroups.Name = "tlp_usedGroups";
+			this.tlp_usedGroups.RowCount = 2;
+			this.tlp_usedGroups.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 21F));
+			this.tlp_usedGroups.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tlp_usedGroups.Size = new System.Drawing.Size(508, 153);
+			this.tlp_usedGroups.TabIndex = 0;
+			// 
+			// tpa_DownloadResult
+			// 
+			this.tpa_DownloadResult.BackColor = System.Drawing.SystemColors.Control;
+			this.tpa_DownloadResult.Controls.Add(this.tlp_downloadResult);
+			this.tpa_DownloadResult.Location = new System.Drawing.Point(4, 22);
+			this.tpa_DownloadResult.Name = "tpa_DownloadResult";
+			this.tpa_DownloadResult.Padding = new System.Windows.Forms.Padding(3);
+			this.tpa_DownloadResult.Size = new System.Drawing.Size(514, 294);
+			this.tpa_DownloadResult.TabIndex = 1;
+			this.tpa_DownloadResult.Text = "Download Result";
+			// 
+			// tlp_downloadResult
+			// 
+			this.tlp_downloadResult.ColumnCount = 4;
+			this.tlp_downloadResult.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.tlp_downloadResult.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+			this.tlp_downloadResult.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
+			this.tlp_downloadResult.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
+			this.tlp_downloadResult.Controls.Add(this.scltp_downloadResult, 0, 1);
+			this.tlp_downloadResult.Controls.Add(this.lbl_newSize, 1, 0);
+			this.tlp_downloadResult.Controls.Add(this.m_lvDownloadResult, 0, 4);
+			this.tlp_downloadResult.Controls.Add(this.lbl_alldownloadedicons, 0, 3);
+			this.tlp_downloadResult.Controls.Add(this.rbu_icons, 1, 3);
+			this.tlp_downloadResult.Controls.Add(this.rbu_details, 2, 3);
+			this.tlp_downloadResult.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.tlp_downloadResult.Location = new System.Drawing.Point(3, 3);
+			this.tlp_downloadResult.Name = "tlp_downloadResult";
+			this.tlp_downloadResult.RowCount = 5;
+			this.tlp_downloadResult.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+			this.tlp_downloadResult.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.tlp_downloadResult.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+			this.tlp_downloadResult.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+			this.tlp_downloadResult.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tlp_downloadResult.Size = new System.Drawing.Size(508, 288);
+			this.tlp_downloadResult.TabIndex = 0;
+			// 
+			// scltp_downloadResult
+			// 
+			this.scltp_downloadResult.ColumnCount = 4;
+			this.tlp_downloadResult.SetColumnSpan(this.scltp_downloadResult, 4);
+			this.scltp_downloadResult.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.25126F));
+			this.scltp_downloadResult.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25.12563F));
+			this.scltp_downloadResult.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 12.31156F));
+			this.scltp_downloadResult.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 12.31156F));
+			this.scltp_downloadResult.Controls.Add(this.pbo_downloadedIcon128, 0, 0);
+			this.scltp_downloadResult.Controls.Add(this.pbo_downloadedIcon64, 1, 0);
+			this.scltp_downloadResult.Controls.Add(this.pbo_downloadedIcon16, 3, 0);
+			this.scltp_downloadResult.Controls.Add(this.pbo_downloadedIcon32, 2, 0);
+			this.scltp_downloadResult.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.scltp_downloadResult.Location = new System.Drawing.Point(0, 30);
+			this.scltp_downloadResult.Margin = new System.Windows.Forms.Padding(0);
+			this.scltp_downloadResult.Name = "scltp_downloadResult";
+			this.scltp_downloadResult.RowCount = 1;
+			this.scltp_downloadResult.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.scltp_downloadResult.ScaleHeight = false;
+			this.scltp_downloadResult.ScaleWidth = true;
+			this.scltp_downloadResult.Size = new System.Drawing.Size(508, 154);
+			this.scltp_downloadResult.TabIndex = 0;
+			// 
+			// pbo_downloadedIcon128
+			// 
+			this.pbo_downloadedIcon128.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.pbo_downloadedIcon128.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+			this.pbo_downloadedIcon128.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+			this.pbo_downloadedIcon128.InitialImage = null;
+			this.pbo_downloadedIcon128.Location = new System.Drawing.Point(61, 11);
+			this.pbo_downloadedIcon128.Name = "pbo_downloadedIcon128";
+			this.pbo_downloadedIcon128.Size = new System.Drawing.Size(132, 132);
+			this.pbo_downloadedIcon128.TabIndex = 0;
+			this.pbo_downloadedIcon128.TabStop = false;
+			// 
+			// pbo_downloadedIcon64
+			// 
+			this.pbo_downloadedIcon64.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.pbo_downloadedIcon64.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+			this.pbo_downloadedIcon64.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+			this.pbo_downloadedIcon64.InitialImage = null;
+			this.pbo_downloadedIcon64.Location = new System.Drawing.Point(284, 43);
+			this.pbo_downloadedIcon64.Name = "pbo_downloadedIcon64";
+			this.pbo_downloadedIcon64.Size = new System.Drawing.Size(68, 68);
+			this.pbo_downloadedIcon64.TabIndex = 1;
+			this.pbo_downloadedIcon64.TabStop = false;
+			// 
+			// pbo_downloadedIcon16
+			// 
+			this.pbo_downloadedIcon16.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.pbo_downloadedIcon16.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+			this.pbo_downloadedIcon16.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+			this.pbo_downloadedIcon16.InitialImage = null;
+			this.pbo_downloadedIcon16.Location = new System.Drawing.Point(466, 67);
+			this.pbo_downloadedIcon16.Name = "pbo_downloadedIcon16";
+			this.pbo_downloadedIcon16.Size = new System.Drawing.Size(20, 20);
+			this.pbo_downloadedIcon16.TabIndex = 3;
+			this.pbo_downloadedIcon16.TabStop = false;
+			// 
+			// pbo_downloadedIcon32
+			// 
+			this.pbo_downloadedIcon32.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.pbo_downloadedIcon32.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+			this.pbo_downloadedIcon32.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+			this.pbo_downloadedIcon32.InitialImage = null;
+			this.pbo_downloadedIcon32.Location = new System.Drawing.Point(396, 60);
+			this.pbo_downloadedIcon32.Name = "pbo_downloadedIcon32";
+			this.pbo_downloadedIcon32.Size = new System.Drawing.Size(34, 34);
+			this.pbo_downloadedIcon32.TabIndex = 2;
+			this.pbo_downloadedIcon32.TabStop = false;
+			// 
+			// lbl_newSize
+			// 
+			this.lbl_newSize.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+			| System.Windows.Forms.AnchorStyles.Left) 
+			| System.Windows.Forms.AnchorStyles.Right)));
+			this.tlp_downloadResult.SetColumnSpan(this.lbl_newSize, 3);
+			this.lbl_newSize.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.lbl_newSize.Location = new System.Drawing.Point(257, 0);
+			this.lbl_newSize.Margin = new System.Windows.Forms.Padding(3, 0, 30, 0);
+			this.lbl_newSize.Name = "lbl_newSize";
+			this.lbl_newSize.Size = new System.Drawing.Size(221, 30);
+			this.lbl_newSize.TabIndex = 4;
+			this.lbl_newSize.Text = "New Size :";
+			this.lbl_newSize.TextAlign = System.Drawing.ContentAlignment.TopRight;
+			// 
+			// m_lvDownloadResult
+			// 
+			this.tlp_downloadResult.SetColumnSpan(this.m_lvDownloadResult, 4);
+			this.m_lvDownloadResult.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.m_lvDownloadResult.FullRowSelect = true;
+			this.m_lvDownloadResult.Location = new System.Drawing.Point(3, 227);
+			this.m_lvDownloadResult.Name = "m_lvDownloadResult";
+			this.m_lvDownloadResult.Size = new System.Drawing.Size(502, 58);
+			this.m_lvDownloadResult.TabIndex = 5;
+			this.m_lvDownloadResult.UseCompatibleStateImageBehavior = false;
 			// 
 			// lbl_alldownloadedicons
 			// 
@@ -762,7 +742,7 @@ namespace CustomIconDashboarderPlugin
 			this.lbl_alldownloadedicons.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.lbl_alldownloadedicons.Location = new System.Drawing.Point(3, 204);
 			this.lbl_alldownloadedicons.Name = "lbl_alldownloadedicons";
-			this.lbl_alldownloadedicons.Size = new System.Drawing.Size(244, 20);
+			this.lbl_alldownloadedicons.Size = new System.Drawing.Size(248, 20);
 			this.lbl_alldownloadedicons.TabIndex = 6;
 			this.lbl_alldownloadedicons.Text = "All downloaded icons";
 			// 
@@ -771,10 +751,10 @@ namespace CustomIconDashboarderPlugin
 			this.rbu_icons.Checked = true;
 			this.rbu_icons.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.rbu_icons.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.rbu_icons.Location = new System.Drawing.Point(250, 204);
+			this.rbu_icons.Location = new System.Drawing.Point(254, 204);
 			this.rbu_icons.Margin = new System.Windows.Forms.Padding(0);
 			this.rbu_icons.Name = "rbu_icons";
-			this.rbu_icons.Size = new System.Drawing.Size(125, 20);
+			this.rbu_icons.Size = new System.Drawing.Size(127, 20);
 			this.rbu_icons.TabIndex = 7;
 			this.rbu_icons.TabStop = true;
 			this.rbu_icons.Text = "Icons only";
@@ -785,14 +765,49 @@ namespace CustomIconDashboarderPlugin
 			this.tlp_downloadResult.SetColumnSpan(this.rbu_details, 2);
 			this.rbu_details.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.rbu_details.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.rbu_details.Location = new System.Drawing.Point(375, 204);
+			this.rbu_details.Location = new System.Drawing.Point(381, 204);
 			this.rbu_details.Margin = new System.Windows.Forms.Padding(0);
 			this.rbu_details.Name = "rbu_details";
-			this.rbu_details.Size = new System.Drawing.Size(126, 20);
+			this.rbu_details.Size = new System.Drawing.Size(127, 20);
 			this.rbu_details.TabIndex = 8;
 			this.rbu_details.Text = "Icons + Details";
 			this.rbu_details.UseVisualStyleBackColor = true;
 			this.rbu_details.CheckedChanged += new System.EventHandler(this.OnDetailsCheckedChanged);
+			// 
+			// tpa_Debug
+			// 
+			this.tpa_Debug.Controls.Add(this.rtb_details);
+			this.tpa_Debug.Location = new System.Drawing.Point(4, 22);
+			this.tpa_Debug.Name = "tpa_Debug";
+			this.tpa_Debug.Padding = new System.Windows.Forms.Padding(3);
+			this.tpa_Debug.Size = new System.Drawing.Size(514, 294);
+			this.tpa_Debug.TabIndex = 2;
+			this.tpa_Debug.Text = "Debug";
+			this.tpa_Debug.UseVisualStyleBackColor = true;
+			// 
+			// rtb_details
+			// 
+			this.rtb_details.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.rtb_details.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.rtb_details.Location = new System.Drawing.Point(3, 3);
+			this.rtb_details.Name = "rtb_details";
+			this.rtb_details.Size = new System.Drawing.Size(508, 288);
+			this.rtb_details.TabIndex = 0;
+			this.rtb_details.Text = "";
+			// 
+			// tlp_main
+			// 
+			this.tlp_main.ColumnCount = 1;
+			this.tlp_main.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tlp_main.Controls.Add(this.spc_mainSplitter, 0, 0);
+			this.tlp_main.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.tlp_main.Location = new System.Drawing.Point(0, 0);
+			this.tlp_main.Name = "tlp_main";
+			this.tlp_main.RowCount = 2;
+			this.tlp_main.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tlp_main.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 5F));
+			this.tlp_main.Size = new System.Drawing.Size(876, 562);
+			this.tlp_main.TabIndex = 9;
 			// 
 			// DashboarderForm
 			// 
@@ -809,8 +824,17 @@ namespace CustomIconDashboarderPlugin
 			this.spc_mainSplitter.Panel2.ResumeLayout(false);
 			this.spc_mainSplitter.ResumeLayout(false);
 			this.tlp_topright.ResumeLayout(false);
+			this.tco_lists.ResumeLayout(false);
+			this.tpa_listAllIcons.ResumeLayout(false);
+			this.tlp_allIcons.ResumeLayout(false);
+			this.flowLayoutPanel1.ResumeLayout(false);
 			this.tlp_right.ResumeLayout(false);
 			this.tlp_right.PerformLayout();
+			this.tlp_upperRight.ResumeLayout(false);
+			this.scltp_icons.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.pbo_selectedIcon16)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.pbo_selectedIcon32)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.pbo_selectedIcon64)).EndInit();
 			this.tco_right.ResumeLayout(false);
 			this.tpa_IconUsage.ResumeLayout(false);
 			this.spc_right.Panel1.ResumeLayout(false);
@@ -827,21 +851,11 @@ namespace CustomIconDashboarderPlugin
 			((System.ComponentModel.ISupportInitialize)(this.pbo_downloadedIcon16)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.pbo_downloadedIcon32)).EndInit();
 			this.tpa_Debug.ResumeLayout(false);
-			this.tlp_upperRight.ResumeLayout(false);
-			this.scltp_icons.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.pbo_selectedIcon16)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.pbo_selectedIcon32)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.pbo_selectedIcon64)).EndInit();
-			this.flp_buttons.ResumeLayout(false);
 			this.tlp_main.ResumeLayout(false);
-			this.tlp_bottom.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
 		private System.Windows.Forms.TableLayoutPanel tlp_topright;
-		private System.Windows.Forms.Button btn_removeIcons;
-		private System.Windows.Forms.Button btn_ModifyIcon;
-		private System.Windows.Forms.FlowLayoutPanel flp_buttons;
 		private System.Windows.Forms.CheckBox cb_allIconsSelection;
 		private System.Windows.Forms.SplitContainer spc_right;
 		private System.Windows.Forms.TableLayoutPanel tlp_usedGroups;
@@ -856,7 +870,6 @@ namespace CustomIconDashboarderPlugin
 		private System.Windows.Forms.Label lbl_usedinentries;
 		private KeePass.UI.CustomListViewEx m_lvUsedGroups;
 		private KeePass.UI.CustomListViewEx m_lvUsedEntries;
-		private System.Windows.Forms.Label lbl_title;
 		private KeePass.UI.CustomListViewEx m_lvViewIcon;
 		private System.Windows.Forms.Label lbl_32x32;
 		private System.Windows.Forms.PictureBox pbo_selectedIcon32;
@@ -868,7 +881,6 @@ namespace CustomIconDashboarderPlugin
 		private System.Windows.Forms.Label lbl_originalSize;
 		private System.Windows.Forms.Label lbl_selectedIcon;
 		private LomsonLib.UI.ScaleControlTableLayoutPanel scltp_icons;
-		private System.Windows.Forms.Button btn_download;
 		private System.Windows.Forms.TabControl tco_right;
 		private System.Windows.Forms.TabPage tpa_IconUsage;
 		private System.Windows.Forms.TabPage tpa_DownloadResult;
@@ -879,15 +891,20 @@ namespace CustomIconDashboarderPlugin
 		private System.Windows.Forms.PictureBox pbo_downloadedIcon32;
 		private System.Windows.Forms.PictureBox pbo_downloadedIcon16;
 		private System.Windows.Forms.Label lbl_newSize;
-		private System.Windows.Forms.Button btn_choose;
 		private System.Windows.Forms.TableLayoutPanel tlp_main;
-		private System.Windows.Forms.TableLayoutPanel tlp_bottom;
 		private System.Windows.Forms.RichTextBox rtb_details;
 		private System.Windows.Forms.TabPage tpa_Debug;
 		private System.Windows.Forms.ListView m_lvDownloadResult;
 		private System.Windows.Forms.Label lbl_alldownloadedicons;
 		private System.Windows.Forms.RadioButton rbu_icons;
 		private System.Windows.Forms.RadioButton rbu_details;
+		private System.Windows.Forms.TabControl tco_lists;
+		private System.Windows.Forms.TabPage tpa_listAllIcons;
+		private System.Windows.Forms.TableLayoutPanel tlp_allIcons;
+		private System.Windows.Forms.TabPage tpa_listAllEntries;
+		private System.Windows.Forms.ComboBox cbo_actionSelector;
+		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+		private System.Windows.Forms.Button btn_perform;
 
 		
 		void DashboarderLoad(object sender, System.EventArgs e)

@@ -75,8 +75,9 @@ namespace CustomIconDashboarderPlugin
 			GlobalWindowManager.AddWindow(this);
 			BestIconFinder.InitClass();
 			InitEx();
+			cbo_actionSelector.SelectedIndex = 0;
 			// Comment to debug
-			this.tco_right.TabPages.Remove(tpa_Debug);
+			//this.tco_right.TabPages.Remove(tpa_Debug);
 		}
 		
 		private void OnFormDispose()
@@ -162,16 +163,10 @@ namespace CustomIconDashboarderPlugin
 			ListViewLayoutManager.dlgMultiCheckingCheckBoxes ehMulti = delegate(IList<ListViewItem> lst) {
 				//Disable button if no elements is checked
 				if (m_lvViewIcon.CheckedItems.Count == 0 ) {
-					btn_ModifyIcon.Enabled = false;
-					btn_removeIcons.Enabled = false;
-					btn_download.Enabled = false;
-					btn_choose.Enabled = false;					
+					btn_perform.Enabled = false;					
 				}
 				else {
-					btn_ModifyIcon.Enabled = true;
-					btn_removeIcons.Enabled = true;
-					btn_download.Enabled = true;
-					btn_choose.Enabled = true;
+					btn_perform.Enabled = cbo_actionSelector.SelectedIndex != 0;
 				}
 			};
 			m_lvIconsColumnSorter.DefineMultiCheckingBehavior(ehMulti);
@@ -697,6 +692,34 @@ namespace CustomIconDashboarderPlugin
 			else {
 				m_lvDownloadResult.View = View.LargeIcon;
 			}
+		}
+		
+		
+		void OnPerformClick(object sender, EventArgs e)
+		{
+			switch (cbo_actionSelector.SelectedIndex) {
+				case 1:
+					OnModifyIconClick(sender,e);
+					break;
+				case 2:
+					OnRemoveIconsClick(sender, e);
+					break;
+				case 3:
+					OnDownloadClick(sender, e);
+					break;
+				case 4:
+					OnPickClick(sender, e);
+					break;
+				default:
+					MessageBox.Show("Pbm");
+					Debug.Assert(false);
+					break;
+			}
+		}
+		
+		void OnActionSelectorSelectedIndexChanged(object sender, EventArgs e)
+		{
+			btn_perform.Enabled = cbo_actionSelector.SelectedIndex != 0;
 		}
 		
 	}
