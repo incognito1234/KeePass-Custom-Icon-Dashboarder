@@ -315,7 +315,7 @@ namespace CustomIconDashboarderPlugin
 			this.cbo_actionSelector.Name = "cbo_actionSelector";
 			this.cbo_actionSelector.Size = new System.Drawing.Size(140, 21);
 			this.cbo_actionSelector.TabIndex = 3;
-			this.cbo_actionSelector.SelectedIndexChanged += new System.EventHandler(this.OnActionSelectorSelectedIndexChanged);
+			this.cbo_actionSelector.SelectedIndexChanged += new System.EventHandler(this.OnIconActionSelectorSelectedIndexChanged);
 			// 
 			// btn_perform
 			// 
@@ -325,7 +325,7 @@ namespace CustomIconDashboarderPlugin
 			this.btn_perform.TabIndex = 4;
 			this.btn_perform.Text = "Go";
 			this.btn_perform.UseVisualStyleBackColor = true;
-			this.btn_perform.Click += new System.EventHandler(this.OnPerformClick);
+			this.btn_perform.Click += new System.EventHandler(this.OnPerformIconActionClick);
 			// 
 			// tpa_listAllEntries
 			// 

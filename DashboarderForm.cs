@@ -47,7 +47,6 @@ namespace CustomIconDashboarderPlugin
 		private IPluginHost m_PluginHost;
 		private IconStatsHandler m_iconCounter;
 		private Dictionary<int, PwCustomIcon> m_iconIndexer;
-		private ImageList m_ilCustoms;
 		private Dictionary<PwUuid, BestIconFinder> m_bestIconFindersIndexer;
 
 		private ListViewLayoutManager  m_lvIconsColumnSorter;
@@ -55,6 +54,7 @@ namespace CustomIconDashboarderPlugin
 		private ListViewLayoutManager  m_lvEntriesColumnSorter;
 		private ListViewLayoutManager  m_lvDownloadResultColumnSorter;
 		
+		#region Initialization & Dispose
 		public DashboarderForm(IPluginHost pluginHost)
 		{
 			
@@ -86,19 +86,39 @@ namespace CustomIconDashboarderPlugin
 		
 		private void InitEx()
 		{
+			m_bestIconFindersIndexer = new Dictionary<PwUuid, BestIconFinder>();
+			BuildCustomIconListView();
+			ResetDashboard();
+		}
+		
+		private void ResetDashboard() {
 			m_iconCounter = new IconStatsHandler();
 			m_iconCounter.Initialize( m_PluginHost.Database);
 			
-			int cx = CompatibilityManager.ScaleIntX(16);
-			int cy = CompatibilityManager.ScaleIntX(16);
-			m_ilCustoms = UIUtil.BuildImageList(m_PluginHost.Database.CustomIcons, cx, cy);
-			m_bestIconFindersIndexer = new Dictionary<PwUuid, BestIconFinder>();
-			BuildCustomListView(m_ilCustoms);
+			ResetAllIconDashboard();
+			m_lvUsedEntries.Items.Clear();
+			m_lvUsedGroups.Items.Clear();
 		}
 		
-		private void BuildCustomListView(ImageList ilCustom)
+		private void CleanUpEx()
 		{
-			Debug.Assert( m_iconCounter != null );
+			// Detach event handlers
+			m_lvViewIcon.SmallImageList = null;
+			m_iconCounter = null;
+		}
+
+		private void OnFormClosed(object sender, FormClosedEventArgs e)
+		{
+			CleanUpEx();
+			GlobalWindowManager.RemoveWindow(this);
+		}
+		
+		#endregion
+		
+		#region ListView icon action
+		private void BuildCustomIconListView()
+		{
+			//Debug.Assert( m_iconCounter != null );
 			
 			// List View Used Entries
 			m_lvUsedEntries.Columns.Add( Resource.hdr_titleEntry, 85 );
@@ -191,7 +211,7 @@ namespace CustomIconDashboarderPlugin
 			m_lvDownloadResultColumnSorter.ApplyToListView(m_lvDownloadResult);
 			
 					
-			CreateCustomIconList(ilCustom);
+		//	CreateCustomIconList();
 			
 		}
 			
@@ -199,10 +219,15 @@ namespace CustomIconDashboarderPlugin
 		/// Recreate the custom icons list view.
 		/// </summary>
 		/// <returns>Index of the previous custom icon, if specified.</returns>
-		private void CreateCustomIconList(ImageList ilCustom)
+		private void CreateCustomIconList()
 		{
+			int cx = CompatibilityManager.ScaleIntX(16);
+			int cy = CompatibilityManager.ScaleIntX(16);
+			ImageList ilCustoms =
+				UIUtil.BuildImageList(m_PluginHost.Database.CustomIcons, cx, cy);
+			
 			// Retrieves from Keepass IconPickerForm
-			m_lvViewIcon.SmallImageList = ilCustom;
+			m_lvViewIcon.SmallImageList = ilCustoms;
 			
 			int j = 0;
 			m_iconIndexer = new Dictionary<int, PwCustomIcon>();
@@ -225,7 +250,7 @@ namespace CustomIconDashboarderPlugin
 				int nTotal = m_iconCounter.GetNbUsageInEntries(pwci) + m_iconCounter.GetNbUsageInGroups(pwci);
 				lvi.SubItems.Add( nTotal.ToString(NumberFormatInfo.InvariantInfo));
 				lvi.SubItems.Add(m_iconCounter.GetNbUrlsInEntries(pwci).ToString(NumberFormatInfo.InvariantInfo));
-				UpdateBestIconFinderResultForLvi(lvi);
+				UpdateBestIconFinderResultForIconLvi(lvi);
 				
 				lvi.Tag = pwci.Uuid;
 				m_lvViewIcon.Items.Add(lvi);
@@ -236,38 +261,20 @@ namespace CustomIconDashboarderPlugin
 			m_lvIconsColumnSorter.UpdateStatistics();
 		}
 		
-		private void ResetDashboard() {
+		
+		
+		private void ResetAllIconDashboard() {
 			m_lvViewIcon.Items.Clear();
 			m_iconCounter = new IconStatsHandler();
 			m_iconCounter.Initialize( m_PluginHost.Database);
-			
-			int cx = CompatibilityManager.ScaleIntX(16);
-			int cy = CompatibilityManager.ScaleIntX(16);
-			m_ilCustoms = UIUtil.BuildImageList(m_PluginHost.Database.CustomIcons, cx, cy);
-		
-			CreateCustomIconList(m_ilCustoms);
+			CreateCustomIconList();
 			m_lvIconsColumnSorter.UpdateCheckAllCheckBox(false);
-			m_lvUsedEntries.Items.Clear();
-			m_lvUsedGroups.Items.Clear();
-		}
-		
-		private void CleanUpEx()
-		{
-			// Detach event handlers
-			m_lvViewIcon.SmallImageList = null;
-			m_iconCounter = null;
-		}
-
-		private void OnFormClosed(object sender, FormClosedEventArgs e)
-		{
-			CleanUpEx();
-			GlobalWindowManager.RemoveWindow(this);
 		}
 		
 		void OnLvViewIconSelectedIndexChanged(object sender, EventArgs e)
 		{
-			UpdateFormFromSelectedIcon();
-			UpdateFormFromBestIconFinder();
+			UpdateIconPaneFromSelectedIcon();
+			UpdateDownloadResultPaneFromSelectedIcon();
 		}
 		
 		void OnModifyIconClick(object sender, EventArgs e)
@@ -367,19 +374,19 @@ namespace CustomIconDashboarderPlugin
 			
 		}
 		
-		void OnDownloadClick(object sender, EventArgs e)
+		void OnDownloadIconClick(object sender, EventArgs e)
 		{
 			ListView.CheckedListViewItemCollection lvsiChecked = m_lvViewIcon.CheckedItems;
 			foreach(ListViewItem lvi in lvsiChecked)
 			{
-				if (UpdateBestIconFinderAndLviFromListViewItem( lvi )) {
+				if (UpdateBestIconFinderAndLviFromIconLvi( lvi )) {
 				    System.Threading.Thread.Sleep(500);
 				}
 			   lvi.EnsureVisible();
 			   m_lvViewIcon.Refresh();
 			}
 			
-			UpdateFormFromBestIconFinder();
+			UpdateDownloadResultPaneFromSelectedIcon();
 		
 		}
 		
@@ -389,8 +396,8 @@ namespace CustomIconDashboarderPlugin
 		/// </summary>
 		/// <param name="lvi"></param>
 		/// <returns>true if an update has occured. false else</returns>
-		private bool UpdateBestIconFinderAndLviFromListViewItem(ListViewItem lvi) {
-			PwCustomIcon readIcon = m_iconIndexer[lvi.ImageIndex];
+		private bool UpdateBestIconFinderAndLviFromIconLvi(ListViewItem iconLvi) {
+			PwCustomIcon readIcon = m_iconIndexer[iconLvi.ImageIndex];
 			if ( !m_bestIconFindersIndexer.ContainsKey( readIcon.Uuid ) ) {
 				List<Uri> lstUris = new List<Uri>();
 				lstUris.AddRange( m_iconCounter.GetListUris( readIcon ) );
@@ -407,13 +414,13 @@ namespace CustomIconDashboarderPlugin
 				}
 				    
 			    m_bestIconFindersIndexer.Add( readIcon.Uuid, bif);
-			    UpdateBestIconFinderResultForLvi( lvi);
+			    UpdateBestIconFinderResultForIconLvi( iconLvi);
 				return true;
 			}
 			return false;
 		}
 		
-		private void UpdateBestIconFinderResultForLvi( ListViewItem lvi) {
+		private void UpdateBestIconFinderResultForIconLvi( ListViewItem lvi) {
 			BestIconFinder bif = null;
 			PwCustomIcon readIcon = m_iconIndexer[lvi.ImageIndex];
 			if (m_bestIconFindersIndexer.ContainsKey(readIcon.Uuid)) {
@@ -436,7 +443,7 @@ namespace CustomIconDashboarderPlugin
 	    	}
 		}
 		
-		void UpdateFormFromSelectedIcon()
+		void UpdateIconPaneFromSelectedIcon()
 		{
 			ListView.SelectedListViewItemCollection sItems = m_lvViewIcon.SelectedItems;
 			
@@ -491,7 +498,7 @@ namespace CustomIconDashboarderPlugin
 			}	
 		}
 		
-		void UpdateFormFromBestIconFinder() 
+		void UpdateDownloadResultPaneFromSelectedIcon() 
 		{
 			ListView.SelectedListViewItemCollection sItems = m_lvViewIcon.SelectedItems;
 			if (sItems.Count > 0) {
@@ -572,12 +579,12 @@ namespace CustomIconDashboarderPlugin
 			}
 		}
 		
-		void OnPickClick(object sender, EventArgs e)
+		void OnPickIconClick(object sender, EventArgs e)
 		{
 			ListView.CheckedListViewItemCollection lvsiChecked = m_lvViewIcon.CheckedItems;
 						
 			foreach(ListViewItem lvi in lvsiChecked) {
-				UpdateBestIconFinderAndLviFromListViewItem( lvi );
+				UpdateBestIconFinderAndLviFromIconLvi( lvi );
 				PwCustomIcon readIcon = m_iconIndexer[lvi.ImageIndex];
 				
 				Debug.Assert(m_bestIconFindersIndexer.ContainsKey( readIcon.Uuid ));
@@ -587,7 +594,7 @@ namespace CustomIconDashboarderPlugin
 					PwCustomIcon newIcon = UpdateCustomIconFromImage( readIcon, bif.BestImage, m_PluginHost.Database);
 					if ((newIcon != null ) && (!m_bestIconFindersIndexer.ContainsKey(newIcon.Uuid)) ) {
 						m_bestIconFindersIndexer.Add(newIcon.Uuid, bif);
-						UpdateBestIconFinderResultForLvi(lvi);
+						UpdateBestIconFinderResultForIconLvi(lvi);
 					}
 					NotifyDatabaseModificationAndUpdateMainForm();
 				}
@@ -680,22 +687,8 @@ namespace CustomIconDashboarderPlugin
 			
 		}	
 		
-		private void NotifyDatabaseModificationAndUpdateMainForm() {
-			m_PluginHost.Database.Modified = true;
-			m_PluginHost.MainWindow.UpdateUI(true, null, false, null, true, null, true);
-		}
-		void OnDetailsCheckedChanged(object sender, EventArgs e)
-		{
-			if (rbu_details.Checked) {
-				m_lvDownloadResult.View = View.Details;
-			}
-			else {
-				m_lvDownloadResult.View = View.LargeIcon;
-			}
-		}
 		
-		
-		void OnPerformClick(object sender, EventArgs e)
+		void OnPerformIconActionClick(object sender, EventArgs e)
 		{
 			switch (cbo_actionSelector.SelectedIndex) {
 				case 1:
@@ -705,10 +698,10 @@ namespace CustomIconDashboarderPlugin
 					OnRemoveIconsClick(sender, e);
 					break;
 				case 3:
-					OnDownloadClick(sender, e);
+					OnDownloadIconClick(sender, e);
 					break;
 				case 4:
-					OnPickClick(sender, e);
+					OnPickIconClick(sender, e);
 					break;
 				default:
 					MessageBox.Show("Pbm");
@@ -717,14 +710,32 @@ namespace CustomIconDashboarderPlugin
 			}
 		}
 		
-		void OnActionSelectorSelectedIndexChanged(object sender, EventArgs e)
+		void OnIconActionSelectorSelectedIndexChanged(object sender, EventArgs e)
 		{
 			btn_perform.Enabled = cbo_actionSelector.SelectedIndex != 0;
 		}
 		
+		
+		#endregion
+		
+		#region Common methods
+		private void NotifyDatabaseModificationAndUpdateMainForm() {
+			m_PluginHost.Database.Modified = true;
+			m_PluginHost.MainWindow.UpdateUI(true, null, false, null, true, null, true);
+		}
+		
+		void OnDetailsCheckedChanged(object sender, EventArgs e)
+		{
+			if (rbu_details.Checked) {
+				m_lvDownloadResult.View = View.Details;
+			}
+			else {
+				m_lvDownloadResult.View = View.LargeIcon;
+			}
+		}
+		#endregion
+		
 	}
-	
-	
 	
 	/// <summary>
 	/// Class to compare size stored as width x height
