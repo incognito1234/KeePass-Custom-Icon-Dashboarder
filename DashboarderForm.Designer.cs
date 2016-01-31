@@ -631,7 +631,7 @@ namespace CustomIconDashboarderPlugin
 			this.tlp_downloadResult.Location = new System.Drawing.Point(3, 3);
 			this.tlp_downloadResult.Name = "tlp_downloadResult";
 			this.tlp_downloadResult.RowCount = 5;
-			this.tlp_downloadResult.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+			this.tlp_downloadResult.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 15F));
 			this.tlp_downloadResult.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tlp_downloadResult.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
 			this.tlp_downloadResult.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
@@ -652,7 +652,7 @@ namespace CustomIconDashboarderPlugin
 			this.scltp_downloadResult.Controls.Add(this.pbo_downloadedIcon16, 3, 0);
 			this.scltp_downloadResult.Controls.Add(this.pbo_downloadedIcon32, 2, 0);
 			this.scltp_downloadResult.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.scltp_downloadResult.Location = new System.Drawing.Point(0, 30);
+			this.scltp_downloadResult.Location = new System.Drawing.Point(0, 15);
 			this.scltp_downloadResult.Margin = new System.Windows.Forms.Padding(0);
 			this.scltp_downloadResult.Name = "scltp_downloadResult";
 			this.scltp_downloadResult.RowCount = 1;
@@ -720,7 +720,7 @@ namespace CustomIconDashboarderPlugin
 			this.lbl_newSize.Location = new System.Drawing.Point(257, 0);
 			this.lbl_newSize.Margin = new System.Windows.Forms.Padding(3, 0, 30, 0);
 			this.lbl_newSize.Name = "lbl_newSize";
-			this.lbl_newSize.Size = new System.Drawing.Size(221, 30);
+			this.lbl_newSize.Size = new System.Drawing.Size(221, 15);
 			this.lbl_newSize.TabIndex = 4;
 			this.lbl_newSize.Text = "New Size :";
 			this.lbl_newSize.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -730,9 +730,9 @@ namespace CustomIconDashboarderPlugin
 			this.tlp_downloadResult.SetColumnSpan(this.m_lvDownloadResult, 4);
 			this.m_lvDownloadResult.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.m_lvDownloadResult.FullRowSelect = true;
-			this.m_lvDownloadResult.Location = new System.Drawing.Point(3, 227);
+			this.m_lvDownloadResult.Location = new System.Drawing.Point(3, 212);
 			this.m_lvDownloadResult.Name = "m_lvDownloadResult";
-			this.m_lvDownloadResult.Size = new System.Drawing.Size(502, 58);
+			this.m_lvDownloadResult.Size = new System.Drawing.Size(502, 73);
 			this.m_lvDownloadResult.TabIndex = 5;
 			this.m_lvDownloadResult.UseCompatibleStateImageBehavior = false;
 			// 
@@ -740,7 +740,7 @@ namespace CustomIconDashboarderPlugin
 			// 
 			this.lbl_alldownloadedicons.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.lbl_alldownloadedicons.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lbl_alldownloadedicons.Location = new System.Drawing.Point(3, 204);
+			this.lbl_alldownloadedicons.Location = new System.Drawing.Point(3, 189);
 			this.lbl_alldownloadedicons.Name = "lbl_alldownloadedicons";
 			this.lbl_alldownloadedicons.Size = new System.Drawing.Size(248, 20);
 			this.lbl_alldownloadedicons.TabIndex = 6;
@@ -751,7 +751,7 @@ namespace CustomIconDashboarderPlugin
 			this.rbu_icons.Checked = true;
 			this.rbu_icons.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.rbu_icons.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.rbu_icons.Location = new System.Drawing.Point(254, 204);
+			this.rbu_icons.Location = new System.Drawing.Point(254, 189);
 			this.rbu_icons.Margin = new System.Windows.Forms.Padding(0);
 			this.rbu_icons.Name = "rbu_icons";
 			this.rbu_icons.Size = new System.Drawing.Size(127, 20);
@@ -765,7 +765,7 @@ namespace CustomIconDashboarderPlugin
 			this.tlp_downloadResult.SetColumnSpan(this.rbu_details, 2);
 			this.rbu_details.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.rbu_details.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.rbu_details.Location = new System.Drawing.Point(381, 204);
+			this.rbu_details.Location = new System.Drawing.Point(381, 189);
 			this.rbu_details.Margin = new System.Windows.Forms.Padding(0);
 			this.rbu_details.Name = "rbu_details";
 			this.rbu_details.Size = new System.Drawing.Size(127, 20);
