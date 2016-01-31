@@ -63,6 +63,11 @@ namespace CustomIconDashboarderPlugin
 			"//link[translate(@rel,'" + alphabetUC + "','" + alphabetLC +"')='apple-touch-icon-precomposed']"
 		};
 		
+		private static Dictionary<Uri,Image> imageCache = new Dictionary<Uri, Image>{};
+		private static object lckImageCache = new object();
+		private static Dictionary<Uri, CachedURIRequestResult> uriRequestCache = new Dictionary<Uri, CachedURIRequestResult>{};
+		private static object lckUriRequestCache = new object();
+		
 		#endregion		
 		
 		
@@ -73,9 +78,10 @@ namespace CustomIconDashboarderPlugin
 		public Uri RootUriForIco {get; private set;}
 		public FinderResult Result {get; private set; }
 		public string Details {get;set; }
+		public int NbRequestCacheInvoke {get; private set; }
 		private MyWebClient client;
-		
-		public List<ImageInfo> ListImageInfo {get; private set;}
+
+		public List<ImageInfo> ListImageInfo {get; private set;} // All image and URI
 		
 		private MyLogger myLogger;
 		private List<Uri> ListUriIcons {get; set;}
@@ -94,6 +100,7 @@ namespace CustomIconDashboarderPlugin
 			this.myLogger = new MyLogger(this);
 			this.BestImage = null;
 			this.ListImageInfo = new List<ImageInfo>();
+			this.NbRequestCacheInvoke = 0;
 			client = new MyWebClient();
 		}
 		
@@ -104,6 +111,7 @@ namespace CustomIconDashboarderPlugin
 			this.myLogger = new MyLogger(this);
 			this.BestImage = null;
 			this.ListImageInfo = new List<ImageInfo>();
+			this.NbRequestCacheInvoke = 0;
 			client = new MyWebClient();
 		}
 		
@@ -202,6 +210,7 @@ namespace CustomIconDashboarderPlugin
 			this.myLogger.LogInfo("End test Icon URI");
 			
 		}
+		
 		/// <summary>
 		/// Test Image URI and store in Best Image if quality is better 
 		/// </summary>
@@ -211,37 +220,58 @@ namespace CustomIconDashboarderPlugin
 			byte[] pictureData = null;
 			Image downloadedImage = null;
 			
-			try {
-				pictureData = client.DownloadData( uriToBeTested);
-				pictureData = PreparedIconBytesArrayToBeParsed( pictureData );
-					
-			   try {
-			   	downloadedImage = KeePassLib.Utility.GfxUtil.LoadImage( pictureData );
-			   }
-			   catch (Exception e) {
-			   	this.myLogger.LogError("Error while parsing image " + uriToBeTested.AbsoluteUri + System.Environment.NewLine
-			   	                      + e.Message);
-			   }
-			   
-			   if (downloadedImage != null) {
-				   this.myLogger.LogDebug( "Size " + downloadedImage.Width + " x " + downloadedImage.Height );
-				   this.ListImageInfo.Add( new ImageInfo( downloadedImage,uriToBeTested.AbsolutePath) );
-				   if ( (this.BestImage == null ) ||
-				       (CompareImageQuality( downloadedImage, this.BestImage) == 1) ) {
-					   	this.BestImage = downloadedImage;
-					   	this.myLogger.LogInfo("-->stored as the best image");
+			bool imageWasInCache = false;
+			
+			lock (lckImageCache) {
+				if (imageCache.ContainsKey( uriToBeTested ) ) {
+					downloadedImage = imageCache[uriToBeTested];
+					imageWasInCache = true;
+				}
+			}
+			
+			if (!imageWasInCache) {
+				try {
+					pictureData = client.DownloadData( uriToBeTested);
+					pictureData = PreparedIconBytesArrayToBeParsed( pictureData );
+						
+				   try {
+				   	downloadedImage = KeePassLib.Utility.GfxUtil.LoadImage( pictureData );
 				   }
-			   }
-			   
+				   catch (Exception e) {
+				   	this.myLogger.LogError("Error while parsing image " + uriToBeTested.AbsoluteUri + System.Environment.NewLine
+				   	                      + e.Message);
+				   }
+				   
+				}
+				catch (WebException) {
+					this.myLogger.LogError( "Error while getting icon " 
+					                       + uriToBeTested.AbsoluteUri);
+				}
+				catch (NotSupportedException) {
+					this.myLogger.LogError( "Not Supported Exception while getting icon " 
+					                       + uriToBeTested.AbsoluteUri);
+				}
+				
+				lock (lckImageCache) {
+					if (!imageCache.ContainsKey(uriToBeTested)) {
+						imageCache.Add(uriToBeTested, downloadedImage);
+					}
+				}
 			}
-			catch (WebException) {
-				this.myLogger.LogError( "Error while getting icon " 
-				                       + uriToBeTested.AbsoluteUri);
-			}
-			catch (NotSupportedException) {
-				this.myLogger.LogError( "Not Supported Exception while getting icon " 
-				                       + uriToBeTested.AbsoluteUri);
-			}
+			
+		   if (downloadedImage != null) {
+				
+				downloadedImage = (Image)downloadedImage.Clone(); 
+				  // It is necessary to clone image to avoid concurrent access during post operation.
+				  // For example, error should occured if image is resized by several thread in the same time.
+	 		    this.myLogger.LogDebug( "Size " + downloadedImage.Width + " x " + downloadedImage.Height );
+			    this.ListImageInfo.Add( new ImageInfo( downloadedImage,uriToBeTested.AbsolutePath) );
+			    if ( (this.BestImage == null ) ||
+			       (CompareImageQuality( downloadedImage, this.BestImage) == 1) ) {
+				   	this.BestImage = downloadedImage;
+				   	this.myLogger.LogInfo("-->stored as the best image");
+			    }
+		   }
 		}
 		
 		public void GetIconLinks() {
@@ -260,20 +290,40 @@ namespace CustomIconDashboarderPlugin
 			// Get HTML
 			HtmlAgilityPack.HtmlDocument htmlPage = null;
 			Uri fullUri = null;
-			try {
-				fullUri = GetURIOfSite(testedUri, out htmlPage);
+			
+			bool uriInCache = false;
+			lock(lckUriRequestCache) {
+				if (uriRequestCache.ContainsKey( param_Uri )) {
+					CachedURIRequestResult curr = uriRequestCache[param_Uri];
+					fullUri = curr.FullUri;
+					htmlPage = curr.Html;
+					this.NbRequestCacheInvoke++;
+					uriInCache = true;
+				}
 			}
-			catch ( WebException ) {
-				this.Result = new FinderResult(FinderResult.RESULT_HTML_NOT_FOUND);
-				this.myLogger.Unindent();
-				this.myLogger.LogDebug("End findIconLinks");
-				return;				
-			}
-			catch ( Exception ) {
-				this.Result = new FinderResult(FinderResult.RESULT_HTML_PARSING);
-				this.myLogger.Unindent();
-				this.myLogger.LogDebug("End findIconLinks");
-				return;
+			
+			if (!uriInCache) {
+				try {
+					fullUri = GetURIOfSite(testedUri, out htmlPage);
+				}
+				catch ( WebException ) {
+					this.Result = new FinderResult(FinderResult.RESULT_HTML_NOT_FOUND);
+					this.myLogger.Unindent();
+					this.myLogger.LogDebug("End findIconLinks");
+					return;				
+				}
+				catch ( Exception ) {
+					this.Result = new FinderResult(FinderResult.RESULT_HTML_PARSING);
+					this.myLogger.Unindent();
+					this.myLogger.LogDebug("End findIconLinks");
+					return;
+				}
+				lock (lckUriRequestCache) {
+					if (!uriRequestCache.ContainsKey( param_Uri )) {
+						var curr = new CachedURIRequestResult(fullUri, htmlPage);
+						uriRequestCache.Add( param_Uri, curr);
+					}
+				}
 			}
 		
 			if ( htmlPage == null) {
@@ -643,6 +693,17 @@ namespace CustomIconDashboarderPlugin
 		}
 	
 	
+		private sealed class CachedURIRequestResult {
+			public Uri FullUri {get; private set; }
+			public HtmlDocument Html {get; private set; }
+			
+			public CachedURIRequestResult (Uri fullUri, HtmlDocument html) {
+				this.FullUri = fullUri;
+				this.Html = html;
+			}
+		
+		}	
+		
 	}
 	
 	public sealed class FinderResult {
@@ -670,6 +731,5 @@ namespace CustomIconDashboarderPlugin
 			}
 		}
 	}
-	
-	
+
 }
