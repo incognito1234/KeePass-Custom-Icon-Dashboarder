@@ -22,20 +22,16 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Globalization;
-using System.Net;
 
 using KeePass.UI;
 using KeePass.Plugins;
 using KeePass.Forms;
 
 using KeePassLib;
-
 using LomsonLib.UI;
-using LomsonLib.Utility;
 
 namespace CustomIconDashboarderPlugin
 {
@@ -236,7 +232,7 @@ namespace CustomIconDashboarderPlugin
 			
 			foreach(PwCustomIcon pwci in m_PluginHost.Database.CustomIcons)
 			{
-				ListViewItem lvi = new ListViewItem(j.ToString(NumberFormatInfo.InvariantInfo), j);
+				var lvi = new ListViewItem(j.ToString(NumberFormatInfo.InvariantInfo), j);
 				Image originalImage = CompatibilityManager.GetOriginalImage(pwci);
 				
 				m_iconIndexer.Add(j, pwci);
@@ -282,8 +278,8 @@ namespace CustomIconDashboarderPlugin
 			PwCustomIcon firstIcon = m_iconIndexer[
 				m_lvViewIcon.CheckedItems[0].ImageIndex];
 			
-			IconPickerForm ipf = new IconPickerForm();
-			ListView lvEntriesOfMainForm = (ListView)GetControlFromForm( m_PluginHost.MainWindow, "m_lvEntries");
+			var ipf = new IconPickerForm();
+			var lvEntriesOfMainForm = (ListView)GetControlFromForm( m_PluginHost.MainWindow, "m_lvEntries");
 			ImageList il_allIcons = lvEntriesOfMainForm.SmallImageList; // Standard icons are the "PwIcon.Count"th first items
 			ipf.InitEx(
 				il_allIcons,
@@ -346,9 +342,7 @@ namespace CustomIconDashboarderPlugin
 		
 		public static Control GetControlFromForm(Control form, String name) {
 			Control[] cntrls = form.Controls.Find(name, true);
-			if (cntrls.Length == 0)
-				return null;
-			return cntrls[0];
+			return cntrls.Length == 0 ? null : cntrls[0];
 	    }
 		
 
@@ -356,7 +350,7 @@ namespace CustomIconDashboarderPlugin
 		void OnRemoveIconsClick(object sender, EventArgs e)
 		{
 			ListView.CheckedListViewItemCollection lvsiChecked = m_lvViewIcon.CheckedItems;
-			List<PwUuid> vUuidsToDelete = new List<PwUuid>();
+			var vUuidsToDelete = new List<PwUuid>();
 
 			foreach(ListViewItem lvi in lvsiChecked)
 			{
@@ -399,7 +393,7 @@ namespace CustomIconDashboarderPlugin
 		private bool UpdateBestIconFinderAndLviFromIconLvi(ListViewItem iconLvi) {
 			PwCustomIcon readIcon = m_iconIndexer[iconLvi.ImageIndex];
 			if ( !m_bestIconFindersIndexer.ContainsKey( readIcon.Uuid ) ) {
-				List<Uri> lstUris = new List<Uri>();
+				var lstUris = new List<Uri>();
 				lstUris.AddRange( m_iconCounter.GetListUris( readIcon ) );
 				
 				// Retrieve images
@@ -478,7 +472,7 @@ namespace CustomIconDashboarderPlugin
 				while (myEntryEnumerator.MoveNext()) {
 					PwEntry readEntry = myEntryEnumerator.Current;
 					
-					ListViewItem lvi = new ListViewItem( readEntry.Strings.ReadSafe( PwDefs.TitleField ) );
+					var lvi = new ListViewItem( readEntry.Strings.ReadSafe( PwDefs.TitleField ) );
 					lvi.SubItems.Add( readEntry.Strings.ReadSafe( PwDefs.UserNameField ) );
 					lvi.SubItems.Add( readEntry.Strings.ReadSafe( PwDefs.UrlField ) );
 					lvi.SubItems.Add( readEntry.ParentGroup.GetFullPath(".", false) );
@@ -488,7 +482,7 @@ namespace CustomIconDashboarderPlugin
 				IEnumerator<PwGroup> myGroupEnumerator = m_iconCounter.GetListGroups( readIcon ).GetEnumerator();
 				while (myGroupEnumerator.MoveNext()) {
 					PwGroup readGroup = myGroupEnumerator.Current;
-					ListViewItem lvi = new ListViewItem( readGroup.Name );
+					var lvi = new ListViewItem( readGroup.Name );
 					lvi.SubItems.Add( readGroup.GetFullPath() );
 					m_lvUsedGroups.Items.Add( lvi );
 				}
@@ -504,7 +498,7 @@ namespace CustomIconDashboarderPlugin
 			if (sItems.Count > 0) {
 				ListViewItem lvi = sItems[0];
 				
-				PwUuid pu = (PwUuid)lvi.Tag;
+				var pu = (PwUuid)lvi.Tag;
 				bool cleanImage = false;
 				
 				if (m_bestIconFindersIndexer.ContainsKey(pu)) {
@@ -539,7 +533,7 @@ namespace CustomIconDashboarderPlugin
 						while (enumImageInfo.MoveNext()) {
 							ImageInfo myImageInfo = enumImageInfo.Current;
 							ii++;
-							ListViewItem lviImageInfo = 
+							var lviImageInfo = 
 								new ListViewItem( ii.ToString(NumberFormatInfo.InvariantInfo )
 								                 );
 							lviImageInfo.SubItems.Add( myImageInfo.ImgData.Width.ToString(NumberFormatInfo.InvariantInfo)
@@ -645,7 +639,7 @@ namespace CustomIconDashboarderPlugin
 		/// <returns>Custom Icon in database. null if an error occurs</returns>
 		private PwCustomIcon GetCustomIconFromImageAndUpdateKdbIfNecessary( Image img, PwDatabase kdb) {
 			// From IconPickerForm.OnBtnCustomAdd - Keepass v2.29
-		 	MemoryStream ms = new MemoryStream();
+		 	var ms = new MemoryStream();
 			const int wMax = 128;
 			const int hMax = 128;
 		 	try {
@@ -726,12 +720,8 @@ namespace CustomIconDashboarderPlugin
 		
 		void OnDetailsCheckedChanged(object sender, EventArgs e)
 		{
-			if (rbu_details.Checked) {
-				m_lvDownloadResult.View = View.Details;
-			}
-			else {
-				m_lvDownloadResult.View = View.LargeIcon;
-			}
+			m_lvDownloadResult.View = rbu_details.Checked ? 
+				View.Details : View.LargeIcon;
 		}
 		#endregion
 		
