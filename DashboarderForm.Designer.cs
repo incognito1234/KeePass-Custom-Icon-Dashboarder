@@ -60,6 +60,9 @@ namespace CustomIconDashboarderPlugin
 			this.cbo_actionSelector = new System.Windows.Forms.ComboBox();
 			this.btn_perform = new System.Windows.Forms.Button();
 			this.tpa_listAllEntries = new System.Windows.Forms.TabPage();
+			this.tlp_allEntries = new System.Windows.Forms.TableLayoutPanel();
+			this.m_lvAllEntries = new System.Windows.Forms.ListView();
+			this.cb_allEntriesSelection = new System.Windows.Forms.CheckBox();
 			this.tlp_right = new System.Windows.Forms.TableLayoutPanel();
 			this.tlp_upperRight = new System.Windows.Forms.TableLayoutPanel();
 			this.lbl_originalSize = new System.Windows.Forms.Label();
@@ -102,6 +105,8 @@ namespace CustomIconDashboarderPlugin
 			this.tpa_listAllIcons.SuspendLayout();
 			this.tlp_allIcons.SuspendLayout();
 			this.flowLayoutPanel1.SuspendLayout();
+			this.tpa_listAllEntries.SuspendLayout();
+			this.tlp_allEntries.SuspendLayout();
 			this.tlp_right.SuspendLayout();
 			this.tlp_upperRight.SuspendLayout();
 			this.scltp_icons.SuspendLayout();
@@ -128,7 +133,6 @@ namespace CustomIconDashboarderPlugin
 			// 
 			// m_lvViewIcon
 			// 
-			this.m_lvViewIcon.Activation = System.Windows.Forms.ItemActivation.OneClick;
 			this.m_lvViewIcon.AllowColumnReorder = true;
 			this.m_lvViewIcon.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.m_lvViewIcon.CheckBoxes = true;
@@ -329,6 +333,7 @@ namespace CustomIconDashboarderPlugin
 			// 
 			// tpa_listAllEntries
 			// 
+			this.tpa_listAllEntries.Controls.Add(this.tlp_allEntries);
 			this.tpa_listAllEntries.Location = new System.Drawing.Point(4, 25);
 			this.tpa_listAllEntries.Name = "tpa_listAllEntries";
 			this.tpa_listAllEntries.Padding = new System.Windows.Forms.Padding(3);
@@ -336,6 +341,50 @@ namespace CustomIconDashboarderPlugin
 			this.tpa_listAllEntries.TabIndex = 1;
 			this.tpa_listAllEntries.Text = "All Entries";
 			this.tpa_listAllEntries.UseVisualStyleBackColor = true;
+			// 
+			// tlp_allEntries
+			// 
+			this.tlp_allEntries.ColumnCount = 1;
+			this.tlp_allEntries.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tlp_allEntries.Controls.Add(this.m_lvAllEntries, 0, 0);
+			this.tlp_allEntries.Controls.Add(this.cb_allEntriesSelection, 0, 1);
+			this.tlp_allEntries.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.tlp_allEntries.Location = new System.Drawing.Point(3, 3);
+			this.tlp_allEntries.Name = "tlp_allEntries";
+			this.tlp_allEntries.RowCount = 3;
+			this.tlp_allEntries.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tlp_allEntries.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+			this.tlp_allEntries.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+			this.tlp_allEntries.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+			this.tlp_allEntries.Size = new System.Drawing.Size(310, 518);
+			this.tlp_allEntries.TabIndex = 0;
+			// 
+			// m_lvAllEntries
+			// 
+			this.m_lvAllEntries.AllowColumnReorder = true;
+			this.m_lvAllEntries.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.m_lvAllEntries.CheckBoxes = true;
+			this.m_lvAllEntries.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.m_lvAllEntries.FullRowSelect = true;
+			this.m_lvAllEntries.GridLines = true;
+			this.m_lvAllEntries.HideSelection = false;
+			this.m_lvAllEntries.Location = new System.Drawing.Point(0, 0);
+			this.m_lvAllEntries.Margin = new System.Windows.Forms.Padding(0);
+			this.m_lvAllEntries.Name = "m_lvAllEntries";
+			this.m_lvAllEntries.Size = new System.Drawing.Size(310, 458);
+			this.m_lvAllEntries.TabIndex = 0;
+			this.m_lvAllEntries.UseCompatibleStateImageBehavior = false;
+			this.m_lvAllEntries.View = System.Windows.Forms.View.Details;
+			this.m_lvAllEntries.SelectedIndexChanged += new System.EventHandler(this.OnLvAllEntriesSelectedIndexChanged);
+			// 
+			// cb_allEntriesSelection
+			// 
+			this.cb_allEntriesSelection.Location = new System.Drawing.Point(3, 461);
+			this.cb_allEntriesSelection.Name = "cb_allEntriesSelection";
+			this.cb_allEntriesSelection.Size = new System.Drawing.Size(129, 24);
+			this.cb_allEntriesSelection.TabIndex = 1;
+			this.cb_allEntriesSelection.Text = "&Check/Uncheck All";
+			this.cb_allEntriesSelection.UseVisualStyleBackColor = true;
 			// 
 			// tlp_right
 			// 
@@ -828,6 +877,8 @@ namespace CustomIconDashboarderPlugin
 			this.tpa_listAllIcons.ResumeLayout(false);
 			this.tlp_allIcons.ResumeLayout(false);
 			this.flowLayoutPanel1.ResumeLayout(false);
+			this.tpa_listAllEntries.ResumeLayout(false);
+			this.tlp_allEntries.ResumeLayout(false);
 			this.tlp_right.ResumeLayout(false);
 			this.tlp_right.PerformLayout();
 			this.tlp_upperRight.ResumeLayout(false);
@@ -905,6 +956,9 @@ namespace CustomIconDashboarderPlugin
 		private System.Windows.Forms.ComboBox cbo_actionSelector;
 		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
 		private System.Windows.Forms.Button btn_perform;
+		private System.Windows.Forms.TableLayoutPanel tlp_allEntries;
+		private System.Windows.Forms.ListView m_lvAllEntries;
+		private System.Windows.Forms.CheckBox cb_allEntriesSelection;
 
 		
 		void DashboarderLoad(object sender, System.EventArgs e)

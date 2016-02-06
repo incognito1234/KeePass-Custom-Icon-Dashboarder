@@ -162,4 +162,10 @@
   <data name="hdr_url" xml:space="preserve">
     <value>Url</value>
   </data>
+  <data name="hdr_idEntry" xml:space="preserve">
+    <value>Id Entry</value>
+  </data>
+  <data name="hdr_group" xml:space="preserve">
+    <value>Group</value>
+  </data>
 </root>

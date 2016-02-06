@@ -49,6 +49,7 @@ namespace CustomIconDashboarderPlugin
 		private ListViewLayoutManager  m_lvGroupsColumnSorter;
 		private ListViewLayoutManager  m_lvEntriesColumnSorter;
 		private ListViewLayoutManager  m_lvDownloadResultColumnSorter;
+		private ListViewLayoutManager  m_lvAllEntriesColumnSorter;
 		
 		#region Initialization & Dispose
 		public DashboarderForm(IPluginHost pluginHost)
@@ -78,12 +79,15 @@ namespace CustomIconDashboarderPlugin
 		
 		private void OnFormDispose()
 		{
+			
 		}
 		
 		private void InitEx()
 		{
 			m_bestIconFindersIndexer = new Dictionary<PwUuid, BestIconFinder>();
 			BuildCustomIconListView();
+			BuildEntriesListViews();
+			BuildUsageListViews();
 			ResetDashboard();
 		}
 		
@@ -100,6 +104,7 @@ namespace CustomIconDashboarderPlugin
 		{
 			// Detach event handlers
 			m_lvViewIcon.SmallImageList = null;
+			m_lvAllEntries.SmallImageList = null;
 			m_iconCounter = null;
 		}
 
@@ -114,41 +119,6 @@ namespace CustomIconDashboarderPlugin
 		#region ListView icon action
 		private void BuildCustomIconListView()
 		{
-			//Debug.Assert( m_iconCounter != null );
-			
-			// List View Used Entries
-			m_lvUsedEntries.Columns.Add( Resource.hdr_titleEntry, 85 );
-			m_lvUsedEntries.Columns.Add( Resource.hdr_userName, 85);
-			m_lvUsedEntries.Columns.Add( Resource.hdr_url, 140);
-			m_lvUsedEntries.Columns.Add( Resource.hdr_groupName, 140);
-			
-			m_lvEntriesColumnSorter = new ListViewLayoutManager();
-			m_lvEntriesColumnSorter.AddColumnComparer(0, new LomsonLib.UI.StringComparer(false,true) );
-			m_lvEntriesColumnSorter.AddColumnComparer(1, new LomsonLib.UI.StringComparer(false,true) );
-			m_lvEntriesColumnSorter.AddColumnComparer(2, new LomsonLib.UI.StringComparer(false,true) );
-			m_lvEntriesColumnSorter.AddColumnComparer(3, new LomsonLib.UI.StringComparer(false,true) );
-			
-			m_lvEntriesColumnSorter.AddDefaultSortedColumn(2,false);
-			m_lvEntriesColumnSorter.AddDefaultSortedColumn(0,false);
-			m_lvEntriesColumnSorter.AddDefaultSortedColumn(1,false);
-			
-			m_lvEntriesColumnSorter.AutoWidthColumn = true;
-			
-			m_lvEntriesColumnSorter.ApplyToListView( this.m_lvUsedEntries );
-			
-			// List View Used Group
-			m_lvUsedGroups.Columns.Add( Resource.hdr_groupName, 130 );
-			m_lvUsedGroups.Columns.Add( Resource.hdr_fullPath, 230 );
-			
-			m_lvGroupsColumnSorter = new ListViewLayoutManager();
-			m_lvGroupsColumnSorter.AddColumnComparer(0, new LomsonLib.UI.StringComparer(false,true) );
-			m_lvGroupsColumnSorter.AddColumnComparer(1, new LomsonLib.UI.StringComparer(false,true) );
-			m_lvGroupsColumnSorter.AddDefaultSortedColumn(1,false);
-			
-			m_lvGroupsColumnSorter.AutoWidthColumn = true;
-			
-			m_lvGroupsColumnSorter.ApplyToListView( this.m_lvUsedGroups);
-		
 			// List View Icon
 			m_lvViewIcon.Columns.Add( Resource.hdr_icon, 50 );
 			m_lvViewIcon.Columns.Add( Resource.hdr_currentSize, 50, HorizontalAlignment.Center );
@@ -157,6 +127,7 @@ namespace CustomIconDashboarderPlugin
 			m_lvViewIcon.Columns.Add( Resource.hdr_nGroup, 50, HorizontalAlignment.Center);
 			m_lvViewIcon.Columns.Add( Resource.hdr_nTotal, 50, HorizontalAlignment.Center);
 			m_lvViewIcon.Columns.Add( Resource.hdr_nURL, 50, HorizontalAlignment.Center );
+			
 			m_lvIconsColumnSorter = new ListViewLayoutManager();
 			
 			m_lvIconsColumnSorter.AddColumnComparer(0, new IntegerAsStringComparer(false));
@@ -191,7 +162,42 @@ namespace CustomIconDashboarderPlugin
 			m_lvIconsColumnSorter.ApplyToListView( this.m_lvViewIcon );
 			
 			ehMulti(null); // Disable buttons
+		}
+		
+		private void BuildUsageListViews() {
+			// List View Used Entries
+			m_lvUsedEntries.Columns.Add( Resource.hdr_titleEntry, 85 );
+			m_lvUsedEntries.Columns.Add( Resource.hdr_userName, 85);
+			m_lvUsedEntries.Columns.Add( Resource.hdr_url, 140);
+			m_lvUsedEntries.Columns.Add( Resource.hdr_groupName, 140);
 			
+			m_lvEntriesColumnSorter = new ListViewLayoutManager();
+			m_lvEntriesColumnSorter.AddColumnComparer(0, new LomsonLib.UI.StringComparer(false,true) );
+			m_lvEntriesColumnSorter.AddColumnComparer(1, new LomsonLib.UI.StringComparer(false,true) );
+			m_lvEntriesColumnSorter.AddColumnComparer(2, new LomsonLib.UI.StringComparer(false,true) );
+			m_lvEntriesColumnSorter.AddColumnComparer(3, new LomsonLib.UI.StringComparer(false,true) );
+			
+			m_lvEntriesColumnSorter.AddDefaultSortedColumn(2,false);
+			m_lvEntriesColumnSorter.AddDefaultSortedColumn(0,false);
+			m_lvEntriesColumnSorter.AddDefaultSortedColumn(1,false);
+			
+			m_lvEntriesColumnSorter.AutoWidthColumn = true;
+			
+			m_lvEntriesColumnSorter.ApplyToListView( this.m_lvUsedEntries );	
+			
+			// List View Used Group
+			m_lvUsedGroups.Columns.Add( Resource.hdr_groupName, 130 );
+			m_lvUsedGroups.Columns.Add( Resource.hdr_fullPath, 230 );
+			
+			m_lvGroupsColumnSorter = new ListViewLayoutManager();
+			m_lvGroupsColumnSorter.AddColumnComparer(0, new LomsonLib.UI.StringComparer(false,true) );
+			m_lvGroupsColumnSorter.AddColumnComparer(1, new LomsonLib.UI.StringComparer(false,true) );
+			m_lvGroupsColumnSorter.AddDefaultSortedColumn(1,false);
+			
+			m_lvGroupsColumnSorter.AutoWidthColumn = true;
+			
+			m_lvGroupsColumnSorter.ApplyToListView( this.m_lvUsedGroups);
+		
 			// List DownloadResult
 			m_lvDownloadResult.Columns.Add("id", 40);
 			m_lvDownloadResult.Columns.Add("Size", 40);
@@ -204,10 +210,46 @@ namespace CustomIconDashboarderPlugin
 			
 			m_lvDownloadResultColumnSorter.AutoWidthColumn = true;
 			m_lvDownloadResultColumnSorter.AddDefaultSortedColumn(0,false);
-			m_lvDownloadResultColumnSorter.ApplyToListView(m_lvDownloadResult);
+			m_lvDownloadResultColumnSorter.ApplyToListView(m_lvDownloadResult);	
+		}
+		
+		
+		private void BuildEntriesListViews() {
+			// List View Icon
+			m_lvAllEntries.Columns.Add( Resource.hdr_idEntry, 150 );
+			m_lvAllEntries.Columns.Add( Resource.hdr_currentSize, 50, HorizontalAlignment.Center );
+			m_lvAllEntries.Columns.Add( Resource.hdr_newSize, 50, HorizontalAlignment.Center );
+			m_lvAllEntries.Columns.Add( Resource.hdr_group, 50, HorizontalAlignment.Center);
+			m_lvAllEntries.Columns.Add( Resource.hdr_url, 150, HorizontalAlignment.Left);
 			
-					
-		//	CreateCustomIconList();
+			m_lvAllEntriesColumnSorter = new ListViewLayoutManager();
+			
+			m_lvAllEntriesColumnSorter.AddColumnComparer(0, new LomsonLib.UI.StringComparer(false, true));
+			m_lvAllEntriesColumnSorter.AddColumnComparer(1, new SizeComparer(false));
+			m_lvAllEntriesColumnSorter.AddColumnComparer(2, new SizeComparer(false));
+			m_lvAllEntriesColumnSorter.AddColumnComparer(3, new LomsonLib.UI.StringComparer(false, true));
+			m_lvAllEntriesColumnSorter.AddColumnComparer(4, new LomsonLib.UI.StringComparer(false, true));
+
+			m_lvAllEntriesColumnSorter.AddDefaultSortedColumn(0,false);
+
+			m_lvAllEntriesColumnSorter.AutoWidthColumn = true;
+			m_lvAllEntriesColumnSorter.CheckAllCheckBox = cb_allEntriesSelection;
+			
+//			ListViewLayoutManager.dlgMultiCheckingCheckBoxes ehMulti = delegate(IList<ListViewItem> lst) {
+//				//Disable button if no elements is checked
+//				if (m_lvViewIcon.CheckedItems.Count == 0 ) {
+//					btn_perform.Enabled = false;					
+//				}
+//				else {
+//					btn_perform.Enabled = cbo_actionSelector.SelectedIndex != 0;
+//				}
+//			};
+			//m_lvAllEntriesColumnSorter.DefineMultiCheckingBehavior(ehMulti);
+			m_lvAllEntriesColumnSorter.EnableMultiCheckingControl();
+			
+			m_lvAllEntriesColumnSorter.ApplyToListView( this.m_lvAllEntries );
+			
+			//ehMulti(null); // Disable buttons
 			
 		}
 			
@@ -258,13 +300,45 @@ namespace CustomIconDashboarderPlugin
 		}
 		
 		
+		private void CreateAllEntriesList()
+		{
+			m_lvAllEntries.BeginUpdate();
+			m_lvAllEntries.SmallImageList = m_PluginHost.MainWindow.ClientIcons;
+		
+			int j=0;
+			foreach(PwEntry pe in m_PluginHost.Database.RootGroup.GetEntries(true))
+			{
+				var lvi = new ListViewItem(pe.Strings.ReadSafe(PwDefs.TitleField));
+				
+				// Current Size
+				lvi.SubItems.Add("0 x 0");
+				lvi.SubItems.Add("0 x 0");
+				
+				lvi.SubItems.Add(pe.ParentGroup.GetFullPath(".",false));
+				lvi.SubItems.Add(pe.Strings.ReadSafe(PwDefs.UrlField));
+				if(pe.CustomIconUuid.Equals(PwUuid.Zero))
+					lvi.ImageIndex = (int)pe.IconId;
+				else
+					lvi.ImageIndex = (int)PwIcon.Count +
+						 m_PluginHost.Database.GetCustomIconIndex(pe.CustomIconUuid);
+				
+				//lvi.Tag = pe;
+				m_lvAllEntries.Items.Add(lvi);
+				j++;
+			}
+			m_lvAllEntries.EndUpdate();
+		}
+		
+		
 		
 		private void ResetAllIconDashboard() {
 			m_lvViewIcon.Items.Clear();
 			m_iconCounter = new IconStatsHandler();
 			m_iconCounter.Initialize( m_PluginHost.Database);
 			CreateCustomIconList();
+			CreateAllEntriesList();
 			m_lvIconsColumnSorter.UpdateCheckAllCheckBox(false);
+			m_lvEntriesColumnSorter.UpdateCheckAllCheckBox(false);
 		}
 		
 		void OnLvViewIconSelectedIndexChanged(object sender, EventArgs e)
@@ -712,6 +786,72 @@ namespace CustomIconDashboarderPlugin
 		
 		#endregion
 		
+		#region ListView entries action
+		void OnLvAllEntriesSelectedIndexChanged(object sender, EventArgs e)
+		{
+		
+			ListView.SelectedListViewItemCollection sItems = m_lvAllEntries.SelectedItems;
+			
+			m_lvUsedEntries.Items.Clear();
+			m_lvUsedGroups.Items.Clear();
+	 
+			if ((sItems.Count > 0 ) &&
+			    (sItems[0].ImageIndex > ((int)PwIcon.Count)) ) {
+				PwCustomIcon readIcon;
+				readIcon = tco_lists.SelectedIndex == 0 ?
+					m_iconIndexer[sItems[0].ImageIndex] : 
+					m_iconIndexer[sItems[0].ImageIndex - (int)PwIcon.Count];
+				
+				Image originalImage = CompatibilityManager.GetOriginalImage(readIcon);
+				
+				pbo_selectedIcon128.BackgroundImage = 
+					CompatibilityManager.ResizedImage(originalImage, 128, 128);
+				pbo_selectedIcon64.BackgroundImage = 
+					CompatibilityManager.ResizedImage(originalImage, 64, 64);
+				pbo_selectedIcon32.BackgroundImage =
+					CompatibilityManager.ResizedImage(originalImage, 32, 32);					
+				pbo_selectedIcon16.BackgroundImage = 
+					CompatibilityManager.ResizedImage(originalImage, 16, 16);
+				lbl_originalSize.Text =
+					"Original Size : " +
+					originalImage.Width +
+					" x " +
+					originalImage.Height;
+				IEnumerator<PwEntry> myEntryEnumerator = m_iconCounter.GetListEntries( readIcon ).GetEnumerator();
+				
+				// Update entry and group list
+				// It is necessary to add all subitems to listView in a single oneshot.
+				// On the other case, a runtime exception occurs when the listView is sorted
+				// and the sort condition take into account one of the nth column, n > 1
+				while (myEntryEnumerator.MoveNext()) {
+					PwEntry readEntry = myEntryEnumerator.Current;
+					
+					var lvi = new ListViewItem( readEntry.Strings.ReadSafe( PwDefs.TitleField ) );
+					lvi.SubItems.Add( readEntry.Strings.ReadSafe( PwDefs.UserNameField ) );
+					lvi.SubItems.Add( readEntry.Strings.ReadSafe( PwDefs.UrlField ) );
+					lvi.SubItems.Add( readEntry.ParentGroup.GetFullPath(".", false) );
+					m_lvUsedEntries.Items.Add(lvi);
+				}
+				
+				IEnumerator<PwGroup> myGroupEnumerator = m_iconCounter.GetListGroups( readIcon ).GetEnumerator();
+				while (myGroupEnumerator.MoveNext()) {
+					PwGroup readGroup = myGroupEnumerator.Current;
+					var lvi = new ListViewItem( readGroup.Name );
+					lvi.SubItems.Add( readGroup.GetFullPath() );
+					m_lvUsedGroups.Items.Add( lvi );
+				}
+			}
+			else {
+				pbo_selectedIcon128.BackgroundImage = null;
+				pbo_selectedIcon64.BackgroundImage = null;
+				pbo_selectedIcon32.BackgroundImage = null;
+				pbo_selectedIcon16.BackgroundImage = null;
+			}	
+		
+		}
+		
+		#endregion
+		
 		#region Common methods
 		private void NotifyDatabaseModificationAndUpdateMainForm() {
 			m_PluginHost.Database.Modified = true;
@@ -723,6 +863,8 @@ namespace CustomIconDashboarderPlugin
 			m_lvDownloadResult.View = rbu_details.Checked ? 
 				View.Details : View.LargeIcon;
 		}
+		
+		
 		#endregion
 		
 	}
