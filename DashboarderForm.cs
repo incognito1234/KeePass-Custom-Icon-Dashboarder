@@ -72,7 +72,7 @@ namespace CustomIconDashboarderPlugin
 			GlobalWindowManager.AddWindow(this);
 			BestIconFinder.InitClass();
 			InitEx();
-			cbo_actionSelector.SelectedIndex = 0;
+			cbo_iconActionSelector.SelectedIndex = 0;
 			// Comment to debug
 			//this.tco_right.TabPages.Remove(tpa_Debug);
 		}
@@ -150,10 +150,10 @@ namespace CustomIconDashboarderPlugin
 			ListViewLayoutManager.dlgMultiCheckingCheckBoxes ehMulti = delegate(IList<ListViewItem> lst) {
 				//Disable button if no elements is checked
 				if (m_lvViewIcon.CheckedItems.Count == 0 ) {
-					btn_perform.Enabled = false;					
+					btn_performIconAction.Enabled = false;					
 				}
 				else {
-					btn_perform.Enabled = cbo_actionSelector.SelectedIndex != 0;
+					btn_performIconAction.Enabled = cbo_iconActionSelector.SelectedIndex != 0;
 				}
 			};
 			m_lvIconsColumnSorter.DefineMultiCheckingBehavior(ehMulti);
@@ -235,21 +235,21 @@ namespace CustomIconDashboarderPlugin
 			m_lvAllEntriesColumnSorter.AutoWidthColumn = true;
 			m_lvAllEntriesColumnSorter.CheckAllCheckBox = cb_allEntriesSelection;
 			
-//			ListViewLayoutManager.dlgMultiCheckingCheckBoxes ehMulti = delegate(IList<ListViewItem> lst) {
-//				//Disable button if no elements is checked
-//				if (m_lvViewIcon.CheckedItems.Count == 0 ) {
-//					btn_perform.Enabled = false;					
-//				}
-//				else {
-//					btn_perform.Enabled = cbo_actionSelector.SelectedIndex != 0;
-//				}
-//			};
-			//m_lvAllEntriesColumnSorter.DefineMultiCheckingBehavior(ehMulti);
+			ListViewLayoutManager.dlgMultiCheckingCheckBoxes ehMulti = delegate(IList<ListViewItem> lst) {
+				//Disable button if no elements is checked
+				if (m_lvAllEntries.CheckedItems.Count == 0 ) {
+					btn_performEntryAction.Enabled = false;					
+				}
+				else {
+					btn_performEntryAction.Enabled = cbo_entryActionSelector.SelectedIndex != 0;
+				}
+			};
+			m_lvAllEntriesColumnSorter.DefineMultiCheckingBehavior(ehMulti);
 			m_lvAllEntriesColumnSorter.EnableMultiCheckingControl();
 			
 			m_lvAllEntriesColumnSorter.ApplyToListView( this.m_lvAllEntries );
 			
-			//ehMulti(null); // Disable buttons
+			ehMulti(null); // Disable buttons
 			
 		}
 			
@@ -758,7 +758,7 @@ namespace CustomIconDashboarderPlugin
 		
 		void OnPerformIconActionClick(object sender, EventArgs e)
 		{
-			switch (cbo_actionSelector.SelectedIndex) {
+			switch (cbo_iconActionSelector.SelectedIndex) {
 				case 1:
 					OnModifyIconClick(sender,e);
 					break;
@@ -780,7 +780,7 @@ namespace CustomIconDashboarderPlugin
 		
 		void OnIconActionSelectorSelectedIndexChanged(object sender, EventArgs e)
 		{
-			btn_perform.Enabled = cbo_actionSelector.SelectedIndex != 0;
+			btn_performIconAction.Enabled = cbo_iconActionSelector.SelectedIndex != 0;
 		}
 		
 		

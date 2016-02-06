@@ -56,11 +56,14 @@ namespace CustomIconDashboarderPlugin
 			this.tpa_listAllIcons = new System.Windows.Forms.TabPage();
 			this.tlp_allIcons = new System.Windows.Forms.TableLayoutPanel();
 			this.cb_allIconsSelection = new System.Windows.Forms.CheckBox();
-			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-			this.cbo_actionSelector = new System.Windows.Forms.ComboBox();
-			this.btn_perform = new System.Windows.Forms.Button();
+			this.flp_iconActions = new System.Windows.Forms.FlowLayoutPanel();
+			this.cbo_iconActionSelector = new System.Windows.Forms.ComboBox();
+			this.btn_performIconAction = new System.Windows.Forms.Button();
 			this.tpa_listAllEntries = new System.Windows.Forms.TabPage();
 			this.tlp_allEntries = new System.Windows.Forms.TableLayoutPanel();
+			this.flp_entryAction = new System.Windows.Forms.FlowLayoutPanel();
+			this.cbo_entryActionSelector = new System.Windows.Forms.ComboBox();
+			this.btn_performEntryAction = new System.Windows.Forms.Button();
 			this.m_lvAllEntries = new System.Windows.Forms.ListView();
 			this.cb_allEntriesSelection = new System.Windows.Forms.CheckBox();
 			this.tlp_right = new System.Windows.Forms.TableLayoutPanel();
@@ -104,9 +107,10 @@ namespace CustomIconDashboarderPlugin
 			this.tco_lists.SuspendLayout();
 			this.tpa_listAllIcons.SuspendLayout();
 			this.tlp_allIcons.SuspendLayout();
-			this.flowLayoutPanel1.SuspendLayout();
+			this.flp_iconActions.SuspendLayout();
 			this.tpa_listAllEntries.SuspendLayout();
 			this.tlp_allEntries.SuspendLayout();
+			this.flp_entryAction.SuspendLayout();
 			this.tlp_right.SuspendLayout();
 			this.tlp_upperRight.SuspendLayout();
 			this.scltp_icons.SuspendLayout();
@@ -274,7 +278,7 @@ namespace CustomIconDashboarderPlugin
 			this.tlp_allIcons.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tlp_allIcons.Controls.Add(this.m_lvViewIcon, 0, 0);
 			this.tlp_allIcons.Controls.Add(this.cb_allIconsSelection, 0, 1);
-			this.tlp_allIcons.Controls.Add(this.flowLayoutPanel1, 0, 2);
+			this.tlp_allIcons.Controls.Add(this.flp_iconActions, 0, 2);
 			this.tlp_allIcons.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tlp_allIcons.Location = new System.Drawing.Point(0, 0);
 			this.tlp_allIcons.Name = "tlp_allIcons";
@@ -295,41 +299,41 @@ namespace CustomIconDashboarderPlugin
 			this.cb_allIconsSelection.Text = "&Check/Uncheck All";
 			this.cb_allIconsSelection.UseVisualStyleBackColor = true;
 			// 
-			// flowLayoutPanel1
+			// flp_iconActions
 			// 
-			this.flowLayoutPanel1.Controls.Add(this.cbo_actionSelector);
-			this.flowLayoutPanel1.Controls.Add(this.btn_perform);
-			this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 497);
-			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-			this.flowLayoutPanel1.Size = new System.Drawing.Size(310, 24);
-			this.flowLayoutPanel1.TabIndex = 3;
+			this.flp_iconActions.Controls.Add(this.cbo_iconActionSelector);
+			this.flp_iconActions.Controls.Add(this.btn_performIconAction);
+			this.flp_iconActions.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.flp_iconActions.Location = new System.Drawing.Point(3, 497);
+			this.flp_iconActions.Name = "flp_iconActions";
+			this.flp_iconActions.Size = new System.Drawing.Size(310, 24);
+			this.flp_iconActions.TabIndex = 3;
 			// 
-			// cbo_actionSelector
+			// cbo_iconActionSelector
 			// 
-			this.cbo_actionSelector.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.cbo_actionSelector.FormattingEnabled = true;
-			this.cbo_actionSelector.Items.AddRange(new object[] {
+			this.cbo_iconActionSelector.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.cbo_iconActionSelector.FormattingEnabled = true;
+			this.cbo_iconActionSelector.Items.AddRange(new object[] {
 			"-- Choose an action --",
 			"Modify",
 			"Remove",
 			"Download Best Icon",
 			"Pick Best Icon"});
-			this.cbo_actionSelector.Location = new System.Drawing.Point(3, 3);
-			this.cbo_actionSelector.Name = "cbo_actionSelector";
-			this.cbo_actionSelector.Size = new System.Drawing.Size(140, 21);
-			this.cbo_actionSelector.TabIndex = 3;
-			this.cbo_actionSelector.SelectedIndexChanged += new System.EventHandler(this.OnIconActionSelectorSelectedIndexChanged);
+			this.cbo_iconActionSelector.Location = new System.Drawing.Point(3, 3);
+			this.cbo_iconActionSelector.Name = "cbo_iconActionSelector";
+			this.cbo_iconActionSelector.Size = new System.Drawing.Size(140, 21);
+			this.cbo_iconActionSelector.TabIndex = 3;
+			this.cbo_iconActionSelector.SelectedIndexChanged += new System.EventHandler(this.OnIconActionSelectorSelectedIndexChanged);
 			// 
-			// btn_perform
+			// btn_performIconAction
 			// 
-			this.btn_perform.Location = new System.Drawing.Point(149, 3);
-			this.btn_perform.Name = "btn_perform";
-			this.btn_perform.Size = new System.Drawing.Size(61, 21);
-			this.btn_perform.TabIndex = 4;
-			this.btn_perform.Text = "Go";
-			this.btn_perform.UseVisualStyleBackColor = true;
-			this.btn_perform.Click += new System.EventHandler(this.OnPerformIconActionClick);
+			this.btn_performIconAction.Location = new System.Drawing.Point(149, 3);
+			this.btn_performIconAction.Name = "btn_performIconAction";
+			this.btn_performIconAction.Size = new System.Drawing.Size(61, 21);
+			this.btn_performIconAction.TabIndex = 4;
+			this.btn_performIconAction.Text = "Go";
+			this.btn_performIconAction.UseVisualStyleBackColor = true;
+			this.btn_performIconAction.Click += new System.EventHandler(this.OnPerformIconActionClick);
 			// 
 			// tpa_listAllEntries
 			// 
@@ -346,6 +350,7 @@ namespace CustomIconDashboarderPlugin
 			// 
 			this.tlp_allEntries.ColumnCount = 1;
 			this.tlp_allEntries.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tlp_allEntries.Controls.Add(this.flp_entryAction, 0, 2);
 			this.tlp_allEntries.Controls.Add(this.m_lvAllEntries, 0, 0);
 			this.tlp_allEntries.Controls.Add(this.cb_allEntriesSelection, 0, 1);
 			this.tlp_allEntries.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -358,6 +363,40 @@ namespace CustomIconDashboarderPlugin
 			this.tlp_allEntries.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
 			this.tlp_allEntries.Size = new System.Drawing.Size(310, 518);
 			this.tlp_allEntries.TabIndex = 0;
+			// 
+			// flp_entryAction
+			// 
+			this.flp_entryAction.Controls.Add(this.cbo_entryActionSelector);
+			this.flp_entryAction.Controls.Add(this.btn_performEntryAction);
+			this.flp_entryAction.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.flp_entryAction.Location = new System.Drawing.Point(3, 491);
+			this.flp_entryAction.Name = "flp_entryAction";
+			this.flp_entryAction.Size = new System.Drawing.Size(304, 24);
+			this.flp_entryAction.TabIndex = 4;
+			// 
+			// cbo_entryActionSelector
+			// 
+			this.cbo_entryActionSelector.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.cbo_entryActionSelector.FormattingEnabled = true;
+			this.cbo_entryActionSelector.Items.AddRange(new object[] {
+			"-- Choose an action --",
+			"Modify",
+			"Remove",
+			"Download Best Icon",
+			"Pick Best Icon"});
+			this.cbo_entryActionSelector.Location = new System.Drawing.Point(3, 3);
+			this.cbo_entryActionSelector.Name = "cbo_entryActionSelector";
+			this.cbo_entryActionSelector.Size = new System.Drawing.Size(140, 21);
+			this.cbo_entryActionSelector.TabIndex = 3;
+			// 
+			// btn_performEntryAction
+			// 
+			this.btn_performEntryAction.Location = new System.Drawing.Point(149, 3);
+			this.btn_performEntryAction.Name = "btn_performEntryAction";
+			this.btn_performEntryAction.Size = new System.Drawing.Size(61, 21);
+			this.btn_performEntryAction.TabIndex = 4;
+			this.btn_performEntryAction.Text = "Go";
+			this.btn_performEntryAction.UseVisualStyleBackColor = true;
 			// 
 			// m_lvAllEntries
 			// 
@@ -876,9 +915,10 @@ namespace CustomIconDashboarderPlugin
 			this.tco_lists.ResumeLayout(false);
 			this.tpa_listAllIcons.ResumeLayout(false);
 			this.tlp_allIcons.ResumeLayout(false);
-			this.flowLayoutPanel1.ResumeLayout(false);
+			this.flp_iconActions.ResumeLayout(false);
 			this.tpa_listAllEntries.ResumeLayout(false);
 			this.tlp_allEntries.ResumeLayout(false);
+			this.flp_entryAction.ResumeLayout(false);
 			this.tlp_right.ResumeLayout(false);
 			this.tlp_right.PerformLayout();
 			this.tlp_upperRight.ResumeLayout(false);
@@ -953,12 +993,15 @@ namespace CustomIconDashboarderPlugin
 		private System.Windows.Forms.TabPage tpa_listAllIcons;
 		private System.Windows.Forms.TableLayoutPanel tlp_allIcons;
 		private System.Windows.Forms.TabPage tpa_listAllEntries;
-		private System.Windows.Forms.ComboBox cbo_actionSelector;
-		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
-		private System.Windows.Forms.Button btn_perform;
+		private System.Windows.Forms.ComboBox cbo_iconActionSelector;
+		private System.Windows.Forms.FlowLayoutPanel flp_iconActions;
+		private System.Windows.Forms.Button btn_performIconAction;
 		private System.Windows.Forms.TableLayoutPanel tlp_allEntries;
 		private System.Windows.Forms.ListView m_lvAllEntries;
 		private System.Windows.Forms.CheckBox cb_allEntriesSelection;
+		private System.Windows.Forms.FlowLayoutPanel flp_entryAction;
+		private System.Windows.Forms.ComboBox cbo_entryActionSelector;
+		private System.Windows.Forms.Button btn_performEntryAction;
 
 		
 		void DashboarderLoad(object sender, System.EventArgs e)
