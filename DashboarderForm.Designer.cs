@@ -818,11 +818,14 @@ namespace CustomIconDashboarderPlugin
 			this.tlp_downloadResult.SetColumnSpan(this.m_lvDownloadResult, 4);
 			this.m_lvDownloadResult.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.m_lvDownloadResult.FullRowSelect = true;
+			this.m_lvDownloadResult.HideSelection = false;
 			this.m_lvDownloadResult.Location = new System.Drawing.Point(3, 212);
+			this.m_lvDownloadResult.MultiSelect = false;
 			this.m_lvDownloadResult.Name = "m_lvDownloadResult";
 			this.m_lvDownloadResult.Size = new System.Drawing.Size(502, 73);
 			this.m_lvDownloadResult.TabIndex = 5;
 			this.m_lvDownloadResult.UseCompatibleStateImageBehavior = false;
+			this.m_lvDownloadResult.SelectedIndexChanged += new System.EventHandler(this.OnDownloadResultSelectedIndexChanged);
 			// 
 			// lbl_alldownloadedicons
 			// 

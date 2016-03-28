@@ -82,6 +82,7 @@ namespace CustomIconDashboarderPlugin
 		private MyWebClient client;
 
 		public List<ImageInfo> ListImageInfo {get; private set;} // All image and URI
+		public int IndexOfBestImage {get; private set; }
 		
 		private MyLogger myLogger;
 		private List<Uri> ListUriIcons {get; set;}
@@ -99,6 +100,7 @@ namespace CustomIconDashboarderPlugin
 			}
 			this.myLogger = new MyLogger(this);
 			this.BestImage = null;
+			this.IndexOfBestImage = -1;
 			this.ListImageInfo = new List<ImageInfo>();
 			this.NbRequestCacheInvoke = 0;
 			client = new MyWebClient();
@@ -110,6 +112,7 @@ namespace CustomIconDashboarderPlugin
 			this.Result = new FinderResult(FinderResult.RESULT_NO_URL);
 			this.myLogger = new MyLogger(this);
 			this.BestImage = null;
+			this.IndexOfBestImage = -1;
 			this.ListImageInfo = new List<ImageInfo>();
 			this.NbRequestCacheInvoke = 0;
 			client = new MyWebClient();
@@ -269,6 +272,7 @@ namespace CustomIconDashboarderPlugin
 			    if ( (this.BestImage == null ) ||
 			       (CompareImageQuality( downloadedImage, this.BestImage) == 1) ) {
 				   	this.BestImage = downloadedImage;
+				   	this.IndexOfBestImage = this.ListImageInfo.Count - 1;
 				   	this.myLogger.LogInfo("-->stored as the best image");
 			    }
 		   }

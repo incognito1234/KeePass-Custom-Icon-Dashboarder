@@ -93,6 +93,7 @@
     <Compile Include="HtmlAgilityPack\Trace.cs" />
     <Compile Include="HtmlAgilityPack\Trace.FullFramework.cs" />
     <Compile Include="HtmlAgilityPack\Utilities.cs" />
+    <Compile Include="IconChooser.cs" />
     <Compile Include="IconStatsHandler.cs" />
     <Compile Include="DashboarderForm.cs" />
     <Compile Include="DashboarderForm.Designer.cs">
