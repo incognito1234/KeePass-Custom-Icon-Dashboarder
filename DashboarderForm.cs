@@ -116,52 +116,16 @@ namespace CustomIconDashboarderPlugin
 		
 		#endregion
 		
-		#region ListView icon action
-		private void BuildCustomIconListView()
-		{
-			// List View Icon
-			m_lvViewIcon.Columns.Add( Resource.hdr_icon, 50 );
-			m_lvViewIcon.Columns.Add( Resource.hdr_currentSize, 50, HorizontalAlignment.Center );
-			m_lvViewIcon.Columns.Add( Resource.hdr_newSize, 50, HorizontalAlignment.Center );
-			m_lvViewIcon.Columns.Add( Resource.hdr_nEntry, 50, HorizontalAlignment.Center);
-			m_lvViewIcon.Columns.Add( Resource.hdr_nGroup, 50, HorizontalAlignment.Center);
-			m_lvViewIcon.Columns.Add( Resource.hdr_nTotal, 50, HorizontalAlignment.Center);
-			m_lvViewIcon.Columns.Add( Resource.hdr_nURL, 50, HorizontalAlignment.Center );
-			
-			m_lvIconsColumnSorter = new ListViewLayoutManager();
-			
-			m_lvIconsColumnSorter.AddColumnComparer(0, new IntegerAsStringComparer(false));
-			m_lvIconsColumnSorter.AddColumnComparer(1, new SizeComparer(false));
-			m_lvIconsColumnSorter.AddColumnComparer(2, new SizeComparer(false));
-			m_lvIconsColumnSorter.AddColumnComparer(3, new IntegerAsStringComparer(false));
-			m_lvIconsColumnSorter.AddColumnComparer(4, new IntegerAsStringComparer(false));
-			m_lvIconsColumnSorter.AddColumnComparer(5, new IntegerAsStringComparer(false));
-			m_lvIconsColumnSorter.AddColumnComparer(6, new IntegerAsStringComparer(false));
-			m_lvIconsColumnSorter.AddDefaultSortedColumn(0,false);
-
-			m_lvIconsColumnSorter.AutoWidthColumn = true;
-			m_lvIconsColumnSorter.CheckAllCheckBox = cb_allIconsSelection;
-			
-			ListViewLayoutManager.dlgStatisticMessageUpdater  ehStats = delegate(String msg) {
-				//tsl_nbIcons.Text = msg;
-			};
-			m_lvIconsColumnSorter.AssignStatisticMessageUpdater(ehStats, true, false, "%3 of %1 checked");
-			
-			ListViewLayoutManager.dlgMultiCheckingCheckBoxes ehMulti = delegate(IList<ListViewItem> lst) {
-				//Disable button if no elements is checked
-				if (m_lvViewIcon.CheckedItems.Count == 0 ) {
-					btn_performIconAction.Enabled = false;					
-				}
-				else {
-					btn_performIconAction.Enabled = cbo_iconActionSelector.SelectedIndex != 0;
-				}
-			};
-			m_lvIconsColumnSorter.DefineMultiCheckingBehavior(ehMulti);
-			m_lvIconsColumnSorter.EnableMultiCheckingControl();
-			
-			m_lvIconsColumnSorter.ApplyToListView( this.m_lvViewIcon );
-			
-			ehMulti(null); // Disable buttons
+		#region Common actions
+		
+		private void ResetAllIconDashboard() {
+			m_lvViewIcon.Items.Clear();
+			m_iconCounter = new IconStatsHandler();
+			m_iconCounter.Initialize( m_PluginHost.Database);
+			CreateCustomIconList();
+			CreateAllEntriesList();
+			m_lvIconsColumnSorter.UpdateCheckAllCheckBox(false);
+			m_lvEntriesColumnSorter.UpdateCheckAllCheckBox(false);
 		}
 		
 		private void BuildUsageListViews() {
@@ -213,50 +177,57 @@ namespace CustomIconDashboarderPlugin
 			m_lvDownloadResultColumnSorter.ApplyToListView(m_lvDownloadResult);	
 		}
 		
+		#endregion
 		
-		private void BuildEntriesListViews() {
+		#region ListView icon actions
+		
+		private void BuildCustomIconListView()
+		{
 			// List View Icon
-			m_lvAllEntries.Columns.Add( Resource.hdr_idEntry, 150 );
-			m_lvAllEntries.Columns.Add( Resource.hdr_currentSize, 50, HorizontalAlignment.Center );
-			m_lvAllEntries.Columns.Add( Resource.hdr_newSize, 50, HorizontalAlignment.Center );
-			m_lvAllEntries.Columns.Add( Resource.hdr_group, 50, HorizontalAlignment.Center);
-			m_lvAllEntries.Columns.Add( Resource.hdr_url, 150, HorizontalAlignment.Left);
+			m_lvViewIcon.Columns.Add( Resource.hdr_icon, 50 );
+			m_lvViewIcon.Columns.Add( Resource.hdr_currentSize, 50, HorizontalAlignment.Center );
+			m_lvViewIcon.Columns.Add( Resource.hdr_newSize, 50, HorizontalAlignment.Center );
+			m_lvViewIcon.Columns.Add( Resource.hdr_nEntry, 50, HorizontalAlignment.Center);
+			m_lvViewIcon.Columns.Add( Resource.hdr_nGroup, 50, HorizontalAlignment.Center);
+			m_lvViewIcon.Columns.Add( Resource.hdr_nTotal, 50, HorizontalAlignment.Center);
+			m_lvViewIcon.Columns.Add( Resource.hdr_nURL, 50, HorizontalAlignment.Center );
 			
-			m_lvAllEntriesColumnSorter = new ListViewLayoutManager();
+			m_lvIconsColumnSorter = new ListViewLayoutManager();
 			
-			m_lvAllEntriesColumnSorter.AddColumnComparer(0, new LomsonLib.UI.StringComparer(false, true));
-			m_lvAllEntriesColumnSorter.AddColumnComparer(1, new SizeComparer(false));
-			m_lvAllEntriesColumnSorter.AddColumnComparer(2, new SizeComparer(false));
-			m_lvAllEntriesColumnSorter.AddColumnComparer(3, new LomsonLib.UI.StringComparer(false, true));
-			m_lvAllEntriesColumnSorter.AddColumnComparer(4, new LomsonLib.UI.StringComparer(false, true));
+			m_lvIconsColumnSorter.AddColumnComparer(0, new IntegerAsStringComparer(false));
+			m_lvIconsColumnSorter.AddColumnComparer(1, new SizeComparer(false));
+			m_lvIconsColumnSorter.AddColumnComparer(2, new SizeComparer(false));
+			m_lvIconsColumnSorter.AddColumnComparer(3, new IntegerAsStringComparer(false));
+			m_lvIconsColumnSorter.AddColumnComparer(4, new IntegerAsStringComparer(false));
+			m_lvIconsColumnSorter.AddColumnComparer(5, new IntegerAsStringComparer(false));
+			m_lvIconsColumnSorter.AddColumnComparer(6, new IntegerAsStringComparer(false));
+			m_lvIconsColumnSorter.AddDefaultSortedColumn(0,false);
 
-			m_lvAllEntriesColumnSorter.AddDefaultSortedColumn(0,false);
-
-			m_lvAllEntriesColumnSorter.AutoWidthColumn = true;
-			m_lvAllEntriesColumnSorter.CheckAllCheckBox = cb_allEntriesSelection;
+			m_lvIconsColumnSorter.AutoWidthColumn = true;
+			m_lvIconsColumnSorter.CheckAllCheckBox = cb_allIconsSelection;
+			
+			ListViewLayoutManager.dlgStatisticMessageUpdater  ehStats = delegate(String msg) {
+				//tsl_nbIcons.Text = msg;
+			};
+			m_lvIconsColumnSorter.AssignStatisticMessageUpdater(ehStats, true, false, "%3 of %1 checked");
 			
 			ListViewLayoutManager.dlgMultiCheckingCheckBoxes ehMulti = delegate(IList<ListViewItem> lst) {
 				//Disable button if no elements is checked
-				if (m_lvAllEntries.CheckedItems.Count == 0 ) {
-					btn_performEntryAction.Enabled = false;					
+				if (m_lvViewIcon.CheckedItems.Count == 0 ) {
+					btn_performIconAction.Enabled = false;					
 				}
 				else {
-					btn_performEntryAction.Enabled = cbo_entryActionSelector.SelectedIndex != 0;
+					btn_performIconAction.Enabled = cbo_iconActionSelector.SelectedIndex != 0;
 				}
 			};
-			m_lvAllEntriesColumnSorter.DefineMultiCheckingBehavior(ehMulti);
-			m_lvAllEntriesColumnSorter.EnableMultiCheckingControl();
+			m_lvIconsColumnSorter.DefineMultiCheckingBehavior(ehMulti);
+			m_lvIconsColumnSorter.EnableMultiCheckingControl();
 			
-			m_lvAllEntriesColumnSorter.ApplyToListView( this.m_lvAllEntries );
+			m_lvIconsColumnSorter.ApplyToListView( this.m_lvViewIcon );
 			
 			ehMulti(null); // Disable buttons
-			
 		}
-			
-		/// <summary>
-		/// Recreate the custom icons list view.
-		/// </summary>
-		/// <returns>Index of the previous custom icon, if specified.</returns>
+		
 		private void CreateCustomIconList()
 		{
 			int cx = CompatibilityManager.ScaleIntX(16);
@@ -299,180 +270,10 @@ namespace CustomIconDashboarderPlugin
 			m_lvIconsColumnSorter.UpdateStatistics();
 		}
 		
-		
-		private void CreateAllEntriesList()
-		{
-			m_lvAllEntries.BeginUpdate();
-			m_lvAllEntries.SmallImageList = m_PluginHost.MainWindow.ClientIcons;
-		
-			int j=0;
-			foreach(PwEntry pe in m_PluginHost.Database.RootGroup.GetEntries(true))
-			{
-				var lvi = new ListViewItem(pe.Strings.ReadSafe(PwDefs.TitleField));
-				
-				// Current Size
-				lvi.SubItems.Add("0 x 0");
-				lvi.SubItems.Add("0 x 0");
-				
-				lvi.SubItems.Add(pe.ParentGroup.GetFullPath(".",false));
-				lvi.SubItems.Add(pe.Strings.ReadSafe(PwDefs.UrlField));
-				if(pe.CustomIconUuid.Equals(PwUuid.Zero))
-					lvi.ImageIndex = (int)pe.IconId;
-				else
-					lvi.ImageIndex = (int)PwIcon.Count +
-						 m_PluginHost.Database.GetCustomIconIndex(pe.CustomIconUuid);
-				
-				//lvi.Tag = pe;
-				m_lvAllEntries.Items.Add(lvi);
-				j++;
-			}
-			m_lvAllEntries.EndUpdate();
-		}
-		
-		
-		
-		private void ResetAllIconDashboard() {
-			m_lvViewIcon.Items.Clear();
-			m_iconCounter = new IconStatsHandler();
-			m_iconCounter.Initialize( m_PluginHost.Database);
-			CreateCustomIconList();
-			CreateAllEntriesList();
-			m_lvIconsColumnSorter.UpdateCheckAllCheckBox(false);
-			m_lvEntriesColumnSorter.UpdateCheckAllCheckBox(false);
-		}
-		
-		private ListViewItem oldSelectedLvi = null;
 		void OnLvViewIconSelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (m_lvViewIcon.SelectedItems.Count > 0) {
-				if (m_lvViewIcon.SelectedItems[0] == oldSelectedLvi) {
-					return;
-				}
-				//else
-				oldSelectedLvi = m_lvViewIcon.SelectedItems[0];
-			}
-			else {
-				oldSelectedLvi = null;
-			}
-			
 			UpdateIconPaneFromSelectedIcon();
 			UpdateDownloadResultPaneFromSelectedIcon();
-			
-			//if (m_lvViewIcon.SelectedItems.Count > 0) 
-
-			
-				
-		}
-		
-		void OnModifyIconClick(object sender, EventArgs e)
-		{
-			PwCustomIcon firstIcon = m_iconIndexer[
-				m_lvViewIcon.CheckedItems[0].ImageIndex];
-			
-			var ipf = new IconPickerForm();
-			var lvEntriesOfMainForm = (ListView)GetControlFromForm( m_PluginHost.MainWindow, "m_lvEntries");
-			ImageList il_allIcons = lvEntriesOfMainForm.SmallImageList; // Standard icons are the "PwIcon.Count"th first items
-			ipf.InitEx(
-				il_allIcons,
-			    (uint)PwIcon.Count,
-			    m_PluginHost.Database,
-			    0,
-				firstIcon.Uuid);
-
-			if(ipf.ShowDialog() == DialogResult.OK) 
-			{
-				foreach (ListViewItem lvi in m_lvViewIcon.CheckedItems) {
-					PwCustomIcon readIcon = m_iconIndexer[lvi.ImageIndex];
-					UpdateCustomIconFromUuid( readIcon.Uuid, 
-				                         (PwIcon)ipf.ChosenIconId,
-				                         ipf.ChosenCustomIconUuid );
-				
-				}
-				ResetDashboard();
-				NotifyDatabaseModificationAndUpdateMainForm();
-			}
-
-			UIUtil.DestroyForm(ipf);
-		}
-		
-		
-		private void UpdateCustomIconFromUuid(
-			PwUuid srcCustomUuid,
-			PwIcon dstStandardIcon,
-			PwUuid dstCustomUuid ) {
-			
-				ICollection<PwEntry> myEntriesCollection =
-						m_iconCounter.GetListEntriesFromUuid( srcCustomUuid );
-				
-				ICollection<PwGroup> myGroupsCollection =
-						m_iconCounter.GetListGroupsFromUuid( srcCustomUuid );
-				
-				if(!dstCustomUuid.Equals(PwUuid.Zero)) // Custom icon
-				{
-					foreach (PwEntry pe in myEntriesCollection) {
-						pe.CustomIconUuid = dstCustomUuid;
-					}
-					foreach (PwGroup pg in myGroupsCollection) {
-						pg.CustomIconUuid = dstCustomUuid;
-					}				
-				}
-				else // Standard icon
-				{
-					foreach (PwEntry pe in myEntriesCollection) {
-						pe.IconId = dstStandardIcon;
-						pe.CustomIconUuid = PwUuid.Zero;
-					}
-					foreach (PwGroup pg in myGroupsCollection) {
-						pg.IconId = dstStandardIcon;
-						pg.CustomIconUuid = PwUuid.Zero;
-					}
-
-				}
-		}
-		
-		
-		public static Control GetControlFromForm(Control form, String name) {
-			Control[] cntrls = form.Controls.Find(name, true);
-			return cntrls.Length == 0 ? null : cntrls[0];
-	    }
-		
-
-		
-		void OnRemoveIconsClick(object sender, EventArgs e)
-		{
-			ListView.CheckedListViewItemCollection lvsiChecked = m_lvViewIcon.CheckedItems;
-			var vUuidsToDelete = new List<PwUuid>();
-
-			foreach(ListViewItem lvi in lvsiChecked)
-			{
-				PwUuid uuidIcon = m_iconIndexer[lvi.ImageIndex].Uuid;
-				vUuidsToDelete.Add(uuidIcon);
-			}
-
-			m_PluginHost.Database.DeleteCustomIcons(vUuidsToDelete);
-
-			if(vUuidsToDelete.Count > 0)
-			{
-				ResetDashboard();
-				NotifyDatabaseModificationAndUpdateMainForm();
-			}
-			
-		}
-		
-		void OnDownloadIconClick(object sender, EventArgs e)
-		{
-			ListView.CheckedListViewItemCollection lvsiChecked = m_lvViewIcon.CheckedItems;
-			foreach(ListViewItem lvi in lvsiChecked)
-			{
-				if (UpdateBestIconFinderAndLviFromIconLvi( lvi )) {
-				    System.Threading.Thread.Sleep(500);
-				}
-			   lvi.EnsureVisible();
-			   m_lvViewIcon.Refresh();
-			}
-			
-			UpdateDownloadResultPaneFromSelectedIcon();
-		
 		}
 		
 		/// <summary>
@@ -676,7 +477,38 @@ namespace CustomIconDashboarderPlugin
 			}
 		}
 		
-		void OnPickIconClick(object sender, EventArgs e)
+		void OnModifyCustomIconClick()
+		{
+			PwCustomIcon firstIcon = m_iconIndexer[
+				m_lvViewIcon.CheckedItems[0].ImageIndex];
+			
+			var ipf = new IconPickerForm();
+			var lvEntriesOfMainForm = (ListView)GetControlFromForm( m_PluginHost.MainWindow, "m_lvEntries");
+			ImageList il_allIcons = lvEntriesOfMainForm.SmallImageList; // Standard icons are the "PwIcon.Count"th first items
+			ipf.InitEx(
+				il_allIcons,
+			    (uint)PwIcon.Count,
+			    m_PluginHost.Database,
+			    0,
+				firstIcon.Uuid);
+
+			if(ipf.ShowDialog() == DialogResult.OK) 
+			{
+				foreach (ListViewItem lvi in m_lvViewIcon.CheckedItems) {
+					PwCustomIcon readIcon = m_iconIndexer[lvi.ImageIndex];
+					UpdateCustomIconFromUuid( readIcon.Uuid, 
+				                         (PwIcon)ipf.ChosenIconId,
+				                         ipf.ChosenCustomIconUuid );
+				
+				}
+				ResetDashboard();
+				NotifyDatabaseModificationAndUpdateMainForm();
+			}
+
+			UIUtil.DestroyForm(ipf);
+		}
+		
+		void OnPickCustomIconClick()
 		{
 			ListView.CheckedListViewItemCollection lvsiChecked = m_lvViewIcon.CheckedItems;
 						
@@ -700,6 +532,44 @@ namespace CustomIconDashboarderPlugin
 			}
 			ResetDashboard();
 		}
+		
+		void OnRemoveCustomIconsClick()
+		{
+			ListView.CheckedListViewItemCollection lvsiChecked = m_lvViewIcon.CheckedItems;
+			var vUuidsToDelete = new List<PwUuid>();
+
+			foreach(ListViewItem lvi in lvsiChecked)
+			{
+				PwUuid uuidIcon = m_iconIndexer[lvi.ImageIndex].Uuid;
+				vUuidsToDelete.Add(uuidIcon);
+			}
+
+			m_PluginHost.Database.DeleteCustomIcons(vUuidsToDelete);
+
+			if(vUuidsToDelete.Count > 0)
+			{
+				ResetDashboard();
+				NotifyDatabaseModificationAndUpdateMainForm();
+			}
+			
+		}
+		
+		void OnDownloadCustomIconClick()
+		{
+			ListView.CheckedListViewItemCollection lvsiChecked = m_lvViewIcon.CheckedItems;
+			foreach(ListViewItem lvi in lvsiChecked)
+			{
+				if (UpdateBestIconFinderAndLviFromIconLvi( lvi )) {
+				    System.Threading.Thread.Sleep(500);
+				}
+			   lvi.EnsureVisible();
+			   m_lvViewIcon.Refresh();
+			}
+			
+			UpdateDownloadResultPaneFromSelectedIcon();
+		
+		}
+		
 		
 		/// <summary>
 		/// Replace all reference to icon with image.
@@ -791,16 +661,16 @@ namespace CustomIconDashboarderPlugin
 		{
 			switch (cbo_iconActionSelector.SelectedIndex) {
 				case 1:
-					OnModifyIconClick(sender,e);
+					OnModifyCustomIconClick();
 					break;
 				case 2:
-					OnRemoveIconsClick(sender, e);
+					OnRemoveCustomIconsClick();
 					break;
 				case 3:
-					OnDownloadIconClick(sender, e);
+					OnDownloadCustomIconClick();
 					break;
 				case 4:
-					OnPickIconClick(sender, e);
+					OnPickCustomIconClick();
 					break;
 				default:
 					MessageBox.Show("Pbm");
@@ -817,7 +687,78 @@ namespace CustomIconDashboarderPlugin
 		
 		#endregion
 		
-		#region ListView entries action
+		#region ListView entries actions
+		
+		
+		private void CreateAllEntriesList()
+		{
+			m_lvAllEntries.BeginUpdate();
+			m_lvAllEntries.SmallImageList = m_PluginHost.MainWindow.ClientIcons;
+		
+			int j=0;
+			foreach(PwEntry pe in m_PluginHost.Database.RootGroup.GetEntries(true))
+			{
+				var lvi = new ListViewItem(pe.Strings.ReadSafe(PwDefs.TitleField));
+				
+				// Current Size
+				lvi.SubItems.Add("0 x 0");
+				lvi.SubItems.Add("0 x 0");
+				
+				lvi.SubItems.Add(pe.ParentGroup.GetFullPath(".",false));
+				lvi.SubItems.Add(pe.Strings.ReadSafe(PwDefs.UrlField));
+				if(pe.CustomIconUuid.Equals(PwUuid.Zero))
+					lvi.ImageIndex = (int)pe.IconId;
+				else
+					lvi.ImageIndex = (int)PwIcon.Count +
+						 m_PluginHost.Database.GetCustomIconIndex(pe.CustomIconUuid);
+				
+				//lvi.Tag = pe;
+				m_lvAllEntries.Items.Add(lvi);
+				j++;
+			}
+			m_lvAllEntries.EndUpdate();
+		}
+		
+		private void BuildEntriesListViews() {
+			// List View Icon
+			m_lvAllEntries.Columns.Add( Resource.hdr_idEntry, 150 );
+			m_lvAllEntries.Columns.Add( Resource.hdr_currentSize, 50, HorizontalAlignment.Center );
+			m_lvAllEntries.Columns.Add( Resource.hdr_newSize, 50, HorizontalAlignment.Center );
+			m_lvAllEntries.Columns.Add( Resource.hdr_group, 50, HorizontalAlignment.Center);
+			m_lvAllEntries.Columns.Add( Resource.hdr_url, 150, HorizontalAlignment.Left);
+			
+			m_lvAllEntriesColumnSorter = new ListViewLayoutManager();
+			
+			m_lvAllEntriesColumnSorter.AddColumnComparer(0, new LomsonLib.UI.StringComparer(false, true));
+			m_lvAllEntriesColumnSorter.AddColumnComparer(1, new SizeComparer(false));
+			m_lvAllEntriesColumnSorter.AddColumnComparer(2, new SizeComparer(false));
+			m_lvAllEntriesColumnSorter.AddColumnComparer(3, new LomsonLib.UI.StringComparer(false, true));
+			m_lvAllEntriesColumnSorter.AddColumnComparer(4, new LomsonLib.UI.StringComparer(false, true));
+
+			m_lvAllEntriesColumnSorter.AddDefaultSortedColumn(0,false);
+
+			m_lvAllEntriesColumnSorter.AutoWidthColumn = true;
+			m_lvAllEntriesColumnSorter.CheckAllCheckBox = cb_allEntriesSelection;
+			
+			ListViewLayoutManager.dlgMultiCheckingCheckBoxes ehMulti = delegate(IList<ListViewItem> lst) {
+				//Disable button if no elements is checked
+				if (m_lvAllEntries.CheckedItems.Count == 0 ) {
+					btn_performEntryAction.Enabled = false;					
+				}
+				else {
+					btn_performEntryAction.Enabled = cbo_entryActionSelector.SelectedIndex != 0;
+				}
+			};
+			m_lvAllEntriesColumnSorter.DefineMultiCheckingBehavior(ehMulti);
+			m_lvAllEntriesColumnSorter.EnableMultiCheckingControl();
+			
+			m_lvAllEntriesColumnSorter.ApplyToListView( this.m_lvAllEntries );
+			
+			ehMulti(null); // Disable buttons
+			
+		}
+		
+		
 		void OnLvAllEntriesSelectedIndexChanged(object sender, EventArgs e)
 		{
 		
@@ -910,7 +851,44 @@ namespace CustomIconDashboarderPlugin
 				ich.ChoosenIndex = 0;
 		}
 		
+		private void UpdateCustomIconFromUuid(
+			PwUuid srcCustomUuid,
+			PwIcon dstStandardIcon,
+			PwUuid dstCustomUuid ) {
+			
+				ICollection<PwEntry> myEntriesCollection =
+						m_iconCounter.GetListEntriesFromUuid( srcCustomUuid );
+				
+				ICollection<PwGroup> myGroupsCollection =
+						m_iconCounter.GetListGroupsFromUuid( srcCustomUuid );
+				
+				if(!dstCustomUuid.Equals(PwUuid.Zero)) // Custom icon
+				{
+					foreach (PwEntry pe in myEntriesCollection) {
+						pe.CustomIconUuid = dstCustomUuid;
+					}
+					foreach (PwGroup pg in myGroupsCollection) {
+						pg.CustomIconUuid = dstCustomUuid;
+					}				
+				}
+				else // Standard icon
+				{
+					foreach (PwEntry pe in myEntriesCollection) {
+						pe.IconId = dstStandardIcon;
+						pe.CustomIconUuid = PwUuid.Zero;
+					}
+					foreach (PwGroup pg in myGroupsCollection) {
+						pg.IconId = dstStandardIcon;
+						pg.CustomIconUuid = PwUuid.Zero;
+					}
+
+				}
+		}
 		
+		public static Control GetControlFromForm(Control form, String name) {
+			Control[] cntrls = form.Controls.Find(name, true);
+			return cntrls.Length == 0 ? null : cntrls[0];
+	    }
 		#endregion
 		
 	}
