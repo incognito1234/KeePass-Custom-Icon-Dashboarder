@@ -36,30 +36,39 @@ namespace CustomIconDashboarderPlugin
 	public class IconStatsHandler
 	{
 		
-		private Dictionary<PwUuid, IconStats> m_dicIconStats = null;
+		private Dictionary<PwUuid, IconStats> m_dicCustomIconsStats = null;
+		private Dictionary<PwIcon, IconStats> m_dicStandardIconsStats = null;
 		private bool m_isInitialized;
 		
 		public IconStatsHandler()
 		{
-			m_dicIconStats = new Dictionary<PwUuid, IconStats>();
+			m_dicCustomIconsStats = new Dictionary<PwUuid, IconStats>();
+			m_dicStandardIconsStats = new Dictionary<PwIcon, IconStats>();
 		}
 		
 		public void Initialize( PwDatabase db) {
 			
-			Debug.Assert( m_dicIconStats != null ); if (m_dicIconStats == null) throw new InvalidOperationException();
+			Debug.Assert( m_dicCustomIconsStats != null ); if (m_dicCustomIconsStats == null) throw new InvalidOperationException();
+			Debug.Assert( m_dicStandardIconsStats != null ); if (m_dicStandardIconsStats == null) throw new InvalidOperationException();
 			
 			
 			GroupHandler gh = delegate(PwGroup pg)
 			{
 				if ( !(pg.CustomIconUuid.Equals(PwUuid.Zero) ) ){
-					if (!(m_dicIconStats.ContainsKey( pg.CustomIconUuid)) ){
-						m_dicIconStats.Add( pg.CustomIconUuid, new IconStats());
+					if (!(m_dicCustomIconsStats.ContainsKey( pg.CustomIconUuid)) ){
+						m_dicCustomIconsStats.Add( pg.CustomIconUuid, new IconStats());
 					}
-					m_dicIconStats[ pg.CustomIconUuid ].nbInGroups += 1;
-					m_dicIconStats[ pg.CustomIconUuid ].listGroups.Add( pg);
+					m_dicCustomIconsStats[ pg.CustomIconUuid ].nbInGroups += 1;
+					m_dicCustomIconsStats[ pg.CustomIconUuid ].listGroups.Add( pg);
 				}
-				
-				
+				else {
+					if (!(m_dicStandardIconsStats.ContainsKey( pg.IconId)) ){
+						m_dicStandardIconsStats.Add( pg.IconId, new IconStats());
+					}
+					m_dicStandardIconsStats[ pg.IconId ].nbInGroups += 1;
+					m_dicStandardIconsStats[ pg.IconId ].listGroups.Add( pg);
+				}
+								
 				return true;
 			};
 			
@@ -69,31 +78,38 @@ namespace CustomIconDashboarderPlugin
 			
 			EntryHandler eh = delegate(PwEntry pe)
 			{
-				if ( !(pe.CustomIconUuid.Equals(PwUuid.Zero))) {
+				if (!(pe.CustomIconUuid.Equals(PwUuid.Zero))) {
 					
-					if (!(m_dicIconStats.ContainsKey( pe.CustomIconUuid))) {
-						m_dicIconStats.Add( pe.CustomIconUuid, new IconStats());
+					if (!(m_dicCustomIconsStats.ContainsKey(pe.CustomIconUuid))) {
+						m_dicCustomIconsStats.Add(pe.CustomIconUuid, new IconStats());
 					}
-					m_dicIconStats[ pe.CustomIconUuid ].nbInEntries += 1;
-					m_dicIconStats[ pe.CustomIconUuid ].listEntries.Add( pe);
-					
-					// Update Url Lists
-					urlFieldValue = pe.Strings.ReadSafe( PwDefs.UrlField ) ;
-					if (!string.IsNullOrEmpty( urlFieldValue ) ) {
-						try {
-							urlFieldValue = URLUtility.addUrlHttpPrefix(urlFieldValue);
-							
-							siteUri = new Uri(urlFieldValue);
-							uriList = m_dicIconStats[ pe.CustomIconUuid ].listUris;
-							if ( (siteUri.Scheme.ToLower() == "http") ||
-							    (siteUri.Scheme.ToLower() == "https") ) {
-								uriList.Add( siteUri );
-							}
-						}
-						catch (Exception) {};
+					m_dicCustomIconsStats[pe.CustomIconUuid].nbInEntries += 1;
+					m_dicCustomIconsStats[pe.CustomIconUuid].listEntries.Add(pe);
+					uriList = m_dicCustomIconsStats[pe.CustomIconUuid].listUris;
 						
+				} 
+				else {
+					if (!(m_dicStandardIconsStats.ContainsKey(pe.IconId))) {
+						m_dicStandardIconsStats.Add(pe.IconId, new IconStats());
 					}
+					m_dicStandardIconsStats[pe.IconId].nbInEntries += 1;
+					m_dicStandardIconsStats[pe.IconId].listEntries.Add(pe);
+					uriList = m_dicStandardIconsStats[pe.IconId].listUris;
 					
+				}
+					
+				// Get Uri
+				urlFieldValue = pe.Strings.ReadSafe(PwDefs.UrlField);
+				if (!string.IsNullOrEmpty(urlFieldValue)) {
+					try {
+						urlFieldValue = URLUtility.addUrlHttpPrefix(urlFieldValue);
+							
+						siteUri = new Uri(urlFieldValue);
+						if ((siteUri.Scheme.ToLower() == "http") ||
+						     (siteUri.Scheme.ToLower() == "https")) {
+							uriList.Add(siteUri);
+						}
+					} catch (Exception) {};
 				}
 				
 				return true;
@@ -107,7 +123,7 @@ namespace CustomIconDashboarderPlugin
 		
 		
 		/// <summary>
-		/// Get number of usage of pci in groups
+		/// Get number of usage of pci in groups for Custom Icon
 		/// </summary>
 		/// <param name="pci"></param>
 		/// <returns>number of usage of pci in groups</returns>
@@ -115,8 +131,8 @@ namespace CustomIconDashboarderPlugin
 		public int GetNbUsageInGroups(PwCustomIcon pci) {
 			Debug.Assert( m_isInitialized);
 			
-			if ( m_dicIconStats.ContainsKey( pci.Uuid ) ) {
-				return m_dicIconStats[pci.Uuid].nbInGroups;
+			if ( m_dicCustomIconsStats.ContainsKey( pci.Uuid ) ) {
+				return m_dicCustomIconsStats[pci.Uuid].nbInGroups;
 				
 			}
 			else {
@@ -125,7 +141,7 @@ namespace CustomIconDashboarderPlugin
 		}
 		
 		/// <summary>
-		/// Get number of usage of pci in entries
+		/// Get number of usage of pci in entries for Custom Icon
 		/// </summary>
 		/// <param name="pci"></param>
 		/// <returns>number of usage of pci in entries</returns>
@@ -133,8 +149,8 @@ namespace CustomIconDashboarderPlugin
 		public int GetNbUsageInEntries(PwCustomIcon pci) {
 			Debug.Assert( m_isInitialized);
 			
-			if ( m_dicIconStats.ContainsKey( pci.Uuid ) ) {
-				return m_dicIconStats[pci.Uuid].nbInEntries;
+			if ( m_dicCustomIconsStats.ContainsKey( pci.Uuid ) ) {
+				return m_dicCustomIconsStats[pci.Uuid].nbInEntries;
 				
 			}
 			else {
@@ -143,32 +159,15 @@ namespace CustomIconDashboarderPlugin
 		}
 		
 		/// <summary>
-		/// Get List of entries
+		/// Get List of entries for Custom Icon
 		/// </summary>
 		/// <param name="pci"></param>
 		/// <returns>List of entries</returns>
-		public ICollection<PwEntry> GetListEntries( PwCustomIcon pci) {
+		public ICollection<PwEntry> GetListEntriesForPci( PwCustomIcon pci) {
 			Debug.Assert( m_isInitialized);
 			
-			if ( m_dicIconStats.ContainsKey( pci.Uuid ) ) {
-				return m_dicIconStats[pci.Uuid].listEntries;
-				
-			}
-			else {
-				return new List<PwEntry>();
-			}
-		}
-		
-		// <summary>
-		/// Get List of entries
-		/// </summary>
-		/// <param name="pci"></param>
-		/// <returns>List of entries</returns>
-		public ICollection<PwEntry> GetListEntriesFromUuid( PwUuid puuid) {
-			Debug.Assert( m_isInitialized);
-			
-			if ( m_dicIconStats.ContainsKey( puuid ) ) {
-				return m_dicIconStats[puuid].listEntries;
+			if ( m_dicCustomIconsStats.ContainsKey( pci.Uuid ) ) {
+				return m_dicCustomIconsStats[pci.Uuid].listEntries;
 				
 			}
 			else {
@@ -177,15 +176,50 @@ namespace CustomIconDashboarderPlugin
 		}
 		
 		/// <summary>
-		/// Get List of groups
+		/// Get List of entries for Standard Icon
 		/// </summary>
 		/// <param name="pci"></param>
-		/// <returns>List of groups</returnGroupss>
-		public ICollection<PwGroup> GetListGroups( PwCustomIcon pci) {
+		/// <returns>List of entries</returns>
+		public ICollection<PwEntry> GetListEntriesForStandardIcon( PwIcon stdIcon) {
 			Debug.Assert( m_isInitialized);
 			
-			if ( m_dicIconStats.ContainsKey( pci.Uuid ) ) {
-				return m_dicIconStats[pci.Uuid].listGroups;
+			if ( m_dicStandardIconsStats.ContainsKey( stdIcon ) ) {
+				return m_dicStandardIconsStats[stdIcon].listEntries;
+				
+			}
+			else {
+				return new List<PwEntry>();
+			}
+		}
+		
+		
+		// <summary>
+		/// Get List of entries for Custom Icon
+		/// </summary>
+		/// <param name="pci"></param>
+		/// <returns>List of entries</returns>
+		public ICollection<PwEntry> GetListEntriesForUuid( PwUuid puuid) {
+			Debug.Assert( m_isInitialized);
+			
+			if ( m_dicCustomIconsStats.ContainsKey( puuid ) ) {
+				return m_dicCustomIconsStats[puuid].listEntries;
+				
+			}
+			else {
+				return new List<PwEntry>();
+			}
+		}
+		
+		/// <summary>
+		/// Get List of groups for Custom Icon
+		/// </summary>
+		/// <param name="pci"></param>
+		/// <returns>List of groups</returns>
+		public ICollection<PwGroup> GetListGroupsForPci( PwCustomIcon pci) {
+			Debug.Assert( m_isInitialized);
+			
+			if ( m_dicCustomIconsStats.ContainsKey( pci.Uuid ) ) {
+				return m_dicCustomIconsStats[pci.Uuid].listGroups;
 				
 			}
 			else {
@@ -193,11 +227,29 @@ namespace CustomIconDashboarderPlugin
 			}
 		}
 		
+		/// <summary>
+		/// Get List of groups for Standard Icon
+		/// </summary>
+		/// <param name="pci"></param>
+		/// <returns>List of groups</returns>
+		public ICollection<PwGroup> GetListGroupsForStandardIcon( PwIcon stdIcon) {
+			Debug.Assert( m_isInitialized);
+			
+			if ( m_dicStandardIconsStats.ContainsKey( stdIcon ) ) {
+				return m_dicStandardIconsStats[stdIcon].listGroups;
+				
+			}
+			else {
+				return new List<PwGroup>();
+			}
+		}
+		
+		
 		public ICollection<PwGroup> GetListGroupsFromUuid( PwUuid puuid) {
 			Debug.Assert( m_isInitialized);
 			
-			if ( m_dicIconStats.ContainsKey( puuid ) ) {
-				return m_dicIconStats[puuid].listGroups;
+			if ( m_dicCustomIconsStats.ContainsKey( puuid ) ) {
+				return m_dicCustomIconsStats[puuid].listGroups;
 				
 			}
 			else {
@@ -213,8 +265,8 @@ namespace CustomIconDashboarderPlugin
 		public ICollection<Uri> GetListUris( PwCustomIcon pci) {
 			Debug.Assert( m_isInitialized);
 			
-			if ( m_dicIconStats.ContainsKey( pci.Uuid ) ) {
-				return m_dicIconStats[pci.Uuid].listUris;
+			if ( m_dicCustomIconsStats.ContainsKey( pci.Uuid ) ) {
+				return m_dicCustomIconsStats[pci.Uuid].listUris;
 				
 			}
 			else {
@@ -231,8 +283,8 @@ namespace CustomIconDashboarderPlugin
 		public int GetNbUrlsInEntries(PwCustomIcon pci) {
 			Debug.Assert( m_isInitialized);
 			
-			if ( m_dicIconStats.ContainsKey( pci.Uuid ) ) {
-				return m_dicIconStats[pci.Uuid].listUris.Count;
+			if ( m_dicCustomIconsStats.ContainsKey( pci.Uuid ) ) {
+				return m_dicCustomIconsStats[pci.Uuid].listUris.Count;
 				
 			}
 			else {
@@ -258,9 +310,6 @@ namespace CustomIconDashboarderPlugin
 			}
 		}
 	}
-	
-	
-	
 	
 	
 }

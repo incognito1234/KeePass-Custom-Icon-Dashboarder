@@ -342,46 +342,14 @@ namespace CustomIconDashboarderPlugin
 				PwCustomIcon readIcon = m_iconIndexer[sItems[0].ImageIndex];
 				
 				Image originalImage = CompatibilityManager.GetOriginalImage(readIcon);
+				IEnumerator<PwEntry> myEntryEnumerator = m_iconCounter.GetListEntriesForPci( readIcon ).GetEnumerator();
+				IEnumerator<PwGroup> myGroupEnumerator = m_iconCounter.GetListGroupsForPci( readIcon ).GetEnumerator();
 				
-				pbo_selectedIcon128.BackgroundImage = 
-					CompatibilityManager.ResizedImage(originalImage, 128, 128);
-				pbo_selectedIcon64.BackgroundImage = 
-					CompatibilityManager.ResizedImage(originalImage, 64, 64);
-				pbo_selectedIcon32.BackgroundImage =
-					CompatibilityManager.ResizedImage(originalImage, 32, 32);					
-				pbo_selectedIcon16.BackgroundImage = 
-					CompatibilityManager.ResizedImage(originalImage, 16, 16);
-				lbl_originalSize.Text =
-					"Original Size : " +
-					originalImage.Width +
-					" x " +
-					originalImage.Height;
-				IEnumerator<PwEntry> myEntryEnumerator = m_iconCounter.GetListEntries( readIcon ).GetEnumerator();
+				UpdateSelectedIconPane(originalImage, myEntryEnumerator, myGroupEnumerator);
 				
-				// Update entry and group list
-				// It is necessary to add all subitems to listView in a single oneshot.
-				// On the other case, a runtime exception occurs when the listView is sorted
-				// and the sort condition take into account one of the nth column, n > 1
-				while (myEntryEnumerator.MoveNext()) {
-					PwEntry readEntry = myEntryEnumerator.Current;
-					
-					var lvi = new ListViewItem( readEntry.Strings.ReadSafe( PwDefs.TitleField ) );
-					lvi.SubItems.Add( readEntry.Strings.ReadSafe( PwDefs.UserNameField ) );
-					lvi.SubItems.Add( readEntry.Strings.ReadSafe( PwDefs.UrlField ) );
-					lvi.SubItems.Add( readEntry.ParentGroup.GetFullPath(".", false) );
-					m_lvUsedEntries.Items.Add(lvi);
-				}
-				
-				IEnumerator<PwGroup> myGroupEnumerator = m_iconCounter.GetListGroups( readIcon ).GetEnumerator();
-				while (myGroupEnumerator.MoveNext()) {
-					PwGroup readGroup = myGroupEnumerator.Current;
-					var lvi = new ListViewItem( readGroup.Name );
-					lvi.SubItems.Add( readGroup.GetFullPath() );
-					m_lvUsedGroups.Items.Add( lvi );
-				}
 			}
 			else {
-				pbo_selectedIcon128.Image = null;
+				UpdateSelectedIconPane(null, null, null);
 			}	
 		}
 		
@@ -570,7 +538,6 @@ namespace CustomIconDashboarderPlugin
 		
 		}
 		
-		
 		/// <summary>
 		/// Replace all reference to icon with image.
 		/// All entries and groups attached to refIcon will be attached to a custom icon that looks like img.
@@ -581,7 +548,7 @@ namespace CustomIconDashboarderPlugin
 			
 			if (targetIcon == null) return null;
 			
-			ICollection<PwEntry> listEntries = m_iconCounter.GetListEntries( refIcon );
+			ICollection<PwEntry> listEntries = m_iconCounter.GetListEntriesForPci( refIcon );
 			IEnumerator<PwEntry> myEntryEnumerator = listEntries.GetEnumerator();
 			while (myEntryEnumerator.MoveNext()) {
 				PwEntry readEntry = myEntryEnumerator.Current;
@@ -589,7 +556,7 @@ namespace CustomIconDashboarderPlugin
 				readEntry.Touch(true);
 			}
 			
-			ICollection<PwGroup> listGroups = m_iconCounter.GetListGroups( refIcon );
+			ICollection<PwGroup> listGroups = m_iconCounter.GetListGroupsForPci( refIcon );
 			IEnumerator<PwGroup> myGroupEnumerator = listGroups.GetEnumerator();
 			while (myGroupEnumerator.MoveNext()) {
 				PwGroup readGroup = myGroupEnumerator.Current;
@@ -655,7 +622,6 @@ namespace CustomIconDashboarderPlugin
 		 	}
 			
 		}	
-		
 		
 		void OnPerformIconActionClick(object sender, EventArgs e)
 		{
@@ -758,7 +724,6 @@ namespace CustomIconDashboarderPlugin
 			
 		}
 		
-		
 		void OnLvAllEntriesSelectedIndexChanged(object sender, EventArgs e)
 		{
 		
@@ -775,49 +740,27 @@ namespace CustomIconDashboarderPlugin
 					m_iconIndexer[sItems[0].ImageIndex - (int)PwIcon.Count];
 				
 				Image originalImage = CompatibilityManager.GetOriginalImage(readIcon);
+				IEnumerator<PwEntry> myEntryEnumerator = m_iconCounter.GetListEntriesForPci( readIcon ).GetEnumerator();
+				IEnumerator<PwGroup> myGroupEnumerator = m_iconCounter.GetListGroupsForPci( readIcon ).GetEnumerator();
 				
-				pbo_selectedIcon128.BackgroundImage = 
-					CompatibilityManager.ResizedImage(originalImage, 128, 128);
-				pbo_selectedIcon64.BackgroundImage = 
-					CompatibilityManager.ResizedImage(originalImage, 64, 64);
-				pbo_selectedIcon32.BackgroundImage =
-					CompatibilityManager.ResizedImage(originalImage, 32, 32);					
-				pbo_selectedIcon16.BackgroundImage = 
-					CompatibilityManager.ResizedImage(originalImage, 16, 16);
-				lbl_originalSize.Text =
-					"Original Size : " +
-					originalImage.Width +
-					" x " +
-					originalImage.Height;
-				IEnumerator<PwEntry> myEntryEnumerator = m_iconCounter.GetListEntries( readIcon ).GetEnumerator();
-				
-				// Update entry and group list
-				// It is necessary to add all subitems to listView in a single oneshot.
-				// On the other case, a runtime exception occurs when the listView is sorted
-				// and the sort condition take into account one of the nth column, n > 1
-				while (myEntryEnumerator.MoveNext()) {
-					PwEntry readEntry = myEntryEnumerator.Current;
-					
-					var lvi = new ListViewItem( readEntry.Strings.ReadSafe( PwDefs.TitleField ) );
-					lvi.SubItems.Add( readEntry.Strings.ReadSafe( PwDefs.UserNameField ) );
-					lvi.SubItems.Add( readEntry.Strings.ReadSafe( PwDefs.UrlField ) );
-					lvi.SubItems.Add( readEntry.ParentGroup.GetFullPath(".", false) );
-					m_lvUsedEntries.Items.Add(lvi);
-				}
-				
-				IEnumerator<PwGroup> myGroupEnumerator = m_iconCounter.GetListGroups( readIcon ).GetEnumerator();
-				while (myGroupEnumerator.MoveNext()) {
-					PwGroup readGroup = myGroupEnumerator.Current;
-					var lvi = new ListViewItem( readGroup.Name );
-					lvi.SubItems.Add( readGroup.GetFullPath() );
-					m_lvUsedGroups.Items.Add( lvi );
-				}
+				UpdateSelectedIconPane( originalImage, myEntryEnumerator,  myGroupEnumerator );
 			}
+			else if ((sItems.Count > 0 ) &&
+			    (sItems[0].ImageIndex <=
+			          ((int)PwIcon.Count)) ){
+				//Image originalImage = CompatibilityManager.GetOriginalImage(readIcon);
+				IEnumerator<PwEntry> myEntryEnumerator = 
+					m_iconCounter.GetListEntriesForStandardIcon(
+						(PwIcon)sItems[0].ImageIndex ).GetEnumerator();
+				IEnumerator<PwGroup> myGroupEnumerator =
+					m_iconCounter.GetListGroupsForStandardIcon(
+						(PwIcon)sItems[0].ImageIndex  ).GetEnumerator();
+				
+				UpdateSelectedIconPane( null, myEntryEnumerator,  myGroupEnumerator );
+			}
+			
 			else {
-				pbo_selectedIcon128.BackgroundImage = null;
-				pbo_selectedIcon64.BackgroundImage = null;
-				pbo_selectedIcon32.BackgroundImage = null;
-				pbo_selectedIcon16.BackgroundImage = null;
+				UpdateSelectedIconPane(null, null, null);
 			}	
 		
 		}
@@ -857,7 +800,7 @@ namespace CustomIconDashboarderPlugin
 			PwUuid dstCustomUuid ) {
 			
 				ICollection<PwEntry> myEntriesCollection =
-						m_iconCounter.GetListEntriesFromUuid( srcCustomUuid );
+						m_iconCounter.GetListEntriesForUuid( srcCustomUuid );
 				
 				ICollection<PwGroup> myGroupsCollection =
 						m_iconCounter.GetListGroupsFromUuid( srcCustomUuid );
@@ -883,6 +826,54 @@ namespace CustomIconDashboarderPlugin
 					}
 
 				}
+		}
+		
+		private void UpdateSelectedIconPane( Image srcImg, IEnumerator<PwEntry> peEnum, IEnumerator<PwGroup> pgEnum) {
+			if (srcImg != null) {
+				pbo_selectedIcon128.BackgroundImage =
+						CompatibilityManager.ResizedImage(srcImg, 128, 128);
+				pbo_selectedIcon64.BackgroundImage = 
+					CompatibilityManager.ResizedImage(srcImg, 64, 64);
+				pbo_selectedIcon32.BackgroundImage =
+					CompatibilityManager.ResizedImage(srcImg, 32, 32);					
+				pbo_selectedIcon16.BackgroundImage = 
+					CompatibilityManager.ResizedImage(srcImg, 16, 16);
+				lbl_originalSize.Text =
+					"Original Size : " +
+					srcImg.Width +
+					" x " +
+					srcImg.Height;
+			}
+			else {
+				pbo_selectedIcon128.BackgroundImage = null;
+				pbo_selectedIcon64.BackgroundImage = null;
+				pbo_selectedIcon32.BackgroundImage = null;
+				pbo_selectedIcon16.BackgroundImage = null;
+			}
+			
+			if (peEnum != null) {
+				// Update entry and group list
+				// It is necessary to add all subitems to listView in a single oneshot.
+				// On the other case, a runtime exception occurs when the listView is sorted
+				// and the sort condition take into account one of the nth column, n > 1
+				while (peEnum.MoveNext()) {
+					PwEntry readEntry = peEnum.Current;
+					
+					var lvi = new ListViewItem( readEntry.Strings.ReadSafe( PwDefs.TitleField ) );
+					lvi.SubItems.Add( readEntry.Strings.ReadSafe( PwDefs.UserNameField ) );
+					lvi.SubItems.Add( readEntry.Strings.ReadSafe( PwDefs.UrlField ) );
+					lvi.SubItems.Add( readEntry.ParentGroup.GetFullPath(".", false) );
+					m_lvUsedEntries.Items.Add(lvi);
+				}
+			}
+			if (pgEnum != null) {
+				while (pgEnum.MoveNext()) {
+					PwGroup readGroup = pgEnum.Current;
+					var lvi = new ListViewItem( readGroup.Name );
+					lvi.SubItems.Add( readGroup.GetFullPath() );
+					m_lvUsedGroups.Items.Add( lvi );
+				}
+			}
 		}
 		
 		public static Control GetControlFromForm(Control form, String name) {
