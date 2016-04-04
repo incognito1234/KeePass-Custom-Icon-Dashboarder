@@ -24,7 +24,9 @@ using System;
 using System.Drawing;
 using System.Diagnostics;
 using System.Reflection;
+using System.Collections.Generic;
 
+using System.Windows.Forms;
 using KeePassLib;
 
 namespace LomsonLib.UI
@@ -39,6 +41,9 @@ namespace LomsonLib.UI
 	/// </summary>
 	
 	/* 
+	 * Version 1.2 - 2016/04/04
+	 * Get list of standard icons with High Definitions
+	 * 
 	 * Version 1.1 - 26/10/2015
      * Use ScaleImage in ResizedImage method
 	 * 
@@ -50,6 +55,9 @@ namespace LomsonLib.UI
 	{
 		// KeePass.UI.DpiUtil from version >= 2.27
 		private static Type       TYPE_DpiUtil = null;
+		
+		// KeePass.Properties.Resources all version and internal
+		private static Type       TYPE_Properties_Resources = null;
 		
 		// PwCustomIcon.GetImage from version >= 2.29
 		private static MethodInfo METHOD_GetImage_NoParameters  = null;
@@ -63,6 +71,14 @@ namespace LomsonLib.UI
 		
 		// KeePassLib.Utility.GfxUtil.ScaleImage from version >= 2.29
 		private static MethodInfo METHOD_ScaleImage = null;
+		
+		// KeePass.Properties.Resources.Images_Client_HighRes from version >= 2.29
+		// KeePass.Util.Archive.ImageArchive.Load             from version >= 2.29
+		// KeePass.Util.Archive.ImageArchive                  from version >= 2.29
+		private static Type         TYPE_ImageArchive = null;
+		private static object       PROPERTYVALUE_Images_Client_HighRes = null;
+		private static MethodInfo   METHOD_ImageArchive_Load  = null;
+		private static MethodInfo   METHOD_ImageArchive_GetImages = null;
 		
 		private static bool IS_INITIALIZED = false;
 		
@@ -83,7 +99,7 @@ namespace LomsonLib.UI
 					"GetImage",
 					new Type[]{ typeof(int), typeof(int) });
 				
-				// Get TYPE_DpiUtil
+				// Get TYPE_DpiUtil and TYPE_Properties_Resources
 				foreach (var a in AppDomain.CurrentDomain.GetAssemblies())
 		        {
 				 	if (a.GetName().Name.Equals("KeePass")){
@@ -91,10 +107,17 @@ namespace LomsonLib.UI
 				 			if (b.FullName.Equals("KeePass.UI.DpiUtil")) {
 								TYPE_DpiUtil = b;
 				 			}
+							else if (b.FullName.Equals("KeePass.Properties.Resources")) {
+							    TYPE_Properties_Resources = b;
+							}
+							else if (b.FullName.Equals("KeePass.Util.Archive.ImageArchive")) {
+							     TYPE_ImageArchive = b;
+							}
 				 		}
 				 		
 				 	}
 		        }
+				Debug.Assert( TYPE_Properties_Resources != null);
 				
 				// Get ScaleIntX and ScaleIntY
 				if (TYPE_DpiUtil != null) {
@@ -115,6 +138,25 @@ namespace LomsonLib.UI
 					"ScaleImage",
 					new Type[]{ typeof(System.Drawing.Image), typeof(int), typeof(int) });
 				
+				// Get Image_Client property Info
+				PROPERTYVALUE_Images_Client_HighRes = GetPropertyValue(
+					TYPE_Properties_Resources,
+					"Images_Client_HighRes");
+				
+				// Method Load of Image Archiver
+				if (TYPE_ImageArchive != null) {
+					METHOD_ImageArchive_Load = GetMethod(
+						TYPE_ImageArchive.AssemblyQualifiedName,
+						"Load", 
+						new Type[] {typeof( byte[] )}
+					);
+					METHOD_ImageArchive_GetImages = GetMethod(
+						TYPE_ImageArchive.AssemblyQualifiedName,
+						"GetImages",
+						new Type[] {typeof(int), typeof(int), typeof(bool) }
+					);
+				}
+				
 				IS_INITIALIZED = true;
 			}
 			
@@ -134,6 +176,30 @@ namespace LomsonLib.UI
 			try {
 		    	var type = Type.GetType(className,false,false);
 		    	result = type.GetMethod(methodName, parameters );
+			}
+			catch (System.Reflection.AmbiguousMatchException) {
+				result= null;
+			}
+		    return result;
+		}
+		
+		/// <summary>
+		/// Get Property value from type and propertyName
+		/// </summary>
+		/// <param name="type">type</param>
+		/// <param name="propertyName">Property Name</param>
+		/// <returns></returns>
+		private static object GetPropertyValue(Type type, string propertyName)
+		{
+			object result=null;
+			try {
+				PropertyInfo prop = type.GetProperty(propertyName,
+				                                    BindingFlags.Static |
+				                                    BindingFlags.NonPublic);
+			
+				if (prop!=null) {
+					result = prop.GetValue(null,null);
+				}
 			}
 			catch (System.Reflection.AmbiguousMatchException) {
 				result= null;
@@ -245,6 +311,37 @@ namespace LomsonLib.UI
 			
 			return result;
 				
+		}
+		
+		/// <summary>
+		/// Get list of standards icons in high definition (if version is >= 2.29)
+		/// </summary>
+		/// <returns></returns>
+		public static List<Image> GetHighDefinitionStandardIcons(
+			KeePass.Plugins.IPluginHost iph, int width, int height) {
+			List<Image> result = null;
+			if (TYPE_ImageArchive != null ) {
+				// cf MainForm_Functions.cs line 3234 from KeePass v2.31
+				object myArchive = Activator.CreateInstance(TYPE_ImageArchive);
+				   // type of myArchive should be ImageArchive
+				METHOD_ImageArchive_Load.Invoke(
+					myArchive,
+					new object[] {PROPERTYVALUE_Images_Client_HighRes});
+				result = (List<Image>)METHOD_ImageArchive_GetImages.Invoke(
+				   	myArchive,
+				   	new Object[]{width,height,true});
+			}
+			else {
+				System.Windows.Forms.ImageList imgl = iph.MainWindow.ClientIcons;
+				ImageList.ImageCollection ic = imgl.Images;
+				result = new List<Image>();
+				for (int i = 0; i<ic.Count; i++ ) {
+					Image img = ResizedImage(ic[i],width,height);
+					result.Add( img );
+				}
+				return result;
+			}
+			return result;
 		}
 		
 		

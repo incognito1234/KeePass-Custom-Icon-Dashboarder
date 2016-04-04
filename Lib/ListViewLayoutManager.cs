@@ -22,6 +22,9 @@
 /*
  * LomsonLib.UI
  *
+ *    Version 1.7 - 2016/04/04
+ *      CompatibilityManager upgrade to v1.2
+ *      
  *    Version 1.6 - 2015/12/06
  *      Make public UpdateCheckAllCheckBox
  * 
