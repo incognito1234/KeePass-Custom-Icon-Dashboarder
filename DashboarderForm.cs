@@ -44,6 +44,7 @@ namespace CustomIconDashboarderPlugin
 		private IconStatsHandler m_iconCounter;
 		private Dictionary<int, PwCustomIcon> m_iconIndexer;
 		private Dictionary<PwUuid, IconChooser> m_iconChooserIndexer;
+		private List<Image> m_stdIcons;
 
 		private ListViewLayoutManager  m_lvIconsColumnSorter;
 		private ListViewLayoutManager  m_lvGroupsColumnSorter;
@@ -73,6 +74,7 @@ namespace CustomIconDashboarderPlugin
 			BestIconFinder.InitClass();
 			InitEx();
 			cbo_iconActionSelector.SelectedIndex = 0;
+			m_stdIcons = CompatibilityManager.GetHighDefinitionStandardIcons(m_PluginHost, 128, 128);
 			// Comment to debug
 			//this.tco_right.TabPages.Remove(tpa_Debug);
 		}
@@ -345,11 +347,11 @@ namespace CustomIconDashboarderPlugin
 				IEnumerator<PwEntry> myEntryEnumerator = m_iconCounter.GetListEntriesForPci( readIcon ).GetEnumerator();
 				IEnumerator<PwGroup> myGroupEnumerator = m_iconCounter.GetListGroupsForPci( readIcon ).GetEnumerator();
 				
-				UpdateSelectedIconPane(originalImage, myEntryEnumerator, myGroupEnumerator);
+				UpdateSelectedIconPane(originalImage, myEntryEnumerator, myGroupEnumerator, false);
 				
 			}
 			else {
-				UpdateSelectedIconPane(null, null, null);
+				UpdateSelectedIconPane(null, null, null, false);
 			}	
 		}
 		
@@ -726,14 +728,13 @@ namespace CustomIconDashboarderPlugin
 		
 		void OnLvAllEntriesSelectedIndexChanged(object sender, EventArgs e)
 		{
-		
 			ListView.SelectedListViewItemCollection sItems = m_lvAllEntries.SelectedItems;
 			
 			m_lvUsedEntries.Items.Clear();
 			m_lvUsedGroups.Items.Clear();
 	 
 			if ((sItems.Count > 0 ) &&
-			    (sItems[0].ImageIndex > ((int)PwIcon.Count)) ) {
+			    (sItems[0].ImageIndex >= ((int)PwIcon.Count)) ) {
 				PwCustomIcon readIcon;
 				readIcon = tco_lists.SelectedIndex == 0 ?
 					m_iconIndexer[sItems[0].ImageIndex] : 
@@ -743,28 +744,29 @@ namespace CustomIconDashboarderPlugin
 				IEnumerator<PwEntry> myEntryEnumerator = m_iconCounter.GetListEntriesForPci( readIcon ).GetEnumerator();
 				IEnumerator<PwGroup> myGroupEnumerator = m_iconCounter.GetListGroupsForPci( readIcon ).GetEnumerator();
 				
-				UpdateSelectedIconPane( originalImage, myEntryEnumerator,  myGroupEnumerator );
+				UpdateSelectedIconPane( originalImage, myEntryEnumerator,  myGroupEnumerator, false);
 			}
 			else if ((sItems.Count > 0 ) &&
 			    (sItems[0].ImageIndex <=
 			          ((int)PwIcon.Count)) ){
 				//Image originalImage = CompatibilityManager.GetOriginalImage(readIcon);
-				IEnumerator<PwEntry> myEntryEnumerator = 
+				Image originalImage = m_stdIcons[sItems[0].ImageIndex];
+				IEnumerator<PwEntry> myEntryEnumerator =
 					m_iconCounter.GetListEntriesForStandardIcon(
 						(PwIcon)sItems[0].ImageIndex ).GetEnumerator();
 				IEnumerator<PwGroup> myGroupEnumerator =
 					m_iconCounter.GetListGroupsForStandardIcon(
 						(PwIcon)sItems[0].ImageIndex  ).GetEnumerator();
 				
-				UpdateSelectedIconPane( null, myEntryEnumerator,  myGroupEnumerator );
+				UpdateSelectedIconPane( originalImage, myEntryEnumerator,  myGroupEnumerator, true);
 			}
 			
 			else {
-				UpdateSelectedIconPane(null, null, null);
+				UpdateSelectedIconPane(null, null, null, false);
 			}	
 		
 		}
-		
+			
 		#endregion
 		
 		#region Common methods
@@ -828,7 +830,12 @@ namespace CustomIconDashboarderPlugin
 				}
 		}
 		
-		private void UpdateSelectedIconPane( Image srcImg, IEnumerator<PwEntry> peEnum, IEnumerator<PwGroup> pgEnum) {
+		private void UpdateSelectedIconPane( 
+		    Image srcImg,
+		    IEnumerator<PwEntry> peEnum,
+		    IEnumerator<PwGroup> pgEnum,
+		    bool isStandardIcon) {
+			
 			if (srcImg != null) {
 				pbo_selectedIcon128.BackgroundImage =
 						CompatibilityManager.ResizedImage(srcImg, 128, 128);
@@ -838,13 +845,19 @@ namespace CustomIconDashboarderPlugin
 					CompatibilityManager.ResizedImage(srcImg, 32, 32);					
 				pbo_selectedIcon16.BackgroundImage = 
 					CompatibilityManager.ResizedImage(srcImg, 16, 16);
-				lbl_originalSize.Text =
-					"Original Size : " +
-					srcImg.Width +
-					" x " +
-					srcImg.Height;
+				if (!isStandardIcon) {
+					lbl_originalSize.Text =
+						"Original Size : " +
+						srcImg.Width +
+						" x " +
+						srcImg.Height;
+				}
+				else {
+					lbl_originalSize.Text = "Standard Icon";
+				}
 			}
 			else {
+				lbl_originalSize.Text = "";
 				pbo_selectedIcon128.BackgroundImage = null;
 				pbo_selectedIcon64.BackgroundImage = null;
 				pbo_selectedIcon32.BackgroundImage = null;
