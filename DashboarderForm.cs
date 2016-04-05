@@ -128,6 +128,7 @@ namespace CustomIconDashboarderPlugin
 		
 		private void ResetAllIconDashboard() {
 			m_lvViewIcon.Items.Clear();
+			m_lvAllEntries.Items.Clear();
 			m_iconCounter = new IconStatsHandler();
 			m_iconCounter.Initialize( m_PluginHost.Database);
 			CreateCustomIconList();
@@ -267,7 +268,7 @@ namespace CustomIconDashboarderPlugin
 				int nTotal = m_iconCounter.GetNbUsageInEntries(pwci) + m_iconCounter.GetNbUsageInGroups(pwci);
 				lvi.SubItems.Add( nTotal.ToString(NumberFormatInfo.InvariantInfo));
 				lvi.SubItems.Add(m_iconCounter.GetNbUrlsInEntries(pwci).ToString(NumberFormatInfo.InvariantInfo));
-				UpdateBestIconFinderResultForIconLvi(lvi);
+				UpdateIconLviFromBestIconFinder(lvi);
 				
 				lvi.Tag = pwci.Uuid;
 				m_lvViewIcon.Items.Add(lvi);
@@ -309,13 +310,13 @@ namespace CustomIconDashboarderPlugin
 				   
 				var ich = new IconChooser(bif);
 			    m_iconChooserIndexerFromIcon.Add( readIcon.Uuid, ich);
-			    UpdateBestIconFinderResultForIconLvi( iconLvi);
+			    UpdateIconLviFromBestIconFinder( iconLvi);
 				return true;
 			}
 			return false;
 		}
 		
-		private void UpdateBestIconFinderResultForIconLvi( ListViewItem lvi) {
+		private void UpdateIconLviFromBestIconFinder( ListViewItem lvi) {
 			IconChooser ich = null;
 			PwCustomIcon readIcon = m_iconIndexer[lvi.ImageIndex];
 			if (m_iconChooserIndexerFromIcon.ContainsKey(readIcon.Uuid)) {
@@ -428,7 +429,7 @@ namespace CustomIconDashboarderPlugin
 						readIcon, bif.BestImage, m_PluginHost.Database);
 					if ((newIcon != null ) && (!m_iconChooserIndexerFromIcon.ContainsKey(newIcon.Uuid)) ) {
 						m_iconChooserIndexerFromIcon.Add(newIcon.Uuid, new IconChooser(bif));
-						UpdateBestIconFinderResultForIconLvi(lvi);
+						UpdateIconLviFromBestIconFinder(lvi);
 					}
 					NotifyDatabaseModificationAndUpdateMainForm();
 				}
@@ -614,6 +615,7 @@ namespace CustomIconDashboarderPlugin
 				
 				lvi.Tag = pe;
 				m_lvAllEntries.Items.Add(lvi);
+				UpdateEntryLviFromBestIconFinder(lvi);
 				j++;
 			}
 			m_lvAllEntries.EndUpdate();
@@ -741,6 +743,29 @@ namespace CustomIconDashboarderPlugin
 		
 		}
         
+        void OnPickCustomIconClickForEntries()
+		{
+        	ListView.CheckedListViewItemCollection lvsiChecked = m_lvAllEntries.CheckedItems;
+						
+			foreach(ListViewItem lvi in lvsiChecked) {
+				
+				UpdateBestIconFinderAndLviFromEntryLvi( lvi );
+				var readEntry = (PwEntry)lvi.Tag;
+				
+				IconChooser ich = m_iconChooserIndexerFromEntry[readEntry];
+				if ((ich != null) && (ich.ChoosenIcon != null)) {
+					// TODO - Update everything
+					PwCustomIcon newIcon = UpdateEntryFromImage(
+						readEntry, ich.ChoosenIcon, m_PluginHost.Database);
+					if ((newIcon != null )) {
+						UpdateBestIconFinderAndLviFromEntryLvi(lvi);
+					}
+					NotifyDatabaseModificationAndUpdateMainForm();
+				}
+			}
+			ResetDashboard();
+		}
+		 
         void OnPerformEntryActionClick(object sender, EventArgs e)
 		{
 			switch (cbo_entryActionSelector.SelectedIndex) {
@@ -754,7 +779,7 @@ namespace CustomIconDashboarderPlugin
 					OnDownloadCustomIconClickForEntries();
 					break;
 				case 4:
-					//OnPickCustomIconClick();
+					OnPickCustomIconClickForEntries();
 					break;
 				default:
 					MessageBox.Show("Pbm");
@@ -790,13 +815,13 @@ namespace CustomIconDashboarderPlugin
 				   
 				var ich = new IconChooser(bif);
 			    m_iconChooserIndexerFromEntry.Add(pe, ich);
-			    UpdateBestIconFinderAndLviForEntryLvi(iconLvi);
+			    UpdateEntryLviFromBestIconFinder(iconLvi);
 				return true;
 			}
 			return false;
 		}    
 
-        private void UpdateBestIconFinderAndLviForEntryLvi( ListViewItem lvi) {
+        private void UpdateEntryLviFromBestIconFinder( ListViewItem lvi) {
 			IconChooser ich = null;
         	var pe = (PwEntry)lvi.Tag;
 			if (m_iconChooserIndexerFromEntry.ContainsKey(pe)) {
@@ -822,6 +847,24 @@ namespace CustomIconDashboarderPlugin
 		void OnEntryActionSelectorSelectedIndexChanged(object sender, EventArgs e)
 		{
 			btn_performEntryAction.Enabled = cbo_entryActionSelector.SelectedIndex != 0;
+		}
+		
+		/// <summary>
+		/// Replace custom icon of entry with image.
+		/// </summary>
+		/// <returns>PwCustomIcon if new icon has been created. null else.</returns>
+		private PwCustomIcon UpdateEntryFromImage( PwEntry pe, Image img, PwDatabase kdb) {
+			PwCustomIcon targetIcon = GetCustomIconFromImageAndUpdateKdbIfNecessary( img, kdb);
+			
+			if (targetIcon == null) return null;
+			if (targetIcon.Uuid == pe.CustomIconUuid) return targetIcon;
+			pe.CustomIconUuid = targetIcon.Uuid;
+			pe.Touch(true);
+			
+			kdb.UINeedsIconUpdate = true;
+			kdb.Modified = true;
+			
+			return targetIcon;
 		}
 		
 		#endregion
