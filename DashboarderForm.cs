@@ -43,7 +43,8 @@ namespace CustomIconDashboarderPlugin
 		private IPluginHost m_PluginHost;
 		private IconStatsHandler m_iconCounter;
 		private Dictionary<int, PwCustomIcon> m_iconIndexer;
-		private Dictionary<PwUuid, IconChooser> m_iconChooserIndexer;
+		private Dictionary<PwUuid, IconChooser> m_iconChooserIndexerFromIcon;
+		private Dictionary<PwEntry, IconChooser> m_iconChooserIndexerFromEntry;
 		private List<Image> m_stdIcons;
 
 		private ListViewLayoutManager  m_lvIconsColumnSorter;
@@ -51,6 +52,8 @@ namespace CustomIconDashboarderPlugin
 		private ListViewLayoutManager  m_lvEntriesColumnSorter;
 		private ListViewLayoutManager  m_lvDownloadResultColumnSorter;
 		private ListViewLayoutManager  m_lvAllEntriesColumnSorter;
+		
+		private IconChooser CurrentIconChooser { get; set; }
 		
 		#region Initialization & Dispose
 		public DashboarderForm(IPluginHost pluginHost)
@@ -63,6 +66,7 @@ namespace CustomIconDashboarderPlugin
 			
 			m_PluginHost = pluginHost;
 			this.Icon = m_PluginHost.MainWindow.Icon;
+			this.CurrentIconChooser = null;
 			
 		}
 		
@@ -74,6 +78,7 @@ namespace CustomIconDashboarderPlugin
 			BestIconFinder.InitClass();
 			InitEx();
 			cbo_iconActionSelector.SelectedIndex = 0;
+			cbo_entryActionSelector.SelectedIndex = 0;
 			m_stdIcons = CompatibilityManager.GetHighDefinitionStandardIcons(m_PluginHost, 128, 128);
 			// Comment to debug
 			//this.tco_right.TabPages.Remove(tpa_Debug);
@@ -86,7 +91,8 @@ namespace CustomIconDashboarderPlugin
 		
 		private void InitEx()
 		{
-			m_iconChooserIndexer = new Dictionary<PwUuid, IconChooser>();
+			m_iconChooserIndexerFromIcon = new Dictionary<PwUuid, IconChooser>();
+			m_iconChooserIndexerFromEntry = new Dictionary<PwEntry, IconChooser>();
 			BuildCustomIconListView();
 			BuildEntriesListViews();
 			BuildUsageListViews();
@@ -286,7 +292,7 @@ namespace CustomIconDashboarderPlugin
 		/// <returns>true if an update has occured. false else</returns>
 		private bool UpdateBestIconFinderAndLviFromIconLvi(ListViewItem iconLvi) {
 			PwCustomIcon readIcon = m_iconIndexer[iconLvi.ImageIndex];
-			if ( !m_iconChooserIndexer.ContainsKey( readIcon.Uuid ) ) {
+			if ( !m_iconChooserIndexerFromIcon.ContainsKey( readIcon.Uuid ) ) {
 				var lstUris = new List<Uri>();
 				lstUris.AddRange( m_iconCounter.GetListUris( readIcon ) );
 				
@@ -302,7 +308,7 @@ namespace CustomIconDashboarderPlugin
 				}
 				   
 				var ich = new IconChooser(bif);
-			    m_iconChooserIndexer.Add( readIcon.Uuid, ich);
+			    m_iconChooserIndexerFromIcon.Add( readIcon.Uuid, ich);
 			    UpdateBestIconFinderResultForIconLvi( iconLvi);
 				return true;
 			}
@@ -312,8 +318,8 @@ namespace CustomIconDashboarderPlugin
 		private void UpdateBestIconFinderResultForIconLvi( ListViewItem lvi) {
 			IconChooser ich = null;
 			PwCustomIcon readIcon = m_iconIndexer[lvi.ImageIndex];
-			if (m_iconChooserIndexer.ContainsKey(readIcon.Uuid)) {
-				ich = m_iconChooserIndexer[readIcon.Uuid];
+			if (m_iconChooserIndexerFromIcon.ContainsKey(readIcon.Uuid)) {
+				ich = m_iconChooserIndexerFromIcon[readIcon.Uuid];
 			}
 			else {
 				lvi.SubItems[2].Text = "";
@@ -360,90 +366,17 @@ namespace CustomIconDashboarderPlugin
 			ListView.SelectedListViewItemCollection sItems = m_lvViewIcon.SelectedItems;
 			if (sItems.Count > 0) {
 				ListViewItem lvi = sItems[0];
-				
 				var pu = (PwUuid)lvi.Tag;
-				bool cleanImage = false;
 				
-				if (m_iconChooserIndexer.ContainsKey(pu)) {
-					IconChooser ich =  m_iconChooserIndexer[pu];
-					Image img = ich.ChoosenIcon;
-					BestIconFinder bif = ich.Bif;
-				    
-					if (img != null) {
-						pbo_downloadedIcon128.BackgroundImage = 
-							CompatibilityManager.ResizedImage(img, 128, 128);
-						pbo_downloadedIcon64.BackgroundImage = 
-							CompatibilityManager.ResizedImage(img, 64, 64);
-						pbo_downloadedIcon32.BackgroundImage =
-							CompatibilityManager.ResizedImage(img, 32, 32);					
-						pbo_downloadedIcon16.BackgroundImage = 
-							CompatibilityManager.ResizedImage(img, 16, 16);
-						lbl_newSize.Text =
-							"New Size : " +
-							img.Width +
-							" x " +
-							img.Height;
-						
-						
-						m_lvDownloadResult.Items.Clear();
-						IEnumerator<ImageInfo> enumImageInfo = bif.ListImageInfo.GetEnumerator();
-						m_lvDownloadResult.LargeImageList = new ImageList();
-						m_lvDownloadResult.SmallImageList = new ImageList();
-						m_lvDownloadResult.LargeImageList.ImageSize = new Size(32, 32);
-						m_lvDownloadResult.LargeImageList.ColorDepth = ColorDepth.Depth32Bit;
-						m_lvDownloadResult.SmallImageList.ImageSize = new Size(32, 32);
-						m_lvDownloadResult.SmallImageList.ColorDepth = ColorDepth.Depth32Bit;
-						
-						int ii = 0;
-						while (enumImageInfo.MoveNext()) {
-							ImageInfo myImageInfo = enumImageInfo.Current;
-							
-							var lviImageInfo = 
-								new ListViewItem( (ii+1).ToString(NumberFormatInfo.InvariantInfo )
-								                 );
-							lviImageInfo.SubItems.Add( myImageInfo.ImgData.Width.ToString(NumberFormatInfo.InvariantInfo)
-								              + "x" 
-								              + myImageInfo.ImgData.Height.ToString(NumberFormatInfo.InvariantInfo));
-							lviImageInfo.SubItems.Add( myImageInfo.Url );
-							lviImageInfo.ImageIndex = ii;
-							lviImageInfo.Tag = ii;
-							if (  ich.ChoosenIndex == ii )
-								lviImageInfo.Selected = true;
-							
-							
-							Image smallImage = CompatibilityManager.ResizedImage(
-								myImageInfo.ImgData,
-								32, 32);
-							m_lvDownloadResult.LargeImageList.Images.Add( smallImage );
-							m_lvDownloadResult.SmallImageList.Images.Add( smallImage );
-							m_lvDownloadResult.Items.Add(lviImageInfo);
-						
-							ii++;						
-						}
-						
-						//m_lvDownloadResult.Items[ich.ChoosenIndex].Selected |= 
-						//	bif.ListImageInfo.Count > 0;
-					}
-					else {
-						cleanImage = true;
-						m_lvDownloadResult.Items.Clear();
-					}
-				     rtb_details.Text=bif.Details;
+				if (m_iconChooserIndexerFromIcon.ContainsKey(pu)) {
+					this.CurrentIconChooser =  m_iconChooserIndexerFromIcon[pu];
+				}
+				else {
+					this.CurrentIconChooser = null;
+				}
+				
+				UpdateDownloadIconPanel( this.CurrentIconChooser );
 			
-					}
-					else {
-						cleanImage = true;
-					}
-				
-					if (cleanImage) {
-						pbo_downloadedIcon128.BackgroundImage = null;
-						pbo_downloadedIcon64.BackgroundImage = null;
-						pbo_downloadedIcon32.BackgroundImage = null;
-						pbo_downloadedIcon16.BackgroundImage = null;
-						m_lvDownloadResult.Items.Clear();
-						lbl_newSize.Text = "New Size :";
-						
-					}
 			}
 		}
 		
@@ -487,14 +420,14 @@ namespace CustomIconDashboarderPlugin
 				UpdateBestIconFinderAndLviFromIconLvi( lvi );
 				PwCustomIcon readIcon = m_iconIndexer[lvi.ImageIndex];
 				
-				Debug.Assert(m_iconChooserIndexer.ContainsKey( readIcon.Uuid ));
+				Debug.Assert(m_iconChooserIndexerFromIcon.ContainsKey( readIcon.Uuid ));
 				
-				BestIconFinder bif = m_iconChooserIndexer[readIcon.Uuid].Bif;
+				BestIconFinder bif = m_iconChooserIndexerFromIcon[readIcon.Uuid].Bif;
 				if (bif.BestImage != null) {
 					PwCustomIcon newIcon = UpdateCustomIconFromImage(
 						readIcon, bif.BestImage, m_PluginHost.Database);
-					if ((newIcon != null ) && (!m_iconChooserIndexer.ContainsKey(newIcon.Uuid)) ) {
-						m_iconChooserIndexer.Add(newIcon.Uuid, new IconChooser(bif));
+					if ((newIcon != null ) && (!m_iconChooserIndexerFromIcon.ContainsKey(newIcon.Uuid)) ) {
+						m_iconChooserIndexerFromIcon.Add(newIcon.Uuid, new IconChooser(bif));
 						UpdateBestIconFinderResultForIconLvi(lvi);
 					}
 					NotifyDatabaseModificationAndUpdateMainForm();
@@ -657,7 +590,6 @@ namespace CustomIconDashboarderPlugin
 		
 		#region ListView entries actions
 		
-		
 		private void CreateAllEntriesList()
 		{
 			m_lvAllEntries.BeginUpdate();
@@ -680,7 +612,7 @@ namespace CustomIconDashboarderPlugin
 					lvi.ImageIndex = (int)PwIcon.Count +
 						 m_PluginHost.Database.GetCustomIconIndex(pe.CustomIconUuid);
 				
-				//lvi.Tag = pe;
+				lvi.Tag = pe;
 				m_lvAllEntries.Items.Add(lvi);
 				j++;
 			}
@@ -733,6 +665,15 @@ namespace CustomIconDashboarderPlugin
 			m_lvUsedEntries.Items.Clear();
 			m_lvUsedGroups.Items.Clear();
 	 
+			if (sItems.Count > 0) {
+				var pe = (PwEntry)sItems[0].Tag;
+				if (m_iconChooserIndexerFromEntry.ContainsKey(pe) ) {
+					this.CurrentIconChooser = m_iconChooserIndexerFromEntry[pe];
+				}
+				else {
+					this.CurrentIconChooser = null;
+				}
+			}
 			if ((sItems.Count > 0 ) &&
 			    (sItems[0].ImageIndex >= ((int)PwIcon.Count)) ) {
 				PwCustomIcon readIcon;
@@ -764,9 +705,125 @@ namespace CustomIconDashboarderPlugin
 			else {
 				UpdateSelectedIconPane(null, null, null, false);
 			}	
+			UpdateDownloadResultPaneFromSelectedEntry();
 		
 		}
+		
+		void UpdateDownloadResultPaneFromSelectedEntry() 
+		{
+			ListView.SelectedListViewItemCollection sItems = m_lvAllEntries.SelectedItems;
+			if (sItems.Count > 0) {
+				ListViewItem lvi = sItems[0];
+				
+				var pe = (PwEntry)lvi.Tag;
+				
+				if (m_iconChooserIndexerFromEntry.ContainsKey(pe)) {
+					this.CurrentIconChooser = m_iconChooserIndexerFromEntry[pe];
+				}
+				
+			}
+			UpdateDownloadIconPanel(this.CurrentIconChooser);
+		}
+				
+        void OnDownloadCustomIconClickForEntries()
+		{
+			ListView.CheckedListViewItemCollection lvsiChecked = m_lvAllEntries.CheckedItems;
+			foreach(ListViewItem lvi in lvsiChecked)
+			{
+				if (UpdateBestIconFinderAndLviFromEntryLvi( lvi )) {
+				    System.Threading.Thread.Sleep(500);
+				}
+			   lvi.EnsureVisible();
+			   m_lvAllEntries.Refresh();
+			}
 			
+			OnLvAllEntriesSelectedIndexChanged(null,null);
+		
+		}
+        
+        void OnPerformEntryActionClick(object sender, EventArgs e)
+		{
+			switch (cbo_entryActionSelector.SelectedIndex) {
+				case 1:
+					//OnModifyCustomIconClick();
+					break;
+				case 2:
+					//OnRemoveCustomIconsClick();
+					break;
+				case 3:
+					OnDownloadCustomIconClickForEntries();
+					break;
+				case 4:
+					//OnPickCustomIconClick();
+					break;
+				default:
+					MessageBox.Show("Pbm");
+					Debug.Assert(false);
+					break;
+			}
+		}
+		/// <summary>
+		/// Update bestIconFinder and size in List View Item
+		/// if icon has not already been downloaded
+		/// </summary>
+		/// <param name="lvi"></param>
+		/// <returns>true if an update has occured. false else</returns>
+		private bool UpdateBestIconFinderAndLviFromEntryLvi(ListViewItem iconLvi) {
+			var pe = (PwEntry)iconLvi.Tag;
+			Debug.Assert( pe != null);
+			
+			if ( !m_iconChooserIndexerFromEntry.ContainsKey( pe ) ) {
+				
+				String readUrl = pe.Strings.ReadSafe(PwDefs.UrlField);
+				BestIconFinder bif;
+				if (!string.IsNullOrEmpty(readUrl)) {
+					String urlFieldValue = LomsonLib.Utility.URLUtility.addUrlHttpPrefix(readUrl);
+							
+					var siteUri = new Uri(urlFieldValue);
+					
+					bif = new BestIconFinder( siteUri );
+					bif.FindBestIcon();
+				}
+				else {
+					bif = new BestIconFinder();
+				}
+				   
+				var ich = new IconChooser(bif);
+			    m_iconChooserIndexerFromEntry.Add(pe, ich);
+			    UpdateBestIconFinderAndLviForEntryLvi(iconLvi);
+				return true;
+			}
+			return false;
+		}    
+
+        private void UpdateBestIconFinderAndLviForEntryLvi( ListViewItem lvi) {
+			IconChooser ich = null;
+        	var pe = (PwEntry)lvi.Tag;
+			if (m_iconChooserIndexerFromEntry.ContainsKey(pe)) {
+				ich = m_iconChooserIndexerFromEntry[pe];
+			}
+			else {
+				lvi.SubItems[2].Text = "";
+				return;
+			}
+			if (ich.Bif.Result.ResultCode == FinderResult.RESULT_NO_URL) {
+				lvi.SubItems[2].Text = Resource.val_nourl;
+			}
+			else if (ich.Bif.BestImage != null) {
+		    	lvi.SubItems[2].Text = ich.Bif.BestImage.Width.ToString(NumberFormatInfo.InvariantInfo)
+                + " x " +
+               ich.Bif.BestImage.Height.ToString(NumberFormatInfo.InvariantInfo);
+		    }
+	    	else {
+		    	lvi.SubItems[2].Text = Resource.val_na;
+	    	}
+		}
+		
+		void OnEntryActionSelectorSelectedIndexChanged(object sender, EventArgs e)
+		{
+			btn_performEntryAction.Enabled = cbo_entryActionSelector.SelectedIndex != 0;
+		}
+		
 		#endregion
 		
 		#region Common methods
@@ -789,7 +846,7 @@ namespace CustomIconDashboarderPlugin
 			ListViewItem lvi = m_lvViewIcon.SelectedItems[0];
 			var iconUuid = lvi.Tag as PwUuid;
 			Debug.Assert(iconUuid != null);
-			IconChooser ich = m_iconChooserIndexer[iconUuid];
+			IconChooser ich = m_iconChooserIndexerFromIcon[iconUuid];
 			if (m_lvDownloadResult.SelectedItems.Count > 0) 
 				ich.ChoosenIndex = (Int32)m_lvDownloadResult.SelectedItems[0].Tag;
 			else
@@ -889,10 +946,93 @@ namespace CustomIconDashboarderPlugin
 			}
 		}
 		
+		private void UpdateDownloadIconPanel(IconChooser ich) {
+			bool cleanImage = false;
+			Image img = null;
+			BestIconFinder bif = null;
+			if (ich != null) {
+				img = ich.ChoosenIcon;
+				bif = ich.Bif;
+			}
+			
+			if (img != null) {
+				
+				pbo_downloadedIcon128.BackgroundImage =
+					CompatibilityManager.ResizedImage(img, 128, 128);
+				pbo_downloadedIcon64.BackgroundImage =
+					CompatibilityManager.ResizedImage(img, 64, 64);
+				pbo_downloadedIcon32.BackgroundImage =
+					CompatibilityManager.ResizedImage(img, 32, 32);
+				pbo_downloadedIcon16.BackgroundImage =
+					CompatibilityManager.ResizedImage(img, 16, 16);
+				lbl_newSize.Text =
+					"New Size : " +
+					img.Width +
+					" x " +
+					img.Height;
+				
+				
+				m_lvDownloadResult.Items.Clear();
+				IEnumerator<ImageInfo> enumImageInfo = bif.ListImageInfo.GetEnumerator();
+				m_lvDownloadResult.LargeImageList = new ImageList();
+				m_lvDownloadResult.SmallImageList = new ImageList();
+				m_lvDownloadResult.LargeImageList.ImageSize = new Size(32, 32);
+				m_lvDownloadResult.LargeImageList.ColorDepth = ColorDepth.Depth32Bit;
+				m_lvDownloadResult.SmallImageList.ImageSize = new Size(32, 32);
+				m_lvDownloadResult.SmallImageList.ColorDepth = ColorDepth.Depth32Bit;
+				
+				int ii = 0;
+				while (enumImageInfo.MoveNext()) {
+					ImageInfo myImageInfo = enumImageInfo.Current;
+					
+					var lviImageInfo =
+						new ListViewItem( (ii+1).ToString(NumberFormatInfo.InvariantInfo )
+						                );
+					lviImageInfo.SubItems.Add( myImageInfo.ImgData.Width.ToString(NumberFormatInfo.InvariantInfo)
+					                          + "x"
+					                          + myImageInfo.ImgData.Height.ToString(NumberFormatInfo.InvariantInfo));
+					lviImageInfo.SubItems.Add( myImageInfo.Url );
+					lviImageInfo.ImageIndex = ii;
+					lviImageInfo.Tag = ii;
+					if (  ich.ChoosenIndex == ii )
+						lviImageInfo.Selected = true;
+					
+					
+					Image smallImage = CompatibilityManager.ResizedImage(
+						myImageInfo.ImgData,
+						32, 32);
+					m_lvDownloadResult.LargeImageList.Images.Add( smallImage );
+					m_lvDownloadResult.SmallImageList.Images.Add( smallImage );
+					m_lvDownloadResult.Items.Add(lviImageInfo);
+					
+					ii++;
+				}
+				
+			}
+			else {
+				cleanImage = true;
+			}
+			
+			if (bif !=null ) {
+				rtb_details.Text=bif.Details;
+			}
+			
+			if (cleanImage) {
+				pbo_downloadedIcon128.BackgroundImage = null;
+				pbo_downloadedIcon64.BackgroundImage = null;
+				pbo_downloadedIcon32.BackgroundImage = null;
+				pbo_downloadedIcon16.BackgroundImage = null;
+				m_lvDownloadResult.Items.Clear();
+				lbl_newSize.Text = "New Size :";
+			}
+			
+		}
+		
 		public static Control GetControlFromForm(Control form, String name) {
 			Control[] cntrls = form.Controls.Find(name, true);
 			return cntrls.Length == 0 ? null : cntrls[0];
 	    }
+		
 		#endregion
 		
 	}

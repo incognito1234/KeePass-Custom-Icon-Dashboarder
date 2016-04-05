@@ -388,6 +388,7 @@ namespace CustomIconDashboarderPlugin
 			this.cbo_entryActionSelector.Name = "cbo_entryActionSelector";
 			this.cbo_entryActionSelector.Size = new System.Drawing.Size(140, 21);
 			this.cbo_entryActionSelector.TabIndex = 3;
+			this.cbo_entryActionSelector.SelectedIndexChanged += new System.EventHandler(this.OnEntryActionSelectorSelectedIndexChanged);
 			// 
 			// btn_performEntryAction
 			// 
@@ -397,6 +398,7 @@ namespace CustomIconDashboarderPlugin
 			this.btn_performEntryAction.TabIndex = 4;
 			this.btn_performEntryAction.Text = "Go";
 			this.btn_performEntryAction.UseVisualStyleBackColor = true;
+			this.btn_performEntryAction.Click += new System.EventHandler(this.OnPerformEntryActionClick);
 			// 
 			// m_lvAllEntries
 			// 
