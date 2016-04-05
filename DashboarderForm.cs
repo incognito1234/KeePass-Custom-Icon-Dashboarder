@@ -840,17 +840,14 @@ namespace CustomIconDashboarderPlugin
 		
 		void OnDownloadResultSelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (m_lvViewIcon.SelectedItems.Count <= 0) 
+			if (this.CurrentIconChooser == null) 
 				return;
 			
-			ListViewItem lvi = m_lvViewIcon.SelectedItems[0];
-			var iconUuid = lvi.Tag as PwUuid;
-			Debug.Assert(iconUuid != null);
-			IconChooser ich = m_iconChooserIndexerFromIcon[iconUuid];
-			if (m_lvDownloadResult.SelectedItems.Count > 0) 
-				ich.ChoosenIndex = (Int32)m_lvDownloadResult.SelectedItems[0].Tag;
-			else
-				ich.ChoosenIndex = 0;
+			this.CurrentIconChooser.ChoosenIndex = 
+				m_lvDownloadResult.SelectedItems.Count > 0 ? 
+				(Int32)m_lvDownloadResult.SelectedItems[0].Tag : 0;
+			
+			UpdateImagesInIconPanel( this.CurrentIconChooser );
 		}
 		
 		private void UpdateCustomIconFromUuid(
@@ -946,17 +943,16 @@ namespace CustomIconDashboarderPlugin
 			}
 		}
 		
-		private void UpdateDownloadIconPanel(IconChooser ich) {
-			bool cleanImage = false;
+		/// <summary>
+		/// Update all sizes of choosen image in download panel
+		/// </summary>
+		/// <param name="ich"></param>
+		private void UpdateImagesInIconPanel(IconChooser ich) {
 			Image img = null;
-			BestIconFinder bif = null;
-			if (ich != null) {
+			if (ich != null)
 				img = ich.ChoosenIcon;
-				bif = ich.Bif;
-			}
 			
 			if (img != null) {
-				
 				pbo_downloadedIcon128.BackgroundImage =
 					CompatibilityManager.ResizedImage(img, 128, 128);
 				pbo_downloadedIcon64.BackgroundImage =
@@ -970,8 +966,24 @@ namespace CustomIconDashboarderPlugin
 					img.Width +
 					" x " +
 					img.Height;
-				
-				
+			}
+			else {
+				pbo_downloadedIcon128.BackgroundImage = null;
+				pbo_downloadedIcon64.BackgroundImage = null;
+				pbo_downloadedIcon32.BackgroundImage = null;
+				pbo_downloadedIcon16.BackgroundImage = null;
+				m_lvDownloadResult.Items.Clear();
+				lbl_newSize.Text = "New Size :";
+			}
+		}
+		
+		private void UpdateDownloadIconPanel(IconChooser ich) {
+			BestIconFinder bif = null;
+			if (ich != null) {
+				bif = ich.Bif;
+			}
+			
+			if (bif != null) {
 				m_lvDownloadResult.Items.Clear();
 				IEnumerator<ImageInfo> enumImageInfo = bif.ListImageInfo.GetEnumerator();
 				m_lvDownloadResult.LargeImageList = new ImageList();
@@ -994,9 +1006,7 @@ namespace CustomIconDashboarderPlugin
 					lviImageInfo.SubItems.Add( myImageInfo.Url );
 					lviImageInfo.ImageIndex = ii;
 					lviImageInfo.Tag = ii;
-					if (  ich.ChoosenIndex == ii )
-						lviImageInfo.Selected = true;
-					
+					lviImageInfo.Selected |= ich.ChoosenIndex == ii;
 					
 					Image smallImage = CompatibilityManager.ResizedImage(
 						myImageInfo.ImgData,
@@ -1007,25 +1017,11 @@ namespace CustomIconDashboarderPlugin
 					
 					ii++;
 				}
-				
-			}
-			else {
-				cleanImage = true;
-			}
 			
-			if (bif !=null ) {
 				rtb_details.Text=bif.Details;
 			}
 			
-			if (cleanImage) {
-				pbo_downloadedIcon128.BackgroundImage = null;
-				pbo_downloadedIcon64.BackgroundImage = null;
-				pbo_downloadedIcon32.BackgroundImage = null;
-				pbo_downloadedIcon16.BackgroundImage = null;
-				m_lvDownloadResult.Items.Clear();
-				lbl_newSize.Text = "New Size :";
-			}
-			
+			UpdateImagesInIconPanel( this.CurrentIconChooser);
 		}
 		
 		public static Control GetControlFromForm(Control form, String name) {
