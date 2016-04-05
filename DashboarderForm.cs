@@ -773,12 +773,9 @@ namespace CustomIconDashboarderPlugin
 					//OnModifyCustomIconClick();
 					break;
 				case 2:
-					//OnRemoveCustomIconsClick();
-					break;
-				case 3:
 					OnDownloadCustomIconClickForEntries();
 					break;
-				case 4:
+				case 3:
 					OnPickCustomIconClickForEntries();
 					break;
 				default:
@@ -787,6 +784,7 @@ namespace CustomIconDashboarderPlugin
 					break;
 			}
 		}
+        
 		/// <summary>
 		/// Update bestIconFinder and size in List View Item
 		/// if icon has not already been downloaded
