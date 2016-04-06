@@ -697,7 +697,7 @@ namespace CustomIconDashboarderPlugin
 				UpdateSelectedIconPane( originalImage, myEntryEnumerator,  myGroupEnumerator, false);
 			}
 			else if ((sItems.Count > 0 ) &&
-			    (sItems[0].ImageIndex <=
+			    (sItems[0].ImageIndex <
 			          ((int)PwIcon.Count)) ){
 				//Image originalImage = CompatibilityManager.GetOriginalImage(readIcon);
 				Image originalImage = m_stdIcons[sItems[0].ImageIndex];
@@ -772,12 +772,45 @@ namespace CustomIconDashboarderPlugin
 			}
 			ResetDashboard();
 		}
-		 
+		
+        void OnModifyIconClickForEntries()
+		{
+        	ListViewItem firstlvi = m_lvAllEntries.CheckedItems[0];
+        	var pe = (PwEntry)firstlvi.Tag;       	
+			var ipf = new IconPickerForm();
+			var lvEntriesOfMainForm = (ListView)GetControlFromForm( m_PluginHost.MainWindow, "m_lvEntries");
+			ImageList il_allIcons = lvEntriesOfMainForm.SmallImageList; // Standard icons are the "PwIcon.Count"th first items
+			ipf.InitEx(
+				il_allIcons,
+			    (uint)PwIcon.Count,
+			    m_PluginHost.Database,
+			    (uint)pe.IconId,
+				pe.CustomIconUuid);
+
+			if(ipf.ShowDialog() == DialogResult.OK){
+				foreach (ListViewItem lvi in m_lvAllEntries.CheckedItems) {
+					
+					if(!ipf.ChosenCustomIconUuid.Equals(PwUuid.Zero)) { // Custom icon
+						pe.CustomIconUuid = ipf.ChosenCustomIconUuid;
+					}
+					else { // Standard icon
+						pe.IconId = (PwIcon)ipf.ChosenIconId;
+						pe.CustomIconUuid = PwUuid.Zero;
+					};
+				
+				}
+				ResetDashboard();
+				NotifyDatabaseModificationAndUpdateMainForm();
+			}
+
+			UIUtil.DestroyForm(ipf);
+		}
+		
         void OnPerformEntryActionClick(object sender, EventArgs e)
 		{
 			switch (cbo_entryActionSelector.SelectedIndex) {
 				case 1:
-					//OnModifyCustomIconClick();
+					OnModifyIconClickForEntries();
 					break;
 				case 2:
 					OnDownloadCustomIconClickForEntries();
