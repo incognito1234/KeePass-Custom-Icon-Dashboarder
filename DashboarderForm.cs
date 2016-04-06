@@ -289,7 +289,7 @@ namespace CustomIconDashboarderPlugin
 		/// Update bestIconFinder and size in List View Item
 		/// if icon has not already been downloaded
 		/// </summary>
-		/// <param name="lvi"></param>
+		/// <param name="iconLvi"></param>
 		/// <returns>true if an update has occured. false else</returns>
 		private bool UpdateBestIconFinderAndLviFromIconLvi(ListViewItem iconLvi) {
 			PwCustomIcon readIcon = m_iconIndexer[iconLvi.ImageIndex];
@@ -601,17 +601,24 @@ namespace CustomIconDashboarderPlugin
 			{
 				var lvi = new ListViewItem(pe.Strings.ReadSafe(PwDefs.TitleField));
 				
-				// Current Size
-				lvi.SubItems.Add("0 x 0");
-				lvi.SubItems.Add("0 x 0");
+				// ImageIndex et Current Size
+				if(pe.CustomIconUuid.Equals(PwUuid.Zero)) {
+					lvi.ImageIndex = (int)pe.IconId;
+					lvi.SubItems.Add("Standard");
+				}
+				else {
+					int iCustomIcon = m_PluginHost.Database.GetCustomIconIndex(pe.CustomIconUuid);
+					lvi.ImageIndex = (int)PwIcon.Count + iCustomIcon;
+					Image img = CompatibilityManager.GetOriginalImage(
+						m_PluginHost.Database.CustomIcons[iCustomIcon]);
+					lvi.SubItems.Add(img.Width.ToString(NumberFormatInfo.InvariantInfo)
+				                + " x " +
+				               img.Height.ToString(NumberFormatInfo.InvariantInfo));
+				}
+				lvi.SubItems.Add(""); // New Size
 				
 				lvi.SubItems.Add(pe.ParentGroup.GetFullPath(".",false));
 				lvi.SubItems.Add(pe.Strings.ReadSafe(PwDefs.UrlField));
-				if(pe.CustomIconUuid.Equals(PwUuid.Zero))
-					lvi.ImageIndex = (int)pe.IconId;
-				else
-					lvi.ImageIndex = (int)PwIcon.Count +
-						 m_PluginHost.Database.GetCustomIconIndex(pe.CustomIconUuid);
 				
 				lvi.Tag = pe;
 				m_lvAllEntries.Items.Add(lvi);
@@ -789,7 +796,7 @@ namespace CustomIconDashboarderPlugin
 		/// Update bestIconFinder and size in List View Item
 		/// if icon has not already been downloaded
 		/// </summary>
-		/// <param name="lvi"></param>
+		/// <param name="iconLvi"></param>
 		/// <returns>true if an update has occured. false else</returns>
 		private bool UpdateBestIconFinderAndLviFromEntryLvi(ListViewItem iconLvi) {
 			var pe = (PwEntry)iconLvi.Tag;
