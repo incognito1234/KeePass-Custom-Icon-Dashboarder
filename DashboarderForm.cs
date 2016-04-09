@@ -63,6 +63,8 @@ namespace CustomIconDashboarderPlugin
 			// The InitializeComponent() call is required for Windows Forms designer support.
 			//
 			InitializeComponent();
+			this.spc_mainSplitter.Panel2MinSize = 200; //bug if this properties is given in the designer
+		
 			
 			m_PluginHost = pluginHost;
 			this.Icon = m_PluginHost.MainWindow.Icon;
@@ -316,7 +318,7 @@ namespace CustomIconDashboarderPlugin
 			return false;
 		}
 		
-		private void UpdateIconLviFromBestIconFinder( ListViewItem lvi) {
+		private void UpdateIconLviFromBestIconFinder(ListViewItem lvi) {
 			IconChooser ich = null;
 			PwCustomIcon readIcon = m_iconIndexer[lvi.ImageIndex];
 			if (m_iconChooserIndexerFromIcon.ContainsKey(readIcon.Uuid)) {
@@ -347,18 +349,18 @@ namespace CustomIconDashboarderPlugin
 			m_lvUsedGroups.Items.Clear();
 	 
 			if (sItems.Count > 0 ) {
-				
-				PwCustomIcon readIcon = m_iconIndexer[sItems[0].ImageIndex];
+				int iconId = sItems[0].ImageIndex;
+				PwCustomIcon readIcon = m_iconIndexer[iconId];
 				
 				Image originalImage = CompatibilityManager.GetOriginalImage(readIcon);
-				IEnumerator<PwEntry> myEntryEnumerator = m_iconCounter.GetListEntriesForPci( readIcon ).GetEnumerator();
-				IEnumerator<PwGroup> myGroupEnumerator = m_iconCounter.GetListGroupsForPci( readIcon ).GetEnumerator();
+				IEnumerator<PwEntry> myEntryEnumerator = m_iconCounter.GetListEntriesForPci(readIcon).GetEnumerator();
+				IEnumerator<PwGroup> myGroupEnumerator = m_iconCounter.GetListGroupsForPci(readIcon).GetEnumerator();
 				
-				UpdateSelectedIconPane(originalImage, myEntryEnumerator, myGroupEnumerator, false);
+				UpdateSelectedIconPane(originalImage, myEntryEnumerator, myGroupEnumerator, false, iconId);
 				
 			}
 			else {
-				UpdateSelectedIconPane(null, null, null, false);
+				UpdateSelectedIconPane(null, null, null, false, 0);
 			}	
 		}
 		
@@ -376,7 +378,7 @@ namespace CustomIconDashboarderPlugin
 					this.CurrentIconChooser = null;
 				}
 				
-				UpdateDownloadIconPanel( this.CurrentIconChooser );
+				UpdateAllDownloadIconPanel( this.CurrentIconChooser );
 			
 			}
 		}
@@ -464,9 +466,9 @@ namespace CustomIconDashboarderPlugin
 			foreach(ListViewItem lvi in lvsiChecked)
 			{
 				if (UpdateBestIconFinderAndLviFromIconLvi( lvi )) {
-				    System.Threading.Thread.Sleep(500);
+				    System.Threading.Thread.Sleep(200);
+					lvi.EnsureVisible();
 				}
-			   lvi.EnsureVisible();
 			   m_lvViewIcon.Refresh();
 			}
 			
@@ -671,36 +673,29 @@ namespace CustomIconDashboarderPlugin
 		{
 			ListView.SelectedListViewItemCollection sItems = m_lvAllEntries.SelectedItems;
 			
-			m_lvUsedEntries.Items.Clear();
-			m_lvUsedGroups.Items.Clear();
-	 
 			if (sItems.Count > 0) {
 				var pe = (PwEntry)sItems[0].Tag;
-				if (m_iconChooserIndexerFromEntry.ContainsKey(pe) ) {
-					this.CurrentIconChooser = m_iconChooserIndexerFromEntry[pe];
-				}
-				else {
-					this.CurrentIconChooser = null;
-				}
+				this.CurrentIconChooser = 
+					m_iconChooserIndexerFromEntry.ContainsKey(pe) ? 
+					m_iconChooserIndexerFromEntry[pe] : null;
 			}
 			if ((sItems.Count > 0 ) &&
 			    (sItems[0].ImageIndex >= ((int)PwIcon.Count)) ) {
 				PwCustomIcon readIcon;
-				readIcon = tco_lists.SelectedIndex == 0 ?
-					m_iconIndexer[sItems[0].ImageIndex] : 
-					m_iconIndexer[sItems[0].ImageIndex - (int)PwIcon.Count];
+				int indexIcon = sItems[0].ImageIndex - (int)PwIcon.Count;
+				readIcon = m_iconIndexer[indexIcon];
 				
 				Image originalImage = CompatibilityManager.GetOriginalImage(readIcon);
 				IEnumerator<PwEntry> myEntryEnumerator = m_iconCounter.GetListEntriesForPci( readIcon ).GetEnumerator();
 				IEnumerator<PwGroup> myGroupEnumerator = m_iconCounter.GetListGroupsForPci( readIcon ).GetEnumerator();
 				
-				UpdateSelectedIconPane( originalImage, myEntryEnumerator,  myGroupEnumerator, false);
+				UpdateSelectedIconPane( originalImage, myEntryEnumerator,  myGroupEnumerator, false, indexIcon);
 			}
 			else if ((sItems.Count > 0 ) &&
 			    (sItems[0].ImageIndex <
 			          ((int)PwIcon.Count)) ){
-				//Image originalImage = CompatibilityManager.GetOriginalImage(readIcon);
-				Image originalImage = m_stdIcons[sItems[0].ImageIndex];
+				int iIcon = sItems[0].ImageIndex;
+				Image originalImage = m_stdIcons[iIcon];
 				IEnumerator<PwEntry> myEntryEnumerator =
 					m_iconCounter.GetListEntriesForStandardIcon(
 						(PwIcon)sItems[0].ImageIndex ).GetEnumerator();
@@ -708,11 +703,11 @@ namespace CustomIconDashboarderPlugin
 					m_iconCounter.GetListGroupsForStandardIcon(
 						(PwIcon)sItems[0].ImageIndex  ).GetEnumerator();
 				
-				UpdateSelectedIconPane( originalImage, myEntryEnumerator,  myGroupEnumerator, true);
+				UpdateSelectedIconPane( originalImage, myEntryEnumerator,  myGroupEnumerator, true, iIcon);
 			}
 			
 			else {
-				UpdateSelectedIconPane(null, null, null, false);
+				UpdateSelectedIconPane(null, null, null, false, 0);
 			}	
 			UpdateDownloadResultPaneFromSelectedEntry();
 		
@@ -731,7 +726,7 @@ namespace CustomIconDashboarderPlugin
 				}
 				
 			}
-			UpdateDownloadIconPanel(this.CurrentIconChooser);
+			UpdateAllDownloadIconPanel(this.CurrentIconChooser);
 		}
 				
         void OnDownloadCustomIconClickForEntries()
@@ -740,9 +735,9 @@ namespace CustomIconDashboarderPlugin
 			foreach(ListViewItem lvi in lvsiChecked)
 			{
 				if (UpdateBestIconFinderAndLviFromEntryLvi( lvi )) {
-				    System.Threading.Thread.Sleep(500);
+				    System.Threading.Thread.Sleep(200);
+				    lvi.EnsureVisible();
 				}
-			   lvi.EnsureVisible();
 			   m_lvAllEntries.Refresh();
 			}
 			
@@ -761,7 +756,6 @@ namespace CustomIconDashboarderPlugin
 				
 				IconChooser ich = m_iconChooserIndexerFromEntry[readEntry];
 				if ((ich != null) && (ich.ChoosenIcon != null)) {
-					// TODO - Update everything
 					PwCustomIcon newIcon = UpdateEntryFromImage(
 						readEntry, ich.ChoosenIcon, m_PluginHost.Database);
 					if ((newIcon != null )) {
@@ -928,7 +922,7 @@ namespace CustomIconDashboarderPlugin
 				m_lvDownloadResult.SelectedItems.Count > 0 ? 
 				(Int32)m_lvDownloadResult.SelectedItems[0].Tag : 0;
 			
-			UpdateImagesInIconPanel( this.CurrentIconChooser );
+			UpdateImagesInDownloadPanel( this.CurrentIconChooser );
 		}
 		
 		private void UpdateCustomIconFromUuid(
@@ -969,7 +963,8 @@ namespace CustomIconDashboarderPlugin
 		    Image srcImg,
 		    IEnumerator<PwEntry> peEnum,
 		    IEnumerator<PwGroup> pgEnum,
-		    bool isStandardIcon) {
+		    bool isStandardIcon,
+		    int iIcon) {
 			
 			if (srcImg != null) {
 				pbo_selectedIcon128.BackgroundImage =
@@ -982,13 +977,13 @@ namespace CustomIconDashboarderPlugin
 					CompatibilityManager.ResizedImage(srcImg, 16, 16);
 				if (!isStandardIcon) {
 					lbl_originalSize.Text =
-						"Original Size : " +
+						"Custom Icon " + iIcon + " : " +
 						srcImg.Width +
 						" x " +
 						srcImg.Height;
 				}
 				else {
-					lbl_originalSize.Text = "Standard Icon";
+					lbl_originalSize.Text = "Standard Icon " + iIcon + "";
 				}
 			}
 			else {
@@ -999,6 +994,12 @@ namespace CustomIconDashboarderPlugin
 				pbo_selectedIcon16.BackgroundImage = null;
 			}
 			
+			m_lvUsedEntries.BeginUpdate();
+			m_lvUsedGroups.BeginUpdate();
+			
+			m_lvUsedEntries.Items.Clear();
+			m_lvUsedGroups.Items.Clear();
+	 
 			if (peEnum != null) {
 				// Update entry and group list
 				// It is necessary to add all subitems to listView in a single oneshot.
@@ -1022,13 +1023,16 @@ namespace CustomIconDashboarderPlugin
 					m_lvUsedGroups.Items.Add( lvi );
 				}
 			}
+			
+			m_lvUsedEntries.EndUpdate();
+			m_lvUsedGroups.EndUpdate();
 		}
 		
 		/// <summary>
 		/// Update all sizes of choosen image in download panel
 		/// </summary>
 		/// <param name="ich"></param>
-		private void UpdateImagesInIconPanel(IconChooser ich) {
+		private void UpdateImagesInDownloadPanel(IconChooser ich) {
 			Image img = null;
 			if (ich != null)
 				img = ich.ChoosenIcon;
@@ -1058,18 +1062,19 @@ namespace CustomIconDashboarderPlugin
 			}
 		}
 		
-		private void UpdateDownloadIconPanel(IconChooser ich) {
+		private void UpdateAllDownloadIconPanel(IconChooser ich) {
 			BestIconFinder bif = null;
 			if (ich != null) {
 				bif = ich.Bif;
 			}
 			
 			if (bif != null) {
+				m_lvDownloadResult.BeginUpdate();
 				m_lvDownloadResult.Items.Clear();
 				IEnumerator<ImageInfo> enumImageInfo = bif.ListImageInfo.GetEnumerator();
 				m_lvDownloadResult.LargeImageList = new ImageList();
 				m_lvDownloadResult.SmallImageList = new ImageList();
-				m_lvDownloadResult.LargeImageList.ImageSize = new Size(32, 32);
+				m_lvDownloadResult.LargeImageList.ImageSize = new Size(64, 64);
 				m_lvDownloadResult.LargeImageList.ColorDepth = ColorDepth.Depth32Bit;
 				m_lvDownloadResult.SmallImageList.ImageSize = new Size(32, 32);
 				m_lvDownloadResult.SmallImageList.ColorDepth = ColorDepth.Depth32Bit;
@@ -1088,21 +1093,23 @@ namespace CustomIconDashboarderPlugin
 					lviImageInfo.ImageIndex = ii;
 					lviImageInfo.Tag = ii;
 					lviImageInfo.Selected |= ich.ChoosenIndex == ii;
-					
 					Image smallImage = CompatibilityManager.ResizedImage(
 						myImageInfo.ImgData,
 						32, 32);
-					m_lvDownloadResult.LargeImageList.Images.Add( smallImage );
+					Image largeImage = CompatibilityManager.ResizedImage(
+						myImageInfo.ImgData,
+						64, 64);
+					m_lvDownloadResult.LargeImageList.Images.Add( largeImage );
 					m_lvDownloadResult.SmallImageList.Images.Add( smallImage );
 					m_lvDownloadResult.Items.Add(lviImageInfo);
 					
 					ii++;
 				}
-			
+				m_lvDownloadResult.EndUpdate();
 				rtb_details.Text=bif.Details;
 			}
 			
-			UpdateImagesInIconPanel( this.CurrentIconChooser);
+			UpdateImagesInDownloadPanel( this.CurrentIconChooser);
 		}
 		
 		public static Control GetControlFromForm(Control form, String name) {
