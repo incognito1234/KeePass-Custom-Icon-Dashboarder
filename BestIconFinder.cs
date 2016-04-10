@@ -228,6 +228,8 @@ namespace CustomIconDashboarderPlugin
 			lock (lckImageCache) {
 				if (imageCache.ContainsKey( uriToBeTested ) ) {
 					downloadedImage = imageCache[uriToBeTested];
+					if (downloadedImage != null) 
+						downloadedImage = (Image)downloadedImage.Clone();
 					imageWasInCache = true;
 				}
 			}
@@ -259,13 +261,14 @@ namespace CustomIconDashboarderPlugin
 					if (!imageCache.ContainsKey(uriToBeTested)) {
 						imageCache.Add(uriToBeTested, downloadedImage);
 					}
+					if (downloadedImage != null) 
+						downloadedImage = (Image)downloadedImage.Clone();
+					
 				}
 			}
 			
 		   if (downloadedImage != null) {
-				
-				downloadedImage = (Image)downloadedImage.Clone(); 
-				  // It is necessary to clone image to avoid concurrent access during post operation.
+			      // It is necessary to clone image to avoid concurrent access during post operation.
 				  // For example, error should occured if image is resized by several thread in the same time.
 	 		    this.myLogger.LogDebug( "Size " + downloadedImage.Width + " x " + downloadedImage.Height );
 			    this.ListImageInfo.Add( new ImageInfo( downloadedImage,uriToBeTested.AbsolutePath) );

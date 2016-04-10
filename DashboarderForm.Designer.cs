@@ -325,6 +325,7 @@ namespace CustomIconDashboarderPlugin
 			// 
 			// btn_performIconAction
 			// 
+			this.btn_performIconAction.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.btn_performIconAction.Location = new System.Drawing.Point(149, 3);
 			this.btn_performIconAction.Name = "btn_performIconAction";
 			this.btn_performIconAction.Size = new System.Drawing.Size(61, 21);

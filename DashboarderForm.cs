@@ -25,6 +25,7 @@ using System.IO;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Globalization;
+using System.Threading;
 
 using KeePass.UI;
 using KeePass.Plugins;
@@ -47,6 +48,8 @@ namespace CustomIconDashboarderPlugin
 		private Dictionary<PwEntry, IconChooser> m_iconChooserIndexerFromEntry;
 		private List<Image> m_stdIcons;
 
+		private Object lckIconChooserIndexer = new Object(); // Lock
+		
 		private ListViewLayoutManager  m_lvIconsColumnSorter;
 		private ListViewLayoutManager  m_lvGroupsColumnSorter;
 		private ListViewLayoutManager  m_lvEntriesColumnSorter;
@@ -734,11 +737,9 @@ namespace CustomIconDashboarderPlugin
 			ListView.CheckedListViewItemCollection lvsiChecked = m_lvAllEntries.CheckedItems;
 			foreach(ListViewItem lvi in lvsiChecked)
 			{
-				if (UpdateBestIconFinderAndLviFromEntryLvi( lvi )) {
-				    System.Threading.Thread.Sleep(200);
-				    lvi.EnsureVisible();
-				}
-			   m_lvAllEntries.Refresh();
+				ThreadPool.QueueUserWorkItem(
+					new WaitCallback(this.UpdateBestIconFinderAndLviFromEntryLviThread),
+					lvi);
 			}
 			
 			OnLvAllEntriesSelectedIndexChanged(null,null);
@@ -747,6 +748,7 @@ namespace CustomIconDashboarderPlugin
         
         void OnPickCustomIconClickForEntries()
 		{
+        	// TODO - Convert OnPickCustomIconClickForEntries to threadsafe method
         	ListView.CheckedListViewItemCollection lvsiChecked = m_lvAllEntries.CheckedItems;
 						
 			foreach(ListViewItem lvi in lvsiChecked) {
@@ -819,18 +821,36 @@ namespace CustomIconDashboarderPlugin
 			}
 		}
         
+        private delegate void UpdateAllEntriesLviCallBack(ListViewItem.ListViewSubItem lvsi, string newValue);
+        
+        private void UpdateAllEntriesLvi(ListViewItem.ListViewSubItem lvsi, string newValue) {
+			if (this.m_lvAllEntries.InvokeRequired) {
+				var dd = new UpdateAllEntriesLviCallBack(UpdateAllEntriesLvi);
+				this.Invoke(dd, new object[] { lvsi, newValue });
+			}
+			else {
+        		lvsi.Text = newValue;
+			}
+		}
+        
 		/// <summary>
 		/// Update bestIconFinder and size in List View Item
-		/// if icon has not already been downloaded
+		/// if icon has not already been downloaded.
+		/// This method is threadsafe
 		/// </summary>
-		/// <param name="iconLvi"></param>
+		/// <param name="iconLvi">ListViewItem representing entry</param>
 		/// <returns>true if an update has occured. false else</returns>
 		private bool UpdateBestIconFinderAndLviFromEntryLvi(ListViewItem iconLvi) {
 			var pe = (PwEntry)iconLvi.Tag;
 			Debug.Assert( pe != null);
 			
-			if ( !m_iconChooserIndexerFromEntry.ContainsKey( pe ) ) {
-				
+			bool iconChooserIndexerIsLocked;
+			lock (lckIconChooserIndexer) {
+				iconChooserIndexerIsLocked = m_iconChooserIndexerFromEntry.ContainsKey( pe );
+			}
+			if ( !iconChooserIndexerIsLocked ) {
+				UpdateAllEntriesLvi( iconLvi.SubItems[2], "...");
+			
 				String readUrl = pe.Strings.ReadSafe(PwDefs.UrlField);
 				BestIconFinder bif;
 				if (!string.IsNullOrEmpty(readUrl)) {
@@ -846,33 +866,49 @@ namespace CustomIconDashboarderPlugin
 				}
 				   
 				var ich = new IconChooser(bif);
-			    m_iconChooserIndexerFromEntry.Add(pe, ich);
+				lock (lckIconChooserIndexer) {
+			    	m_iconChooserIndexerFromEntry.Add(pe, ich);
+				}
 			    UpdateEntryLviFromBestIconFinder(iconLvi);
-				return true;
+			    return true;
 			}
 			return false;
 		}    
+		private void UpdateBestIconFinderAndLviFromEntryLviThread(Object lvi) {
+			var lvsi = (ListViewItem)lvi;
+			UpdateBestIconFinderAndLviFromEntryLvi(lvsi);
+		}
+		
 
+		// This method is threadsafe
         private void UpdateEntryLviFromBestIconFinder( ListViewItem lvi) {
 			IconChooser ich = null;
         	var pe = (PwEntry)lvi.Tag;
-			if (m_iconChooserIndexerFromEntry.ContainsKey(pe)) {
-				ich = m_iconChooserIndexerFromEntry[pe];
-			}
-			else {
-				lvi.SubItems[2].Text = "";
-				return;
-			}
+        	lock (lckIconChooserIndexer) {
+				if (m_iconChooserIndexerFromEntry.ContainsKey(pe)) {
+					ich = m_iconChooserIndexerFromEntry[pe];
+				}
+				else {
+        			UpdateAllEntriesLvi(lvi.SubItems[2],"");
+					return;
+				}
+        	}
 			if (ich.Bif.Result.ResultCode == FinderResult.RESULT_NO_URL) {
-				lvi.SubItems[2].Text = Resource.val_nourl;
+        		UpdateAllEntriesLvi(lvi.SubItems[2],Resource.val_nourl);
 			}
 			else if (ich.Bif.BestImage != null) {
-		    	lvi.SubItems[2].Text = ich.Bif.BestImage.Width.ToString(NumberFormatInfo.InvariantInfo)
-                + " x " +
-               ich.Bif.BestImage.Height.ToString(NumberFormatInfo.InvariantInfo);
+		    	UpdateAllEntriesLvi(
+        			lvi.SubItems[2],
+        			ich.Bif.BestImage.Width.ToString(NumberFormatInfo.InvariantInfo)
+	                + " x " +
+	                ich.Bif.BestImage.Height.ToString(NumberFormatInfo.InvariantInfo)
+	               );
 		    }
 	    	else {
-		    	lvi.SubItems[2].Text = Resource.val_na;
+		    	UpdateAllEntriesLvi(
+        			lvi.SubItems[2],
+        			Resource.val_na
+        		);
 	    	}
 		}
 		
