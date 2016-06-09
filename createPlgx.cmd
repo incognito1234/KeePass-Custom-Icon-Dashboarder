@@ -36,6 +36,8 @@ copy %~dp0\CustomIconDashboarder.plgx C:\workspace\KeePass\KeePass-2.28\Plugins
 copy %~dp0\CustomIconDashboarder.plgx C:\workspace\KeePass\KeePass-2.29\Plugins
 copy %~dp0\CustomIconDashboarder.plgx C:\workspace\KeePass\KeePass-2.30\Plugins
 copy %~dp0\CustomIconDashboarder.plgx C:\workspace\KeePass\KeePass-2.31\Plugins
+copy %~dp0\CustomIconDashboarder.plgx C:\workspace\KeePass\KeePass-2.32\Plugins
+copy %~dp0\CustomIconDashboarder.plgx C:\workspace\KeePass\KeePass-2.33\Plugins
 
 echo Remove Temp files
 

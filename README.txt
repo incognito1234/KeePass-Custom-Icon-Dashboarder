@@ -4,7 +4,7 @@
 Pre-requisites
 --------------
 KeePass Password Safe 2.00+
-(latest version tested on 2.25 to 2.30)
+(latest version tested on 2.25 to 2.33)
 
 
 Installation instructions
@@ -12,6 +12,12 @@ Installation instructions
 Put the .plgx file into a folder called "plugins" inside your
 KeePass Password Safe installation folder
 
+Version 1.1.0
+-------------
+- All icons from URL are downloaded. The best-sized icon is choosen by default.
+  Then it is possible to change manually the choosen icon.
+- Add support of downloading icons of entries with standard icons.
+- Display index of selected icon in the upper right corner of dashboard.
 
 Version 1.0.0
 -------------

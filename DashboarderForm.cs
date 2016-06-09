@@ -2,7 +2,7 @@
  CustomIconDashboarder - KeePass Plugin to get some information and 
   manage custom icons
 
- Copyright (C) 2015 Jareth Lomson <incognito1234@users.sourceforge.net>
+ Copyright (C) 2016 Jareth Lomson <incognito1234@users.sourceforge.net>
  
  This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -83,7 +83,7 @@ namespace CustomIconDashboarderPlugin
 			cbo_entryActionSelector.SelectedIndex = 0;
 			m_stdIcons = CompatibilityManager.GetHighDefinitionStandardIcons(m_PluginHost, 128, 128);
 			// Comment to debug
-			//this.tco_right.TabPages.Remove(tpa_Debug);
+			this.tco_right.TabPages.Remove(tpa_Debug);
 		}
 		
 		private void OnFormDispose()
