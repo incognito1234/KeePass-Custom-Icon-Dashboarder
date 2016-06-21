@@ -53,6 +53,8 @@ namespace CustomIconDashboarderPlugin
 		private ListViewLayoutManager  m_lvDownloadResultColumnSorter;
 		private ListViewLayoutManager  m_lvAllEntriesColumnSorter;
 		
+		private KPCIDConfig m_kpcidConfig;
+	
 		private IconChooser CurrentIconChooser { get; set; }
 		
 		#region Initialization & Dispose
@@ -69,6 +71,7 @@ namespace CustomIconDashboarderPlugin
 			m_PluginHost = pluginHost;
 			this.Icon = m_PluginHost.MainWindow.Icon;
 			this.CurrentIconChooser = null;
+			this.m_kpcidConfig = new KPCIDConfig(pluginHost);
 			
 		}
 		
@@ -86,11 +89,6 @@ namespace CustomIconDashboarderPlugin
 			this.tco_right.TabPages.Remove(tpa_Debug);
 		}
 		
-		private void OnFormDispose()
-		{
-			
-		}
-		
 		private void InitEx()
 		{
 			m_iconChooserIndexerFromIcon = new Dictionary<PwUuid, IconChooser>();
@@ -99,6 +97,9 @@ namespace CustomIconDashboarderPlugin
 			BuildEntriesListViews();
 			BuildUsageListViews();
 			ResetDashboard();
+			
+			LoadSizeAndPosition();
+				
 		}
 		
 		private void ResetDashboard() {
@@ -117,10 +118,58 @@ namespace CustomIconDashboarderPlugin
 			m_lvAllEntries.SmallImageList = null;
 			m_iconCounter = null;
 		}
+		
+		private void LoadSizeAndPosition() {
+			if (!m_kpcidConfig.DashboardPosition.IsNull) {
+					KPCIDConfig.Size initialDashboardPosition = 
+						m_kpcidConfig.DashboardPosition;
+					this.StartPosition = FormStartPosition.Manual;
+					this.Location = new Point(initialDashboardPosition.X, initialDashboardPosition.Y);
+			}
+			if (!m_kpcidConfig.DashboardSize.IsNull) {
+				KPCIDConfig.Size initialDashboardSize = 
+					m_kpcidConfig.DashboardSize;
+				this.Size = new Size(initialDashboardSize.X, initialDashboardSize.Y);
+			}
+			
+			this.WindowState = m_kpcidConfig.DashboardState != FormWindowState.Maximized
+				? FormWindowState.Normal
+				: FormWindowState.Maximized;
+		}
+		
+		private void RecordSizeAndPosition()
+		{
+			m_kpcidConfig.DashboardState = this.WindowState == FormWindowState.Maximized
+				? FormWindowState.Maximized
+				: FormWindowState.Normal;
+			
+			if ( this.WindowState==FormWindowState.Normal ) {
+				m_kpcidConfig.DashboardPosition =
+					new KPCIDConfig.Size(
+						this.DesktopBounds.Left, this.DesktopBounds.Top);
+				
+				m_kpcidConfig.DashboardSize =
+					new KPCIDConfig.Size(
+						this.DesktopBounds.Width, this.DesktopBounds.Height );
+			}
+			else {
+				m_kpcidConfig.DashboardPosition =
+					new KPCIDConfig.Size(
+						this.RestoreBounds.Left, this.RestoreBounds.Top);
+				
+				m_kpcidConfig.DashboardSize =
+					new KPCIDConfig.Size(
+						this.RestoreBounds.Width, this.RestoreBounds.Height );
+			}
+			
+			// TODO - Record RestoreBounds property if maximized
+			//http://stackoverflow.com/questions/92540/save-and-restore-form-position-and-size
+		}
 
 		private void OnFormClosed(object sender, FormClosedEventArgs e)
 		{
 			CleanUpEx();
+			RecordSizeAndPosition();
 			GlobalWindowManager.RemoveWindow(this);
 		}
 		

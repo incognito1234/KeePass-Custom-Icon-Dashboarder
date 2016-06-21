@@ -33,7 +33,6 @@ namespace CustomIconDashboarderPlugin
 					components.Dispose();
 				}
 			}
-			this.OnFormDispose();
 			base.Dispose(disposing);
 		}
 		
