@@ -7,7 +7,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>CustomIconDashboarderPlugin</RootNamespace>
     <AssemblyName>CustomIconDashboarderPlugin</AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -47,6 +47,9 @@
     <Optimize>True</Optimize>
     <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
     <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -95,7 +98,9 @@
     <Compile Include="HtmlAgilityPack\Utilities.cs" />
     <Compile Include="IconChooser.cs" />
     <Compile Include="IconStatsHandler.cs" />
-    <Compile Include="DashboarderForm.cs" />
+    <Compile Include="DashboarderForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="DashboarderForm.Designer.cs">
       <DependentUpon>DashboarderForm.cs</DependentUpon>
     </Compile>
@@ -106,12 +111,15 @@
     <Compile Include="Lib\LomsonDebugLib.cs" />
     <Compile Include="Lib\LomsonUtility.cs" />
     <Compile Include="Lib\RTFBuilder.cs" />
-    <Compile Include="Lib\ScaleControlTableLayoutPanel.cs" />
+    <Compile Include="Lib\ScaleControlTableLayoutPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Lib\SwappableComparer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resource.Designer.cs">
       <DependentUpon>Resource.resx</DependentUpon>
       <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="Lib\ListViewLayoutManager.cs" />
   </ItemGroup>
@@ -126,22 +134,19 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="cleanBinaries.cmd" />
-    <None Include="createPlgx.cmd">
-      <Generator>TextTemplatingFileGenerator</Generator>
-    </None>
+    <None Include="createPlgx.cmd" />
     <None Include="LICENSE.txt" />
     <None Include="README.txt" />
     <None Include="versionInfo.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\KeePass\KeePass\KeePass.csproj">
-      <Project>{10938016-DEE2-4A25-9A5A-8FD3444379CA}</Project>
+      <Project>{10938016-dee2-4a25-9a5a-8fd3444379ca}</Project>
       <Name>KeePass</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="HtmlAgilityPack" />
-    <Folder Include="Lib" />
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
