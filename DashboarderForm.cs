@@ -55,6 +55,13 @@ namespace CustomIconDashboarderPlugin
 		private ListViewLayoutManager  m_lvEntriesColumnSorter;
 		private ListViewLayoutManager  m_lvDownloadResultColumnSorter;
 		private ListViewLayoutManager  m_lvAllEntriesColumnSorter;
+
+        enum BatchStatusType : byte { Stopped = 0, InProgress, Stopping };
+        private volatile int nbActiveThread;
+        private volatile int nbCreatedThread;
+        private volatile int nbThreadToBeLaunched;
+        private volatile BatchStatusType batchStatus = BatchStatusType.Stopped;
+        private Object lckThreadStatus = new object(); // Lock
 		
 		private IconChooser CurrentIconChooser { get; set; }
 		
@@ -107,7 +114,8 @@ namespace CustomIconDashboarderPlugin
 		private void ResetDashboard() {
 			m_iconCounter = new IconStatsHandler();
 			m_iconCounter.Initialize( m_PluginHost.Database);
-			
+
+            ResetThreadManagement(0);
 			ResetAllIconDashboard();
 			m_lvUsedEntries.Items.Clear();
 			m_lvUsedGroups.Items.Clear();
@@ -126,12 +134,95 @@ namespace CustomIconDashboarderPlugin
 			CleanUpEx();
 			GlobalWindowManager.RemoveWindow(this);
 		}
-		
-		#endregion
-		
-		#region Common actions
-		
-		private void ResetAllIconDashboard() {
+
+        #endregion
+
+        #region Thread Management
+
+        private void ResetThreadManagement(int nbToBeLaunched)
+        {
+            lock (lckThreadStatus)
+            {
+                batchStatus = BatchStatusType.Stopped;
+                nbCreatedThread = 0;
+                nbActiveThread = 0;
+                nbThreadToBeLaunched = nbToBeLaunched;
+                UpdateThreadStatus();
+            }
+        }
+
+        private delegate void UpdateNbThreadCallBack(int newValue);
+
+        private void UpdateNbThread(int newValue)
+        {
+            if (this.m_lvAllEntries.InvokeRequired)
+            {
+                var dd = new UpdateNbThreadCallBack(UpdateNbThread);
+                this.Invoke(dd, new object[] { newValue });
+            }
+            else
+            {
+                lock (lckThreadStatus)
+                {
+                    if (newValue > 0) { nbActiveThread += 1; nbCreatedThread += 1; }
+                    else { nbActiveThread -= 1; }
+                    UpdateThreadStatus();
+                    UpdateGoAndStopButtons();
+                }
+            }
+        }
+
+        private void UpdateThreadStatus()
+        {
+            string status;
+            if (batchStatus == BatchStatusType.Stopping)
+            {
+                if (nbActiveThread > 0 )
+                {
+                    status = "Stopping in progress";
+                }
+                else
+                {
+                    status = "Stopped"; batchStatus = BatchStatusType.Stopped;
+                }
+            }
+            else
+            {
+                if (nbActiveThread > 0)
+                {
+                    status = "In Progress"; batchStatus = BatchStatusType.InProgress;
+                }
+                else
+                {
+                    status = "Complete"; batchStatus = BatchStatusType.Stopped;
+                }
+            }
+            
+            lbl_status.Text = String.Format("{0} - Nb Thread : {1} Active / {2} Create / {3} Total"
+                , status, nbActiveThread, nbCreatedThread, nbThreadToBeLaunched);
+        }
+
+        private void UpdateBestIconFinderAndLviFromEntryLviThread(Object lvi)
+        {
+            if (batchStatus != BatchStatusType.Stopping)
+            {
+                var lvsi = (ListViewItem)lvi;
+                UpdateNbThread(1);
+                UpdateBestIconFinderAndLviFromEntryLvi(lvsi);
+                UpdateNbThread(-1);
+            }
+        }
+
+        private void Btn_stopEntryAction_Click(object sender, EventArgs e)
+        {
+            batchStatus = BatchStatusType.Stopping;
+            UpdateThreadStatus();
+        }
+        #endregion
+
+        #region Common actions
+
+        private void ResetAllIconDashboard() {
 			m_lvViewIcon.Items.Clear();
 			m_lvAllEntries.Items.Clear();
 			m_iconCounter = new IconStatsHandler();
@@ -191,6 +282,26 @@ namespace CustomIconDashboarderPlugin
 			m_lvDownloadResultColumnSorter.ApplyToListView(m_lvDownloadResult);	
 		}
 		
+        private void UpdateGoAndStopButtons()
+        {
+            if (cbo_entryActionSelector.SelectedIndex == 0)
+            {
+                btn_performEntryAction.Enabled = false;
+                btn_stopEntryAction.Enabled = false;
+            }
+            else if ( batchStatus == BatchStatusType.InProgress )
+            {
+                btn_performEntryAction.Enabled = false;
+                btn_stopEntryAction.Enabled = true;
+            }
+            else if ( batchStatus == BatchStatusType.Stopped )
+            {
+                btn_performEntryAction.Enabled = true;
+                btn_stopEntryAction.Enabled = false;
+            }
+            // else batchStatus == BatchStatusType.Stopping
+        }
+
 		#endregion
 		
 		#region ListView icon actions
@@ -735,6 +846,7 @@ namespace CustomIconDashboarderPlugin
         void OnDownloadCustomIconClickForEntries()
 		{
 			ListView.CheckedListViewItemCollection lvsiChecked = m_lvAllEntries.CheckedItems;
+            ResetThreadManagement(lvsiChecked.Count);
 			foreach(ListViewItem lvi in lvsiChecked)
 			{
 				ThreadPool.QueueUserWorkItem(
@@ -874,11 +986,6 @@ namespace CustomIconDashboarderPlugin
 			}
 			return false;
 		}    
-		private void UpdateBestIconFinderAndLviFromEntryLviThread(Object lvi) {
-			var lvsi = (ListViewItem)lvi;
-			UpdateBestIconFinderAndLviFromEntryLvi(lvsi);
-		}
-		
 
 		// This method is threadsafe
         private void UpdateEntryLviFromBestIconFinder( ListViewItem lvi) {
@@ -914,7 +1021,7 @@ namespace CustomIconDashboarderPlugin
 		
 		void OnEntryActionSelectorSelectedIndexChanged(object sender, EventArgs e)
 		{
-			btn_performEntryAction.Enabled = cbo_entryActionSelector.SelectedIndex != 0;
+            UpdateGoAndStopButtons();
 		}
 		
 		/// <summary>
@@ -1152,16 +1259,16 @@ namespace CustomIconDashboarderPlugin
 			Control[] cntrls = form.Controls.Find(name, true);
 			return cntrls.Length == 0 ? null : cntrls[0];
 	    }
-		
-		#endregion
-		
-	}
-	
-	/// <summary>
-	/// Class to compare size stored as width x height
-	/// compare only Width
-	/// </summary>
-	public class SizeComparer:BaseSwappableStringComparer
+
+        #endregion
+                
+    }
+
+    /// <summary>
+    /// Class to compare size stored as width x height
+    /// compare only Width
+    /// </summary>
+    public class SizeComparer:BaseSwappableStringComparer
 	{
 		private enum OperandType { str, num, size };
 		
