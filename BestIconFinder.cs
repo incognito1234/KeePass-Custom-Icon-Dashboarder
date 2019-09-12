@@ -2,7 +2,7 @@
   CustomIconDashboarder - KeePass Plugin to get some information and 
   manage custom icons
   
-  Copyright (C) 2015 Jareth Lomson <incognito1234@users.sourceforge.net>
+  Copyright (C) 2019 Jareth Lomson <incognito1234@users.sourceforge.net>
  
  This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -42,9 +42,11 @@ namespace CustomIconDashboarderPlugin
 		
 		
 		public static void InitClass() {
-		}
-		
-		~BestIconFinder() {
+            //  Enable TLS 1.1 (768) and TLS 1.2 (3072)
+            ServicePointManager.SecurityProtocol = (SecurityProtocolType)768 | (SecurityProtocolType)3072;
+        }
+
+        ~BestIconFinder() {
 			client.Dispose();
 		}
 		
