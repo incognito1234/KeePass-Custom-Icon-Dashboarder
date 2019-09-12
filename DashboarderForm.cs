@@ -62,6 +62,8 @@ namespace CustomIconDashboarderPlugin
         private volatile int nbThreadToBeLaunched;
         private volatile BatchStatusType batchStatus = BatchStatusType.Stopped;
         private Object lckThreadStatus = new object(); // Lock
+
+        private int CONFIG_MAX_CLOSING_WAITING_SEC = 10; // Waiting delay when form is closing and thread is running
 		
 		private IconChooser CurrentIconChooser { get; set; }
 		
@@ -128,6 +130,32 @@ namespace CustomIconDashboarderPlugin
 			m_lvAllEntries.SmallImageList = null;
 			m_iconCounter = null;
 		}
+
+        private void OnFormClosing(object sender, FormClosingEventArgs e)
+        {
+            if ( batchStatus != BatchStatusType.Stopped )
+            {
+                batchStatus = BatchStatusType.Stopping;
+                UpdateThreadStatus();
+                WaitingForm wf = new WaitingForm();
+                wf.Location = new Point(
+                    this.Location.X + (this.Width - wf.Width) / 2 ,
+                    this.Location.Y + (this.Height - wf.Height) / 2);
+                wf.SetMessage("Current operation is stopping. Please Wait ... ");
+                wf.Enabled = false;
+                wf.Show();
+                int i = 0;
+                int maxSec = CONFIG_MAX_CLOSING_WAITING_SEC * 2;
+                while ((i < maxSec) && (batchStatus != BatchStatusType.Stopped))
+                {
+                    i += 1;
+                    Application.DoEvents();
+                    Thread.Sleep(500);
+                }
+                wf.Close();
+                wf.Dispose();
+            }
+        }
 
 		private void OnFormClosed(object sender, FormClosedEventArgs e)
 		{

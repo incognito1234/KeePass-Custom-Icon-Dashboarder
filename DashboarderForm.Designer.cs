@@ -989,6 +989,7 @@ namespace CustomIconDashboarderPlugin
             this.Margin = new System.Windows.Forms.Padding(8, 7, 8, 7);
             this.Name = "DashboarderForm";
             this.Text = "Custom Icon Dashboard";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
             this.Load += new System.EventHandler(this.DashboarderLoad);
             this.spc_mainSplitter.Panel1.ResumeLayout(false);
