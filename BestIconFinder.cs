@@ -685,10 +685,13 @@ namespace CustomIconDashboarderPlugin
 	
 			protected override WebRequest GetWebRequest(Uri address)
 			{
-				// enhance chance to get favicon by setting some specifics parameters in request
-				// Sample of web site and parameters
-				//    Header Accept  - usefull for www dot akamai dot com
-				WebRequest request = base.GetWebRequest(address);
+                // enhance chance to get favicon by setting some specifics parameters in request
+                // Sample of web site and parameters
+                //    Header Accept  - usefull for www dot akamai dot com
+                WebRequest request = null;
+                try { request = base.GetWebRequest(address); }
+                catch (Exception) { } // address is not well formed
+                
 				var webRequest = request as HttpWebRequest;
 				if (webRequest != null) {
 					webRequest.Accept = REQUEST_HEADER_ACCEPT;
