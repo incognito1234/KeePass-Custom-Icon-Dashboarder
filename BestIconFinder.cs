@@ -42,14 +42,16 @@ namespace CustomIconDashboarderPlugin
 		
 		
 		public static void InitClass() {
-		}
+            //  Enable TLS 1.1 (768) and TLS 1.2 (3072)
+            ServicePointManager.SecurityProtocol = (SecurityProtocolType)768 | (SecurityProtocolType)3072;
+        }
 		
 		~BestIconFinder() {
 			client.Dispose();
 		}
-		
-		private const string REQUEST_USER_AGENT = "Mozilla/5.0 (Windows 6.1; rv:27.0) Gecko/20100101 Firefox/27.0";
-		private const string REQUEST_HEADER_ACCEPT = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
+
+        private const string REQUEST_USER_AGENT = "Mozilla/5.0 (Windows 6.1; rv:27.0) Gecko/20100101 Firefox/27.0";
+        private const string REQUEST_HEADER_ACCEPT = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
 		private const int REQUEST_TIMEOUT = 10000;
 		
 		private const string alphabetUC = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -103,7 +105,8 @@ namespace CustomIconDashboarderPlugin
 			this.IndexOfBestImage = -1;
 			this.ListImageInfo = new List<ImageInfo>();
 			this.NbRequestCacheInvoke = 0;
-			client = new MyWebClient();
+
+            client = new MyWebClient();
 		}
 		
 		public BestIconFinder()
@@ -115,7 +118,8 @@ namespace CustomIconDashboarderPlugin
 			this.IndexOfBestImage = -1;
 			this.ListImageInfo = new List<ImageInfo>();
 			this.NbRequestCacheInvoke = 0;
-			client = new MyWebClient();
+
+            client = new MyWebClient();
 		}
 		
 		
@@ -680,10 +684,11 @@ namespace CustomIconDashboarderPlugin
 	
 			protected override WebRequest GetWebRequest(Uri address)
 			{
-				// enhance chance to get favicon by setting some specifics parameters in request
-				// Sample of web site and parameters
-				//    Header Accept  - usefull for www dot akamai dot com
-				WebRequest request = base.GetWebRequest(address);
+                  // https://stackoverflow.com/questions/33761919/tls-1-2-in-net-framework-4-0
+                  // enhance chance to get favicon by setting some specifics parameters in request
+                  // Sample of web site and parameters
+                  //    Header Accept  - usefull for www dot akamai dot com
+                WebRequest request = base.GetWebRequest(address);
 				var webRequest = request as HttpWebRequest;
 				if (webRequest != null) {
 					webRequest.Accept = REQUEST_HEADER_ACCEPT;
@@ -691,7 +696,7 @@ namespace CustomIconDashboarderPlugin
 		            webRequest.Headers.Add(HttpRequestHeader.AcceptLanguage, "*");
 		            webRequest.Timeout = REQUEST_TIMEOUT;
 					webRequest.CookieContainer = m_container;
-				}
+                }
 				return request;
 			}
 		}
