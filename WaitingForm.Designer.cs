@@ -33,6 +33,7 @@
             // 
             // lbl_waitingMessage
             // 
+            this.lbl_waitingMessage.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
             this.lbl_waitingMessage.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lbl_waitingMessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.900001F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbl_waitingMessage.Location = new System.Drawing.Point(0, 0);
@@ -49,7 +50,7 @@
             this.ClientSize = new System.Drawing.Size(794, 300);
             this.ControlBox = false;
             this.Controls.Add(this.lbl_waitingMessage);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "WaitingForm";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
