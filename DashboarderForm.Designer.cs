@@ -57,6 +57,7 @@ namespace CustomIconDashboarderPlugin
             this.flp_iconActions = new System.Windows.Forms.FlowLayoutPanel();
             this.cbo_iconActionSelector = new System.Windows.Forms.ComboBox();
             this.btn_performIconAction = new System.Windows.Forms.Button();
+            this.btn_stopIconAction = new System.Windows.Forms.Button();
             this.tpa_listAllEntries = new System.Windows.Forms.TabPage();
             this.tlp_allEntries = new System.Windows.Forms.TableLayoutPanel();
             this.flp_entryAction = new System.Windows.Forms.FlowLayoutPanel();
@@ -301,6 +302,7 @@ namespace CustomIconDashboarderPlugin
             // 
             this.flp_iconActions.Controls.Add(this.cbo_iconActionSelector);
             this.flp_iconActions.Controls.Add(this.btn_performIconAction);
+            this.flp_iconActions.Controls.Add(this.btn_stopIconAction);
             this.flp_iconActions.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flp_iconActions.Location = new System.Drawing.Point(8, 1201);
             this.flp_iconActions.Margin = new System.Windows.Forms.Padding(8, 7, 8, 7);
@@ -331,11 +333,22 @@ namespace CustomIconDashboarderPlugin
             this.btn_performIconAction.Location = new System.Drawing.Point(391, 7);
             this.btn_performIconAction.Margin = new System.Windows.Forms.Padding(8, 7, 8, 7);
             this.btn_performIconAction.Name = "btn_performIconAction";
-            this.btn_performIconAction.Size = new System.Drawing.Size(178, 50);
+            this.btn_performIconAction.Size = new System.Drawing.Size(120, 50);
             this.btn_performIconAction.TabIndex = 4;
             this.btn_performIconAction.Text = "Start";
             this.btn_performIconAction.UseVisualStyleBackColor = true;
             this.btn_performIconAction.Click += new System.EventHandler(this.OnPerformIconActionClick);
+            // 
+            // btn_stopIconAction
+            // 
+            this.btn_stopIconAction.Location = new System.Drawing.Point(527, 7);
+            this.btn_stopIconAction.Margin = new System.Windows.Forms.Padding(8, 7, 8, 7);
+            this.btn_stopIconAction.Name = "btn_stopIconAction";
+            this.btn_stopIconAction.Size = new System.Drawing.Size(120, 50);
+            this.btn_stopIconAction.TabIndex = 5;
+            this.btn_stopIconAction.Text = "Stop";
+            this.btn_stopIconAction.UseVisualStyleBackColor = true;
+            this.btn_stopIconAction.Click += new System.EventHandler(this.Btn_stopIconAction_Click);
             // 
             // tpa_listAllEntries
             // 
@@ -1100,5 +1113,6 @@ namespace CustomIconDashboarderPlugin
         private System.Windows.Forms.TableLayoutPanel tlp_footer_right;
         private System.Windows.Forms.Label lbl_status;
         private System.Windows.Forms.Button btn_stopEntryAction;
+        private System.Windows.Forms.Button btn_stopIconAction;
     }
 }
