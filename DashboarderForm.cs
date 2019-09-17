@@ -2,7 +2,7 @@
  CustomIconDashboarder - KeePass Plugin to get some information and 
   manage custom icons
 
- Copyright (C) 2015 Jareth Lomson <incognito1234@users.sourceforge.net>
+ Copyright (C) 2016 Jareth Lomson <incognito1234@users.sourceforge.net>
  
  This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -65,6 +65,8 @@ namespace CustomIconDashboarderPlugin
 
         private int CONFIG_MAX_CLOSING_WAITING_SEC = 10; // Waiting delay when form is closing and thread is running
 		
+		private KPCIDConfig m_kpcidConfig;
+	
 		private IconChooser CurrentIconChooser { get; set; }
 		
 		#region Initialization & Dispose
@@ -81,6 +83,7 @@ namespace CustomIconDashboarderPlugin
 			m_PluginHost = pluginHost;
 			this.Icon = m_PluginHost.MainWindow.Icon;
 			this.CurrentIconChooser = null;
+			this.m_kpcidConfig = new KPCIDConfig(pluginHost);
 			
 		}
 		
@@ -95,12 +98,7 @@ namespace CustomIconDashboarderPlugin
 			cbo_entryActionSelector.SelectedIndex = 0;
 			m_stdIcons = CompatibilityManager.GetHighDefinitionStandardIcons(m_PluginHost, 128, 128);
 			// Comment to debug
-			//this.tco_right.TabPages.Remove(tpa_Debug);
-		}
-		
-		private void OnFormDispose()
-		{
-			
+			this.tco_right.TabPages.Remove(tpa_Debug);
 		}
 		
 		private void InitEx()
@@ -111,6 +109,9 @@ namespace CustomIconDashboarderPlugin
 			BuildEntriesListViews();
 			BuildUsageListViews();
 			ResetDashboard();
+			
+			LoadSizeAndPosition();
+				
 		}
 		
 		private void ResetDashboard() {
@@ -129,6 +130,53 @@ namespace CustomIconDashboarderPlugin
 			m_lvViewIcon.SmallImageList = null;
 			m_lvAllEntries.SmallImageList = null;
 			m_iconCounter = null;
+		}
+		
+		private void LoadSizeAndPosition() {
+			if (!m_kpcidConfig.DashboardPosition.IsNull) {
+					KPCIDConfig.Size initialDashboardPosition = 
+						m_kpcidConfig.DashboardPosition;
+					this.StartPosition = FormStartPosition.Manual;
+					this.Location = new Point(initialDashboardPosition.X, initialDashboardPosition.Y);
+			}
+			if (!m_kpcidConfig.DashboardSize.IsNull) {
+				KPCIDConfig.Size initialDashboardSize = 
+					m_kpcidConfig.DashboardSize;
+				this.Size = new Size(initialDashboardSize.X, initialDashboardSize.Y);
+			}
+			
+			this.WindowState = m_kpcidConfig.DashboardState != FormWindowState.Maximized
+				? FormWindowState.Normal
+				: FormWindowState.Maximized;
+		}
+		
+		private void RecordSizeAndPosition()
+		{
+			m_kpcidConfig.DashboardState = this.WindowState == FormWindowState.Maximized
+				? FormWindowState.Maximized
+				: FormWindowState.Normal;
+			
+			if ( this.WindowState==FormWindowState.Normal ) {
+				m_kpcidConfig.DashboardPosition =
+					new KPCIDConfig.Size(
+						this.DesktopBounds.Left, this.DesktopBounds.Top);
+				
+				m_kpcidConfig.DashboardSize =
+					new KPCIDConfig.Size(
+						this.DesktopBounds.Width, this.DesktopBounds.Height );
+			}
+			else {
+				m_kpcidConfig.DashboardPosition =
+					new KPCIDConfig.Size(
+						this.RestoreBounds.Left, this.RestoreBounds.Top);
+				
+				m_kpcidConfig.DashboardSize =
+					new KPCIDConfig.Size(
+						this.RestoreBounds.Width, this.RestoreBounds.Height );
+			}
+			
+			// TODO - Record RestoreBounds property if maximized
+			//http://stackoverflow.com/questions/92540/save-and-restore-form-position-and-size
 		}
 
         private void OnFormClosing(object sender, FormClosingEventArgs e)
@@ -160,6 +208,7 @@ namespace CustomIconDashboarderPlugin
 		private void OnFormClosed(object sender, FormClosedEventArgs e)
 		{
 			CleanUpEx();
+			RecordSizeAndPosition();
 			GlobalWindowManager.RemoveWindow(this);
 		}
 

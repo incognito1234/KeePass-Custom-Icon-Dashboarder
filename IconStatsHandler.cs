@@ -2,7 +2,7 @@
  CustomIconDashboarder - KeePass Plugin to get some information and
   manage custom icons
    
- Copyright (C) 2014 Jareth Lomson <incognito1234@users.sourceforge.net>
+ Copyright (C) 2016 Jareth Lomson <incognito1234@users.sourceforge.net>
 
  This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -75,8 +75,7 @@ namespace CustomIconDashboarderPlugin
 			String urlFieldValue;
 			Uri siteUri;
 			List<Uri> uriList;
-			
-			EntryHandler eh = delegate(PwEntry pe)
+            EntryHandler eh = delegate(PwEntry pe)
 			{
 				if (!(pe.CustomIconUuid.Equals(PwUuid.Zero))) {
 					
@@ -100,16 +99,24 @@ namespace CustomIconDashboarderPlugin
 					
 				// Get Uri
 				urlFieldValue = pe.Strings.ReadSafe(PwDefs.UrlField);
-				if (!string.IsNullOrEmpty(urlFieldValue)) {
-					try {
-						urlFieldValue = URLUtility.addUrlHttpPrefix(urlFieldValue);
-							
-						siteUri = new Uri(urlFieldValue);
-						if ((siteUri.Scheme.ToLower() == "http") ||
-						     (siteUri.Scheme.ToLower() == "https")) {
-							uriList.Add(siteUri);
-						}
-					} catch (Exception) {};
+                if (!string.IsNullOrEmpty(urlFieldValue)) {
+                    try {
+                        urlFieldValue = URLUtility.addUrlHttpPrefix(urlFieldValue);
+                        bool urlWellFFormatted = Uri.TryCreate(urlFieldValue, UriKind.Absolute, out siteUri);
+
+                        if (urlWellFFormatted) { 
+                            if ((siteUri.Scheme.ToLower() == "http") ||
+                                 (siteUri.Scheme.ToLower() == "https"))
+                            {
+                                uriList.Add(siteUri);
+                            }
+                        }
+                    }
+                    catch (UriFormatException e)
+                    {
+                        Debug.Write(String.Format("URIFormatException during parsing uri of entry = {0}", e.Message));
+                    }
+                    catch (Exception) { };
 				}
 				
 				return true;
@@ -117,7 +124,7 @@ namespace CustomIconDashboarderPlugin
 			
 			gh( db.RootGroup );
 			db.RootGroup.TraverseTree(TraversalMethod.PreOrder, gh, eh);
-			
+            
 			m_isInitialized = true;
 		}
 		
