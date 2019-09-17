@@ -42,8 +42,11 @@ namespace CustomIconDashboarderPlugin
 		
 		private const String XMLPATH_DASHBOARD_POSITION =
 			XMLPATH_PLUGINNAME + ".dashboardPosition";
-		
-		private AceCustomConfig m_config = null;
+
+        private const String XMLPATH_DASHBOARD_DEBUGLEVEL =
+            XMLPATH_PLUGINNAME + ".debugLevel"; // 0 or 1 for now
+        
+        private AceCustomConfig m_config = null;
 	
 		public KPCIDConfig(IPluginHost host)
 		{
@@ -89,9 +92,24 @@ namespace CustomIconDashboarderPlugin
 					m_config.SetString(XMLPATH_DASHBOARD_POSITION, value.ToString());
 			}
 		}
-				
-		
-		public class Size
+
+        public byte DebugLevel
+        {
+            get
+            {
+                string strDebugLevel = m_config.GetString(XMLPATH_DASHBOARD_DEBUGLEVEL, "");
+                byte byteDebugLevel = strDebugLevel == "0" ? (byte)0 : strDebugLevel == "1" ? (byte)1 : (byte)0;
+                return byteDebugLevel;
+            }
+            set
+            {
+                // Assume that value is correctly formatted
+                m_config.SetString(XMLPATH_DASHBOARD_DEBUGLEVEL, value.ToString());
+            }
+        }
+
+
+        public class Size
 		{
 			public int X {get; private set;}
 			public int Y {get; private set;}
@@ -111,7 +129,7 @@ namespace CustomIconDashboarderPlugin
 				this.IsNull = true;
 			}
 			
-			public String ToString()
+			public override String ToString()
 			{
 				if (!this.IsNull)
 					return this.X.ToString("D") + "x" + this.Y.ToString("D");

@@ -98,8 +98,7 @@ namespace CustomIconDashboarderPlugin
             cbo_iconActionSelector.SelectedIndex = 0;
             cbo_entryActionSelector.SelectedIndex = 0;
             m_stdIcons = CompatibilityManager.GetHighDefinitionStandardIcons(m_PluginHost, 128, 128);
-            // Comment to debug
-            this.tco_right.TabPages.Remove(tpa_Debug);
+            
         }
 
         private void InitEx()
@@ -112,6 +111,7 @@ namespace CustomIconDashboarderPlugin
             ResetDashboard();
 
             LoadSizeAndPosition();
+            RemoveDebugTabAccordingToGlobalDebugLevel();
 
         }
 
@@ -178,6 +178,14 @@ namespace CustomIconDashboarderPlugin
 
             // TODO - Record RestoreBounds property if maximized
             //http://stackoverflow.com/questions/92540/save-and-restore-form-position-and-size
+        }
+
+        private void RemoveDebugTabAccordingToGlobalDebugLevel()
+        {
+            if (m_kpcidConfig.DebugLevel == 0)
+            {
+                this.tco_right.TabPages.Remove(tpa_Debug);
+            }
         }
 
         private void OnFormClosing(object sender, FormClosingEventArgs e)
