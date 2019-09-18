@@ -60,12 +60,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BestIconFinder.cs" />
-    <Compile Include="WaitingForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="WaitingForm.Designer.cs">
-      <DependentUpon>WaitingForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="HtmlAgilityPack\crc32.cs" />
     <Compile Include="HtmlAgilityPack\EncodingFoundException.cs" />
     <Compile Include="HtmlAgilityPack\HtmlAttribute.cs" />
@@ -80,6 +74,7 @@
     <Compile Include="HtmlAgilityPack\HtmlEntity.cs" />
     <Compile Include="HtmlAgilityPack\HtmlNameTable.cs" />
     <Compile Include="HtmlAgilityPack\HtmlNode.cs" />
+    <Compile Include="HtmlAgilityPack\HtmlNode.Encapsulator.cs" />
     <Compile Include="HtmlAgilityPack\HtmlNode.Xpath.cs" />
     <Compile Include="HtmlAgilityPack\HtmlNodeCollection.cs" />
     <Compile Include="HtmlAgilityPack\HtmlNodeNavigator.cs" />
@@ -90,7 +85,11 @@
     <Compile Include="HtmlAgilityPack\HtmlWeb.cs" />
     <Compile Include="HtmlAgilityPack\HtmlWeb.Xpath.cs" />
     <Compile Include="HtmlAgilityPack\HtmlWebException.cs" />
+    <Compile Include="HtmlAgilityPack\InvalidProgramException.cs" />
     <Compile Include="HtmlAgilityPack\IOLibrary.cs" />
+    <Compile Include="HtmlAgilityPack\Metro\HtmlWeb.cs" />
+    <Compile Include="HtmlAgilityPack\Metro\InvalidProgramException.cs" />
+    <Compile Include="HtmlAgilityPack\MimeTypeMap.cs" />
     <Compile Include="HtmlAgilityPack\MixedCodeDocument.cs" />
     <Compile Include="HtmlAgilityPack\MixedCodeDocumentCodeFragment.cs" />
     <Compile Include="HtmlAgilityPack\MixedCodeDocumentFragment.cs" />
@@ -102,6 +101,12 @@
     <Compile Include="HtmlAgilityPack\Trace.cs" />
     <Compile Include="HtmlAgilityPack\Trace.FullFramework.cs" />
     <Compile Include="HtmlAgilityPack\Utilities.cs" />
+    <Compile Include="WaitingForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WaitingForm.Designer.cs">
+      <DependentUpon>WaitingForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="IconChooser.cs" />
     <Compile Include="IconStatsHandler.cs" />
     <Compile Include="DashboarderForm.cs">

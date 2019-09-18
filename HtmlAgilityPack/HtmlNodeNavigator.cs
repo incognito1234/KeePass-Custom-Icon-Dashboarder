@@ -1,10 +1,19 @@
-// HtmlAgilityPack V1.0 - Simon Mourier <simon underscore mourier at hotmail dot com>
+// Description: Html Agility Pack - HTML Parsers, selectors, traversors, manupulators.
+// Website & Documentation: http://html-agility-pack.net
+// Forum & Issues: https://github.com/zzzprojects/html-agility-pack
+// License: https://github.com/zzzprojects/html-agility-pack/blob/master/LICENSE
+// More projects: http://www.zzzprojects.com/
+// Copyright © ZZZ Projects Inc. 2014 - 2017. All rights reserved.
+
+#if !METRO
+
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.XPath;
+
 #pragma warning disable 0649
 namespace HtmlAgilityPack
 {
@@ -37,11 +46,15 @@ namespace HtmlAgilityPack
             {
                 throw new ArgumentNullException("currentNode");
             }
+
             if (currentNode.OwnerDocument != doc)
             {
                 throw new ArgumentException(HtmlDocument.HtmlExceptionRefNotChild);
             }
+
+#if TRACE_NAVIGATOR
             InternalTrace(null);
+#endif
 
             _doc = doc;
             Reset();
@@ -54,8 +67,9 @@ namespace HtmlAgilityPack
             {
                 throw new ArgumentNullException("nav");
             }
+#if TRACE_NAVIGATOR
             InternalTrace(null);
-
+#endif
             _doc = nav._doc;
             _currentnode = nav._currentnode;
             _attindex = nav._attindex;
@@ -129,6 +143,7 @@ namespace HtmlAgilityPack
             Reset();
         }
 
+#if !(NETSTANDARD1_3 || NETSTANDARD1_6)
         /// <summary>
         /// Initializes a new instance of the HtmlNavigator and loads an HTML document from a file.
         /// </summary>
@@ -185,10 +200,11 @@ namespace HtmlAgilityPack
             _doc.Load(path, encoding, detectEncodingFromByteOrderMarks, buffersize);
             Reset();
         }
+#endif
 
-        #endregion
+#endregion
 
-        #region Properties
+#region Properties
 
         /// <summary>
         /// Gets the base URI for the current node.
@@ -198,7 +214,9 @@ namespace HtmlAgilityPack
         {
             get
             {
+#if TRACE_NAVIGATOR
                 InternalTrace(">");
+#endif
                 return _nametable.GetOrAdd(string.Empty);
             }
         }
@@ -226,7 +244,9 @@ namespace HtmlAgilityPack
         {
             get
             {
+#if TRACE_NAVIGATOR
                 InternalTrace(">" + (_currentnode.Attributes.Count > 0));
+#endif
                 return (_currentnode.Attributes.Count > 0);
             }
         }
@@ -238,7 +258,9 @@ namespace HtmlAgilityPack
         {
             get
             {
+#if TRACE_NAVIGATOR
                 InternalTrace(">" + (_currentnode.ChildNodes.Count > 0));
+#endif
                 return (_currentnode.ChildNodes.Count > 0);
             }
         }
@@ -250,7 +272,9 @@ namespace HtmlAgilityPack
         {
             get
             {
+#if TRACE_NAVIGATOR
                 InternalTrace(">" + !HasChildren);
+#endif
                 // REVIEW: is this ok?
                 return !HasChildren;
             }
@@ -265,10 +289,15 @@ namespace HtmlAgilityPack
             {
                 if (_attindex != -1)
                 {
+#if TRACE_NAVIGATOR
                     InternalTrace("att>" + _currentnode.Attributes[_attindex].Name);
+#endif
                     return _nametable.GetOrAdd(_currentnode.Attributes[_attindex].Name);
                 }
+
+#if TRACE_NAVIGATOR
                 InternalTrace("node>" + _currentnode.Name);
+#endif
                 return _nametable.GetOrAdd(_currentnode.Name);
             }
         }
@@ -280,7 +309,9 @@ namespace HtmlAgilityPack
         {
             get
             {
+#if TRACE_NAVIGATOR
                 InternalTrace(">" + _currentnode.Name);
+#endif
                 return _nametable.GetOrAdd(_currentnode.Name);
             }
         }
@@ -293,7 +324,9 @@ namespace HtmlAgilityPack
         {
             get
             {
+#if TRACE_NAVIGATOR
                 InternalTrace(">");
+#endif
                 return _nametable.GetOrAdd(string.Empty);
             }
         }
@@ -305,7 +338,9 @@ namespace HtmlAgilityPack
         {
             get
             {
+#if TRACE_NAVIGATOR
                 InternalTrace(null);
+#endif
                 return _nametable;
             }
         }
@@ -320,27 +355,38 @@ namespace HtmlAgilityPack
                 switch (_currentnode.NodeType)
                 {
                     case HtmlNodeType.Comment:
+#if TRACE_NAVIGATOR
                         InternalTrace(">" + XPathNodeType.Comment);
+#endif
                         return XPathNodeType.Comment;
 
                     case HtmlNodeType.Document:
+#if TRACE_NAVIGATOR
                         InternalTrace(">" + XPathNodeType.Root);
+#endif
                         return XPathNodeType.Root;
 
                     case HtmlNodeType.Text:
+#if TRACE_NAVIGATOR
                         InternalTrace(">" + XPathNodeType.Text);
+#endif
                         return XPathNodeType.Text;
 
                     case HtmlNodeType.Element:
+                    {
+                        if (_attindex != -1)
                         {
-                            if (_attindex != -1)
-                            {
-                                InternalTrace(">" + XPathNodeType.Attribute);
-                                return XPathNodeType.Attribute;
-                            }
-                            InternalTrace(">" + XPathNodeType.Element);
-                            return XPathNodeType.Element;
+#if TRACE_NAVIGATOR
+                            InternalTrace(">" + XPathNodeType.Attribute);
+#endif
+                             return XPathNodeType.Attribute;
                         }
+
+#if TRACE_NAVIGATOR
+                        InternalTrace(">" + XPathNodeType.Element);
+#endif
+                         return XPathNodeType.Element;
+                    }
 
                     default:
                         throw new NotImplementedException("Internal error: Unhandled HtmlNodeType: " +
@@ -357,7 +403,9 @@ namespace HtmlAgilityPack
         {
             get
             {
+#if TRACE_NAVIGATOR
                 InternalTrace(null);
+#endif
                 return _nametable.GetOrAdd(string.Empty);
             }
         }
@@ -369,30 +417,41 @@ namespace HtmlAgilityPack
         {
             get
             {
+#if TRACE_NAVIGATOR
                 InternalTrace("nt=" + _currentnode.NodeType);
+#endif
                 switch (_currentnode.NodeType)
                 {
                     case HtmlNodeType.Comment:
+#if TRACE_NAVIGATOR
                         InternalTrace(">" + ((HtmlCommentNode) _currentnode).Comment);
+#endif
                         return ((HtmlCommentNode) _currentnode).Comment;
 
                     case HtmlNodeType.Document:
+#if TRACE_NAVIGATOR
                         InternalTrace(">");
+#endif
                         return "";
 
                     case HtmlNodeType.Text:
+#if TRACE_NAVIGATOR
                         InternalTrace(">" + ((HtmlTextNode) _currentnode).Text);
+#endif
                         return ((HtmlTextNode) _currentnode).Text;
 
                     case HtmlNodeType.Element:
+                    {
+                        if (_attindex != -1)
                         {
-                            if (_attindex != -1)
-                            {
-                                InternalTrace(">" + _currentnode.Attributes[_attindex].Value);
-                                return _currentnode.Attributes[_attindex].Value;
-                            }
-                            return _currentnode.InnerText;
+#if TRACE_NAVIGATOR
+                            InternalTrace(">" + _currentnode.Attributes[_attindex].Value);
+#endif
+                           return _currentnode.Attributes[_attindex].Value;
                         }
+
+                        return _currentnode.InnerText;
+                    }
 
                     default:
                         throw new NotImplementedException("Internal error: Unhandled HtmlNodeType: " +
@@ -409,14 +468,16 @@ namespace HtmlAgilityPack
         {
             get
             {
+#if TRACE_NAVIGATOR
                 InternalTrace(null);
+#endif
                 return _nametable.GetOrAdd(string.Empty);
             }
         }
 
-        #endregion
+#endregion
 
-        #region Public Methods
+#region Public Methods
 
         /// <summary>
         /// Creates a new HtmlNavigator positioned at the same node as this HtmlNavigator.
@@ -424,7 +485,9 @@ namespace HtmlAgilityPack
         /// <returns>A new HtmlNavigator object positioned at the same node as the original HtmlNavigator.</returns>
         public override XPathNavigator Clone()
         {
+#if TRACE_NAVIGATOR
             InternalTrace(null);
+#endif
             return new HtmlNodeNavigator(this);
         }
 
@@ -436,14 +499,21 @@ namespace HtmlAgilityPack
         /// <returns>The value of the specified HTML attribute. String.Empty or null if a matching attribute is not found or if the navigator is not positioned on an element node.</returns>
         public override string GetAttribute(string localName, string namespaceURI)
         {
+#if TRACE_NAVIGATOR
             InternalTrace("localName=" + localName + ", namespaceURI=" + namespaceURI);
+#endif
             HtmlAttribute att = _currentnode.Attributes[localName];
             if (att == null)
             {
+#if TRACE_NAVIGATOR
                 InternalTrace(">null");
+#endif
                 return null;
             }
+
+#if TRACE_NAVIGATOR
             InternalTrace(">" + att.Value);
+#endif
             return att.Value;
         }
 
@@ -455,7 +525,9 @@ namespace HtmlAgilityPack
         /// <returns>Always returns string.Empty for the HtmlNavigator implementation.</returns>
         public override string GetNamespace(string name)
         {
+#if TRACE_NAVIGATOR
             InternalTrace("name=" + name);
+#endif
             return string.Empty;
         }
 
@@ -469,10 +541,15 @@ namespace HtmlAgilityPack
             HtmlNodeNavigator nav = other as HtmlNodeNavigator;
             if (nav == null)
             {
+#if TRACE_NAVIGATOR
                 InternalTrace(">false");
+#endif
                 return false;
             }
+
+#if TRACE_NAVIGATOR
             InternalTrace(">" + (nav._currentnode == _currentnode));
+#endif
             return (nav._currentnode == _currentnode);
         }
 
@@ -486,22 +563,32 @@ namespace HtmlAgilityPack
             HtmlNodeNavigator nav = other as HtmlNodeNavigator;
             if (nav == null)
             {
+#if TRACE_NAVIGATOR
                 InternalTrace(">false (nav is not an HtmlNodeNavigator)");
+#endif
                 return false;
             }
+
+#if TRACE_NAVIGATOR
             InternalTrace("moveto oid=" + nav.GetHashCode()
-                          + ", n:" + nav._currentnode.Name
-                          + ", a:" + nav._attindex);
+                                        + ", n:" + nav._currentnode.Name
+                                        + ", a:" + nav._attindex);
+#endif
 
             if (nav._doc == _doc)
             {
                 _currentnode = nav._currentnode;
                 _attindex = nav._attindex;
+#if TRACE_NAVIGATOR
                 InternalTrace(">true");
+#endif
                 return true;
             }
+
             // we don't know how to handle that
+#if TRACE_NAVIGATOR
             InternalTrace(">false (???)");
+#endif
             return false;
         }
 
@@ -513,15 +600,22 @@ namespace HtmlAgilityPack
         /// <returns>true if the HTML attribute is found, otherwise, false. If false, the position of the navigator does not change.</returns>
         public override bool MoveToAttribute(string localName, string namespaceURI)
         {
+#if TRACE_NAVIGATOR
             InternalTrace("localName=" + localName + ", namespaceURI=" + namespaceURI);
+#endif
             int index = _currentnode.Attributes.GetAttributeIndex(localName);
             if (index == -1)
             {
+#if TRACE_NAVIGATOR
                 InternalTrace(">false");
+#endif
                 return false;
             }
+
             _attindex = index;
+#if TRACE_NAVIGATOR
             InternalTrace(">true");
+#endif
             return true;
         }
 
@@ -533,16 +627,24 @@ namespace HtmlAgilityPack
         {
             if (_currentnode.ParentNode == null)
             {
+#if TRACE_NAVIGATOR
                 InternalTrace(">false");
+#endif
                 return false;
             }
+
             if (_currentnode.ParentNode.FirstChild == null)
             {
+#if TRACE_NAVIGATOR
                 InternalTrace(">false");
+#endif
                 return false;
             }
+
             _currentnode = _currentnode.ParentNode.FirstChild;
+#if TRACE_NAVIGATOR
             InternalTrace(">true");
+#endif
             return true;
         }
 
@@ -554,11 +656,16 @@ namespace HtmlAgilityPack
         {
             if (!HasAttributes)
             {
+#if TRACE_NAVIGATOR
                 InternalTrace(">false");
+#endif
                 return false;
             }
+
             _attindex = 0;
+#if TRACE_NAVIGATOR
             InternalTrace(">true");
+#endif
             return true;
         }
 
@@ -570,11 +677,16 @@ namespace HtmlAgilityPack
         {
             if (!_currentnode.HasChildNodes)
             {
+#if TRACE_NAVIGATOR
                 InternalTrace(">false");
+#endif
                 return false;
             }
+
             _currentnode = _currentnode.ChildNodes[0];
+#if TRACE_NAVIGATOR
             InternalTrace(">true");
+#endif
             return true;
         }
 
@@ -586,7 +698,9 @@ namespace HtmlAgilityPack
         /// <returns>Always returns false for the HtmlNavigator implementation.</returns>
         public override bool MoveToFirstNamespace(XPathNamespaceScope scope)
         {
+#if TRACE_NAVIGATOR
             InternalTrace(null);
+#endif
             return false;
         }
 
@@ -597,15 +711,22 @@ namespace HtmlAgilityPack
         /// <returns>true if the move was successful, otherwise false. If false, the position of the navigator is unchanged.</returns>
         public override bool MoveToId(string id)
         {
+#if TRACE_NAVIGATOR
             InternalTrace("id=" + id);
+#endif
             HtmlNode node = _doc.GetElementbyId(id);
             if (node == null)
             {
+#if TRACE_NAVIGATOR
                 InternalTrace(">false");
+#endif
                 return false;
             }
+
             _currentnode = node;
+#if TRACE_NAVIGATOR
             InternalTrace(">true");
+#endif
             return true;
         }
 
@@ -617,7 +738,9 @@ namespace HtmlAgilityPack
         /// <returns>Always returns false for the HtmlNavigator implementation.</returns>
         public override bool MoveToNamespace(string name)
         {
+#if TRACE_NAVIGATOR
             InternalTrace("name=" + name);
+#endif
             return false;
         }
 
@@ -629,13 +752,20 @@ namespace HtmlAgilityPack
         {
             if (_currentnode.NextSibling == null)
             {
+#if TRACE_NAVIGATOR
                 InternalTrace(">false");
+#endif
                 return false;
             }
+
+#if TRACE_NAVIGATOR
             InternalTrace("_c=" + _currentnode.CloneNode(false).OuterHtml);
             InternalTrace("_n=" + _currentnode.NextSibling.CloneNode(false).OuterHtml);
+#endif
             _currentnode = _currentnode.NextSibling;
+#if TRACE_NAVIGATOR
             InternalTrace(">true");
+#endif
             return true;
         }
 
@@ -645,14 +775,21 @@ namespace HtmlAgilityPack
         /// <returns></returns>
         public override bool MoveToNextAttribute()
         {
+#if TRACE_NAVIGATOR
             InternalTrace(null);
+#endif
             if (_attindex >= (_currentnode.Attributes.Count - 1))
             {
+#if TRACE_NAVIGATOR
                 InternalTrace(">false");
+#endif
                 return false;
             }
+
             _attindex++;
+#if TRACE_NAVIGATOR
             InternalTrace(">true");
+#endif
             return true;
         }
 
@@ -664,7 +801,9 @@ namespace HtmlAgilityPack
         /// <returns>Always returns false for the HtmlNavigator implementation.</returns>
         public override bool MoveToNextNamespace(XPathNamespaceScope scope)
         {
+#if TRACE_NAVIGATOR
             InternalTrace(null);
+#endif
             return false;
         }
 
@@ -676,11 +815,16 @@ namespace HtmlAgilityPack
         {
             if (_currentnode.ParentNode == null)
             {
+#if TRACE_NAVIGATOR
                 InternalTrace(">false");
+#endif
                 return false;
             }
+
             _currentnode = _currentnode.ParentNode;
+#if TRACE_NAVIGATOR
             InternalTrace(">true");
+#endif
             return true;
         }
 
@@ -692,11 +836,16 @@ namespace HtmlAgilityPack
         {
             if (_currentnode.PreviousSibling == null)
             {
+#if TRACE_NAVIGATOR
                 InternalTrace(">false");
+#endif
                 return false;
             }
+
             _currentnode = _currentnode.PreviousSibling;
+#if TRACE_NAVIGATOR
             InternalTrace(">true");
+#endif
             return true;
         }
 
@@ -706,13 +855,15 @@ namespace HtmlAgilityPack
         public override void MoveToRoot()
         {
             _currentnode = _doc.DocumentNode;
+#if TRACE_NAVIGATOR
             InternalTrace(null);
+#endif
         }
 
         #endregion
 
         #region Internal Methods
-
+#if TRACE_NAVIGATOR
         [Conditional("TRACE")]
         internal void InternalTrace(object traceValue)
         {
@@ -720,8 +871,13 @@ namespace HtmlAgilityPack
             {
                 return;
             }
-            StackFrame sf = new StackFrame(1, true);
+
+#if !(NETSTANDARD1_3 || NETSTANDARD1_6)
+            StackFrame sf = new StackFrame(1);
             string name = sf.GetMethod().Name;
+#else
+            string name = "";
+#endif
             string nodename = _currentnode == null ? "(null)" : _currentnode.Name;
             string nodevalue;
             if (_currentnode == null)
@@ -749,21 +905,24 @@ namespace HtmlAgilityPack
                         break;
                 }
             }
-           
+
             HtmlAgilityPack.Trace.WriteLine(string.Format("oid={0},n={1},a={2},v={3},{4}", GetHashCode(), nodename, _attindex, nodevalue, traceValue), "N!" + name);
         }
-
+#endif
         #endregion
 
         #region Private Methods
 
         private void Reset()
         {
+#if TRACE_NAVIGATOR
             InternalTrace(null);
+#endif
             _currentnode = _doc.DocumentNode;
             _attindex = -1;
         }
 
-        #endregion
+#endregion
     }
 }
+#endif

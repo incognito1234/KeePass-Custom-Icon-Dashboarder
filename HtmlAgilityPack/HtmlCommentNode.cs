@@ -1,4 +1,10 @@
-// HtmlAgilityPack V1.0 - Simon Mourier <simon underscore mourier at hotmail dot com>
+// Description: Html Agility Pack - HTML Parsers, selectors, traversors, manupulators.
+// Website & Documentation: http://html-agility-pack.net
+// Forum & Issues: https://github.com/zzzprojects/html-agility-pack
+// License: https://github.com/zzzprojects/html-agility-pack/blob/master/LICENSE
+// More projects: http://www.zzzprojects.com/
+// Copyright © ZZZ Projects Inc. 2014 - 2017. All rights reserved.
+
 namespace HtmlAgilityPack
 {
     /// <summary>
@@ -16,7 +22,7 @@ namespace HtmlAgilityPack
 
         internal HtmlCommentNode(HtmlDocument ownerdocument, int index)
             :
-                base(HtmlNodeType.Comment, ownerdocument, index)
+            base(HtmlNodeType.Comment, ownerdocument, index)
         {
         }
 
@@ -35,6 +41,7 @@ namespace HtmlAgilityPack
                 {
                     return base.InnerHtml;
                 }
+
                 return _comment;
             }
             set { _comment = value; }
@@ -51,6 +58,7 @@ namespace HtmlAgilityPack
                 {
                     return base.InnerHtml;
                 }
+
                 return _comment;
             }
             set { _comment = value; }
@@ -67,6 +75,7 @@ namespace HtmlAgilityPack
                 {
                     return base.OuterHtml;
                 }
+
                 return "<!--" + _comment + "-->";
             }
         }

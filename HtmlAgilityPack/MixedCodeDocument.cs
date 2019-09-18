@@ -1,4 +1,11 @@
-// HtmlAgilityPack V1.0 - Simon Mourier <simon underscore mourier at hotmail dot com>
+// Description: Html Agility Pack - HTML Parsers, selectors, traversors, manupulators.
+// Website & Documentation: http://html-agility-pack.net
+// Forum & Issues: https://github.com/zzzprojects/html-agility-pack
+// License: https://github.com/zzzprojects/html-agility-pack/blob/master/LICENSE
+// More projects: http://www.zzzprojects.com/
+// Copyright © ZZZ Projects Inc. 2014 - 2017. All rights reserved.
+
+#if !METRO
 using System;
 using System.IO;
 using System.Text;
@@ -88,6 +95,7 @@ namespace HtmlAgilityPack
                             break;
                     }
                 }
+
                 return s;
             }
         }
@@ -204,7 +212,11 @@ namespace HtmlAgilityPack
         /// <param name="path">The complete file path to be read.</param>
         public void Load(string path)
         {
+#if NETSTANDARD1_3 || NETSTANDARD1_6
+            Load(new StreamReader(File.OpenRead(path)));
+#else
             Load(new StreamReader(path));
+#endif
         }
 
         /// <summary>
@@ -214,7 +226,11 @@ namespace HtmlAgilityPack
         /// <param name="detectEncodingFromByteOrderMarks">Indicates whether to look for byte order marks at the beginning of the file.</param>
         public void Load(string path, bool detectEncodingFromByteOrderMarks)
         {
+#if NETSTANDARD1_3 || NETSTANDARD1_6
+            Load(new StreamReader(File.OpenRead(path), detectEncodingFromByteOrderMarks));
+#else
             Load(new StreamReader(path, detectEncodingFromByteOrderMarks));
+#endif
         }
 
         /// <summary>
@@ -224,7 +240,11 @@ namespace HtmlAgilityPack
         /// <param name="encoding">The character encoding to use.</param>
         public void Load(string path, Encoding encoding)
         {
+#if NETSTANDARD1_3 || NETSTANDARD1_6
+            Load(new StreamReader(File.OpenRead(path), encoding));
+#else
             Load(new StreamReader(path, encoding));
+#endif
         }
 
         /// <summary>
@@ -235,7 +255,11 @@ namespace HtmlAgilityPack
         /// <param name="detectEncodingFromByteOrderMarks">Indicates whether to look for byte order marks at the beginning of the file.</param>
         public void Load(string path, Encoding encoding, bool detectEncodingFromByteOrderMarks)
         {
+#if NETSTANDARD1_3 || NETSTANDARD1_6
+            Load(new StreamReader(File.OpenRead(path), encoding, detectEncodingFromByteOrderMarks));
+#else
             Load(new StreamReader(path, encoding, detectEncodingFromByteOrderMarks));
+#endif
         }
 
         /// <summary>
@@ -247,7 +271,11 @@ namespace HtmlAgilityPack
         /// <param name="buffersize">The minimum buffer size.</param>
         public void Load(string path, Encoding encoding, bool detectEncodingFromByteOrderMarks, int buffersize)
         {
+#if NETSTANDARD1_3 || NETSTANDARD1_6
+            Load(new StreamReader(File.OpenRead(path), encoding, detectEncodingFromByteOrderMarks, buffersize));
+#else
             Load(new StreamReader(path, encoding, detectEncodingFromByteOrderMarks, buffersize));
+#endif
         }
 
         /// <summary>
@@ -260,14 +288,16 @@ namespace HtmlAgilityPack
             _textfragments.Clear();
 
             // all pseudo constructors get down to this one
-            StreamReader sr = reader as StreamReader;
-            if (sr != null)
+            using (StreamReader sr = reader as StreamReader)
             {
-                _streamencoding = sr.CurrentEncoding;
+                if (sr != null)
+                {
+                    _streamencoding = sr.CurrentEncoding;
+                }
+
+                _text = reader.ReadToEnd();
             }
 
-            _text = reader.ReadToEnd();
-            reader.Close();
             Parse();
         }
 
@@ -307,7 +337,11 @@ namespace HtmlAgilityPack
         /// <param name="filename">The location of the file where you want to save the document.</param>
         public void Save(string filename)
         {
+#if NETSTANDARD1_3 || NETSTANDARD1_6
+            StreamWriter sw = new StreamWriter(File.OpenWrite(filename), GetOutEncoding());
+#else
             StreamWriter sw = new StreamWriter(filename, false, GetOutEncoding());
+#endif
             Save(sw);
         }
 
@@ -318,7 +352,11 @@ namespace HtmlAgilityPack
         /// <param name="encoding">The character encoding to use.</param>
         public void Save(string filename, Encoding encoding)
         {
+#if NETSTANDARD1_3 || NETSTANDARD1_6
+            StreamWriter sw = new StreamWriter(File.OpenWrite(filename), encoding);
+#else
             StreamWriter sw = new StreamWriter(filename, false, encoding);
+#endif
             Save(sw);
         }
 
@@ -407,6 +445,7 @@ namespace HtmlAgilityPack
                                 continue;
                             }
                         }
+
                         break;
 
                     case ParseState.Code:
@@ -423,6 +462,7 @@ namespace HtmlAgilityPack
                                 continue;
                             }
                         }
+
                         break;
                 }
             }
@@ -451,3 +491,4 @@ namespace HtmlAgilityPack
         #endregion
     }
 }
+#endif

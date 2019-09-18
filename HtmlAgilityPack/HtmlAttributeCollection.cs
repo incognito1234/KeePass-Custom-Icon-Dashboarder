@@ -1,4 +1,10 @@
-// HtmlAgilityPack V1.0 - Simon Mourier <simon underscore mourier at hotmail dot com>
+// Description: Html Agility Pack - HTML Parsers, selectors, traversors, manupulators.
+// Website & Documentation: http://html-agility-pack.net
+// Forum & Issues: https://github.com/zzzprojects/html-agility-pack
+// License: https://github.com/zzzprojects/html-agility-pack/blob/master/LICENSE
+// More projects: http://www.zzzprojects.com/
+// Copyright © ZZZ Projects Inc. 2014 - 2017. All rights reserved.
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,7 +18,7 @@ namespace HtmlAgilityPack
     {
         #region Fields
 
-        internal Dictionary<string, HtmlAttribute> Hashitems = new Dictionary<string, HtmlAttribute>();
+        internal Dictionary<string, HtmlAttribute> Hashitems = new Dictionary<string, HtmlAttribute>(StringComparer.OrdinalIgnoreCase);
         private HtmlNode _ownernode;
         private List<HtmlAttribute> items = new List<HtmlAttribute>();
 
@@ -27,26 +33,6 @@ namespace HtmlAgilityPack
 
         #endregion
 
-        #region Properties
-
-        /// <summary>
-        /// Gets a given attribute from the list using its name.
-        /// </summary>
-        public HtmlAttribute this[string name]
-        {
-            get
-            {
-                if (name == null)
-                {
-                    throw new ArgumentNullException("name");
-                }
-                HtmlAttribute value;
-                return Hashitems.TryGetValue(name.ToLower(), out value) ? value : null;
-            }
-            set { Append(value); }
-        }
-
-        #endregion
 
         #region IList<HtmlAttribute> Members
 
@@ -72,8 +58,63 @@ namespace HtmlAgilityPack
         public HtmlAttribute this[int index]
         {
             get { return items[index]; }
-            set { items[index] = value; }
+            set
+            {
+                var oldValue = items[index];
+               
+                items[index] = value;
+
+                if (oldValue.Name != value.Name)
+                {
+                    Hashitems.Remove(oldValue.Name);
+                }
+                Hashitems[value.Name] = value;
+
+                value._ownernode = _ownernode;
+                _ownernode.SetChanged();
+            }
         }
+
+
+        /// <summary>
+        /// Gets a given attribute from the list using its name.
+        /// </summary>
+        public HtmlAttribute this[string name]
+        {
+            get
+            {
+                if (name == null)
+                {
+                    throw new ArgumentNullException("name");
+                }
+
+                HtmlAttribute value;
+                return Hashitems.TryGetValue(name, out value) ? value : null;
+            }
+            set
+            {
+                HtmlAttribute currentValue;
+
+                if (!Hashitems.TryGetValue(name, out currentValue))
+                {
+                    Append(value);
+                }
+
+                this[items.IndexOf(currentValue)] = value;
+            }
+        }
+
+
+        /// <summary>
+        /// Adds a new attribute to the collection with the given values
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="value"></param>
+        public void Add(string name, string value)
+        {
+            Append(name, value);
+        }
+
 
         /// <summary>
         /// Adds supplied item to collection
@@ -84,10 +125,30 @@ namespace HtmlAgilityPack
             Append(item);
         }
 
-        /// <summary>
-        /// Explicit clear
-        /// </summary>
-        void ICollection<HtmlAttribute>.Clear()
+        /// <summary>Adds a range supplied items to collection.</summary>
+        /// <param name="items">An IEnumerable&lt;HtmlAttribute&gt; of items to append to this.</param>
+        public void AddRange(IEnumerable<HtmlAttribute> items)
+	    {
+		    foreach (var item in items)
+		    { 
+				Append(item);
+			}
+	    }
+
+        /// <summary>Adds a range supplied items to collection using a dictionary.</summary>
+        /// <param name="items">A Dictionary&lt;string,string&gt; of items to append to this.</param>
+        public void AddRange(Dictionary<string, string> items)
+	    {
+		    foreach (var item in items)
+            {
+                Add(item.Key, item.Value);
+            }
+	    }
+
+		/// <summary>
+		/// Explicit clear
+		/// </summary>
+		void ICollection<HtmlAttribute>.Clear()
         {
             items.Clear();
         }
@@ -187,23 +248,18 @@ namespace HtmlAgilityPack
         #region Public Methods
 
         /// <summary>
-        /// Adds a new attribute to the collection with the given values
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="value"></param>
-        public void Add(string name, string value)
-        {
-            Append(name, value);
-        }
-
-        /// <summary>
         /// Inserts the specified attribute as the last attribute in the collection.
         /// </summary>
         /// <param name="newAttribute">The attribute to insert. May not be null.</param>
         /// <returns>The appended attribute.</returns>
         public HtmlAttribute Append(HtmlAttribute newAttribute)
         {
-            if (newAttribute == null)
+	        if (_ownernode.NodeType == HtmlNodeType.Text || _ownernode.NodeType == HtmlNodeType.Comment)
+	        {
+				throw new Exception("A Text or Comment node cannot have attributes.");
+	        }
+				  
+			if (newAttribute == null)
             {
                 throw new ArgumentNullException("newAttribute");
             }
@@ -248,9 +304,10 @@ namespace HtmlAgilityPack
         {
             for (int i = 0; i < items.Count; i++)
             {
-                if (items[i].Name.Equals(name.ToLower()))
+                if (String.Equals(items[i].Name, name, StringComparison.OrdinalIgnoreCase))
                     return true;
             }
+
             return false;
         }
 
@@ -275,11 +332,13 @@ namespace HtmlAgilityPack
             {
                 throw new ArgumentNullException("attribute");
             }
+
             int index = GetAttributeIndex(attribute);
             if (index == -1)
             {
                 throw new IndexOutOfRangeException();
             }
+
             RemoveAt(index);
         }
 
@@ -294,11 +353,10 @@ namespace HtmlAgilityPack
                 throw new ArgumentNullException("name");
             }
 
-            string lname = name.ToLower();
             for (int i = 0; i < items.Count; i++)
             {
                 HtmlAttribute att = items[i];
-                if (att.Name == lname)
+                if (String.Equals(att.Name, name, StringComparison.OrdinalIgnoreCase))
                 {
                     RemoveAt(i);
                 }
@@ -327,10 +385,9 @@ namespace HtmlAgilityPack
         /// <returns></returns>
         public IEnumerable<HtmlAttribute> AttributesWithName(string attributeName)
         {
-            attributeName = attributeName.ToLower();
             for (int i = 0; i < items.Count; i++)
             {
-                if (items[i].Name.Equals(attributeName))
+                if (String.Equals(items[i].Name, attributeName, StringComparison.OrdinalIgnoreCase))
                     yield return items[i];
             }
         }
@@ -340,8 +397,7 @@ namespace HtmlAgilityPack
         /// </summary>
         public void Remove()
         {
-            foreach (HtmlAttribute item in items)
-                item.Remove();
+            items.Clear();
         }
 
         #endregion
@@ -363,11 +419,13 @@ namespace HtmlAgilityPack
             {
                 throw new ArgumentNullException("attribute");
             }
+
             for (int i = 0; i < items.Count; i++)
             {
                 if ((items[i]) == attribute)
                     return i;
             }
+
             return -1;
         }
 
@@ -377,12 +435,13 @@ namespace HtmlAgilityPack
             {
                 throw new ArgumentNullException("name");
             }
-            string lname = name.ToLower();
+
             for (int i = 0; i < items.Count; i++)
             {
-                if ((items[i]).Name == lname)
+                if (String.Equals((items[i]).Name, name, StringComparison.OrdinalIgnoreCase))
                     return i;
             }
+
             return -1;
         }
 

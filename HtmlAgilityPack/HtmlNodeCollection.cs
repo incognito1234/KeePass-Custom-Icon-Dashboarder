@@ -1,4 +1,10 @@
-// HtmlAgilityPack V1.0 - Simon Mourier <simon underscore mourier at hotmail dot com>
+// Description: Html Agility Pack - HTML Parsers, selectors, traversors, manupulators.
+// Website & Documentation: http://html-agility-pack.net
+// Forum & Issues: https://github.com/zzzprojects/html-agility-pack
+// License: https://github.com/zzzprojects/html-agility-pack/blob/master/LICENSE
+// More projects: http://www.zzzprojects.com/
+// Copyright © ZZZ Projects Inc. 2014 - 2017. All rights reserved.
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -42,8 +48,8 @@ namespace HtmlAgilityPack
                 int index = GetNodeIndex(node);
                 if (index == -1)
                     throw new ArgumentOutOfRangeException("node",
-                                                          "Node \"" + node.CloneNode(false).OuterHtml +
-                                                          "\" was not found in the collection");
+                        "Node \"" + node.CloneNode(false).OuterHtml +
+                        "\" was not found in the collection");
                 return index;
             }
         }
@@ -57,9 +63,8 @@ namespace HtmlAgilityPack
         {
             get
             {
-                nodeName = nodeName.ToLower();
                 for (int i = 0; i < _items.Count; i++)
-                    if (_items[i].Name.Equals(nodeName))
+                    if (string.Equals(_items[i].Name, nodeName, StringComparison.OrdinalIgnoreCase))
                         return _items[i];
 
                 return null;
@@ -101,7 +106,22 @@ namespace HtmlAgilityPack
         /// <param name="node"></param>
         public void Add(HtmlNode node)
         {
+            Add(node, true);
+        }
+
+        /// <summary>
+        /// Add node to the collection
+        /// </summary>
+        /// <param name="node"></param>
+        /// <param name="setParent"></param>
+        public void Add(HtmlNode node, bool setParent)
+        {
             _items.Add(node);
+
+            if (setParent)
+            {
+                node.ParentNode = _parentnode;
+            }
         }
 
         /// <summary>
@@ -115,6 +135,7 @@ namespace HtmlAgilityPack
                 node.NextSibling = null;
                 node.PreviousSibling = null;
             }
+
             _items.Clear();
         }
 
@@ -176,9 +197,9 @@ namespace HtmlAgilityPack
             HtmlNode next = null;
             HtmlNode prev = null;
 
-            if (index > 0)            
+            if (index > 0)
                 prev = _items[index - 1];
-            
+
             if (index < _items.Count)
                 next = _items[index];
 
@@ -188,7 +209,7 @@ namespace HtmlAgilityPack
             {
                 if (node == prev)
                     throw new InvalidProgramException("Unexpected error.");
-                
+
                 prev._nextnode = node;
             }
 
@@ -198,10 +219,10 @@ namespace HtmlAgilityPack
             node._prevnode = prev;
             if (next == node)
                 throw new InvalidProgramException("Unexpected error.");
-            
-            node._nextnode = next;
-            node._parentnode = _parentnode;
-        }
+
+            node._nextnode = next; 
+			node.SetParent(_parentnode);
+		}
 
         /// <summary>
         /// Remove node
@@ -225,6 +246,9 @@ namespace HtmlAgilityPack
             HtmlNode prev = null;
             HtmlNode oldnode = _items[index];
 
+            // KEEP a reference since it will be set to null
+            var parentNode = _parentnode ?? oldnode._parentnode;
+
             if (index > 0)
                 prev = _items[index - 1];
 
@@ -246,6 +270,11 @@ namespace HtmlAgilityPack
             oldnode._prevnode = null;
             oldnode._nextnode = null;
             oldnode._parentnode = null;
+
+            if (parentNode != null)
+            {
+                parentNode.SetChanged();
+            }
         }
 
         #endregion
@@ -262,13 +291,14 @@ namespace HtmlAgilityPack
         {
             foreach (HtmlNode node in items)
             {
-                if (node.Name.ToLower().Contains(name))
+                if (node.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
                     return node;
                 if (!node.HasChildNodes) continue;
                 HtmlNode returnNode = FindFirst(node.ChildNodes, name);
                 if (returnNode != null)
                     return returnNode;
             }
+
             return null;
         }
 
@@ -281,15 +311,15 @@ namespace HtmlAgilityPack
             HtmlNode last = null;
             if (_items.Count > 0)
                 last = _items[_items.Count - 1];
-            
+
             _items.Add(node);
             node._prevnode = last;
             node._nextnode = null;
-            node._parentnode = _parentnode;
-            if (last == null) return;
+	        node.SetParent(_parentnode);
+			if (last == null) return;
             if (last == node)
                 throw new InvalidProgramException("Unexpected error.");
-            
+
             last._nextnode = node;
         }
 
@@ -333,9 +363,9 @@ namespace HtmlAgilityPack
                 throw new InvalidProgramException("Unexpected error.");
             node._nextnode = first;
             node._prevnode = null;
-            node._parentnode = _parentnode;
+	        node.SetParent(_parentnode);
 
-            if (first != null)
+			if (first != null)
                 first._prevnode = node;
         }
 
@@ -385,9 +415,9 @@ namespace HtmlAgilityPack
                 throw new InvalidProgramException("Unexpected error.");
 
             node._nextnode = next;
-            node._parentnode = _parentnode;
+	        node.SetParent(_parentnode);
 
-            oldnode._prevnode = null;
+			oldnode._prevnode = null;
             oldnode._nextnode = null;
             oldnode._parentnode = null;
         }
@@ -403,8 +433,8 @@ namespace HtmlAgilityPack
         public IEnumerable<HtmlNode> Descendants()
         {
             foreach (HtmlNode item in _items)
-                foreach (HtmlNode n in item.Descendants())
-                    yield return n;
+            foreach (HtmlNode n in item.Descendants())
+                yield return n;
         }
 
         /// <summary>
@@ -414,8 +444,8 @@ namespace HtmlAgilityPack
         public IEnumerable<HtmlNode> Descendants(string name)
         {
             foreach (HtmlNode item in _items)
-                foreach (HtmlNode n in item.Descendants(name))
-                    yield return n;
+            foreach (HtmlNode n in item.Descendants(name))
+                yield return n;
         }
 
         /// <summary>
@@ -425,8 +455,8 @@ namespace HtmlAgilityPack
         public IEnumerable<HtmlNode> Elements()
         {
             foreach (HtmlNode item in _items)
-                foreach (HtmlNode n in item.ChildNodes)
-                    yield return n;
+            foreach (HtmlNode n in item.ChildNodes)
+                yield return n;
         }
 
         /// <summary>
@@ -437,8 +467,8 @@ namespace HtmlAgilityPack
         public IEnumerable<HtmlNode> Elements(string name)
         {
             foreach (HtmlNode item in _items)
-                foreach (HtmlNode n in item.Elements(name))
-                    yield return n;
+            foreach (HtmlNode n in item.Elements(name))
+                yield return n;
         }
 
         /// <summary>
@@ -448,8 +478,8 @@ namespace HtmlAgilityPack
         public IEnumerable<HtmlNode> Nodes()
         {
             foreach (HtmlNode item in _items)
-                foreach (HtmlNode n in item.ChildNodes)
-                    yield return n;
+            foreach (HtmlNode n in item.ChildNodes)
+                yield return n;
         }
 
         #endregion

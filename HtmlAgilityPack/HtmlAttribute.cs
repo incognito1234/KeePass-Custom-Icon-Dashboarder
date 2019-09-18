@@ -1,4 +1,9 @@
-// HtmlAgilityPack V1.0 - Simon Mourier <simon underscore mourier at hotmail dot com>
+// Description: Html Agility Pack - HTML Parsers, selectors, traversors, manupulators.
+// Website & Documentation: http://html-agility-pack.net
+// Forum & Issues: https://github.com/zzzprojects/html-agility-pack
+// License: https://github.com/zzzprojects/html-agility-pack/blob/master/LICENSE
+// More projects: http://www.zzzprojects.com/
+// Copyright © ZZZ Projects Inc. 2014 - 2017. All rights reserved.
 
 #region
 
@@ -6,6 +11,7 @@ using System;
 using System.Diagnostics;
 
 #endregion
+
 // ReSharper disable InconsistentNaming
 
 namespace HtmlAgilityPack
@@ -62,9 +68,27 @@ namespace HtmlAgilityPack
         }
 
         /// <summary>
-        /// Gets the qualified name of the attribute.
+        /// Gets the stream position of the value of this attribute in the document, relative to the start of the document.
         /// </summary>
-        public string Name
+        public int ValueStartIndex
+        {
+            get { return _valuestartindex; }
+        }
+
+        /// <summary>
+        /// Gets the length of the value.
+        /// </summary>
+        public int ValueLength
+        {
+            get { return _valuelength; }
+        }
+
+	    public bool UseOriginalName { get; set; } = false;
+
+	    /// <summary>
+		/// Gets the qualified name of the attribute.
+		/// </summary>
+		public string Name
         {
             get
             {
@@ -72,14 +96,16 @@ namespace HtmlAgilityPack
                 {
                     _name = _ownerdocument.Text.Substring(_namestartindex, _namelength);
                 }
-                return _name.ToLower();
-            }
+
+	            return UseOriginalName ? _name : _name.ToLowerInvariant();
+			}
             set
             {
                 if (value == null)
                 {
                     throw new ArgumentNullException("value");
                 }
+
                 _name = value;
                 if (_ownernode != null)
                 {
@@ -136,15 +162,28 @@ namespace HtmlAgilityPack
         {
             get
             {
+                // A null value has been provided, the attribute should be considered as "hidden"
+                if (_value == null && _ownerdocument.Text == null && _valuestartindex == 0 && _valuelength == 0)
+                {
+                    return null;
+                }
+
                 if (_value == null)
                 {
                     _value = _ownerdocument.Text.Substring(_valuestartindex, _valuelength);
+
+                    if (!_ownerdocument.BackwardCompatibility)
+                    {
+                        _value = HtmlEntity.DeEntitize(_value);
+                    }
                 }
+
                 return _value;
             }
             set
             {
                 _value = value;
+
                 if (_ownernode != null)
                 {
                     _ownernode.SetChanged();
@@ -152,9 +191,17 @@ namespace HtmlAgilityPack
             }
         }
 
+        /// <summary>
+        /// Gets the DeEntitized value of the attribute.
+        /// </summary>
+        public string DeEntitizeValue
+        {
+            get { return HtmlEntity.DeEntitize(Value); }
+        }
+
         internal string XmlName
         {
-            get { return HtmlDocument.GetXmlName(Name); }
+            get { return HtmlDocument.GetXmlName(Name, true, OwnerDocument.OptionPreserveXmlNamespaces); }
         }
 
         internal string XmlValue
@@ -190,6 +237,7 @@ namespace HtmlAgilityPack
             {
                 throw new ArgumentException("obj");
             }
+
             return Name.CompareTo(att.Name);
         }
 
@@ -206,6 +254,7 @@ namespace HtmlAgilityPack
             HtmlAttribute att = new HtmlAttribute(_ownerdocument);
             att.Name = Name;
             att.Value = Value;
+            att.QuoteType = QuoteType;
             return att;
         }
 
@@ -236,6 +285,7 @@ namespace HtmlAgilityPack
 
                 i++;
             }
+
             return "@" + Name + "[" + i + "]";
         }
 
@@ -251,6 +301,7 @@ namespace HtmlAgilityPack
         /// A single quote mark '
         /// </summary>
         SingleQuote,
+
         /// <summary>
         /// A double quote mark "
         /// </summary>

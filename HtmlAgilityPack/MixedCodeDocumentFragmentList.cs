@@ -1,4 +1,12 @@
-// HtmlAgilityPack V1.0 - Simon Mourier <simon underscore mourier at hotmail dot com>
+// Description: Html Agility Pack - HTML Parsers, selectors, traversors, manupulators.
+// Website & Documentation: http://html-agility-pack.net
+// Forum & Issues: https://github.com/zzzprojects/html-agility-pack
+// License: https://github.com/zzzprojects/html-agility-pack/blob/master/LICENSE
+// More projects: http://www.zzzprojects.com/
+// Copyright © ZZZ Projects Inc. 2014 - 2017. All rights reserved.
+
+#if !METRO
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -49,7 +57,7 @@ namespace HtmlAgilityPack
         /// </summary>
         public MixedCodeDocumentFragment this[int index]
         {
-            get { return _items[index] as MixedCodeDocumentFragment; }
+            get { return _items[index]; }
         }
 
         #endregion
@@ -78,6 +86,7 @@ namespace HtmlAgilityPack
             {
                 throw new ArgumentNullException("newFragment");
             }
+
             _items.Add(newFragment);
         }
 
@@ -99,6 +108,7 @@ namespace HtmlAgilityPack
             {
                 throw new ArgumentNullException("newFragment");
             }
+
             _items.Insert(0, newFragment);
         }
 
@@ -112,11 +122,13 @@ namespace HtmlAgilityPack
             {
                 throw new ArgumentNullException("fragment");
             }
+
             int index = GetFragmentIndex(fragment);
             if (index == -1)
             {
                 throw new IndexOutOfRangeException();
             }
+
             RemoveAt(index);
         }
 
@@ -153,6 +165,7 @@ namespace HtmlAgilityPack
             {
                 throw new ArgumentNullException("fragment");
             }
+
             for (int i = 0; i < _items.Count; i++)
             {
                 if ((_items[i]) == fragment)
@@ -160,6 +173,7 @@ namespace HtmlAgilityPack
                     return i;
                 }
             }
+
             return -1;
         }
 
@@ -235,3 +249,4 @@ namespace HtmlAgilityPack
         #endregion
     }
 }
+#endif
