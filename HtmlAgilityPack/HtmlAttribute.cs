@@ -83,7 +83,22 @@ namespace HtmlAgilityPack
             get { return _valuelength; }
         }
 
-	    public bool UseOriginalName { get; set; } = false;
+        private bool _useOriginalName = false;
+	    public bool UseOriginalName
+        {
+            get
+            {
+                return _useOriginalName;
+            }
+            set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+                _useOriginalName = value;
+            }
+        }
 
 	    /// <summary>
 		/// Gets the qualified name of the attribute.

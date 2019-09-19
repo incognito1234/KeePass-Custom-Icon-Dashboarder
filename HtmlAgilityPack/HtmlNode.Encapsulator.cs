@@ -743,7 +743,18 @@ namespace HtmlAgilityPack
     [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
     public sealed class XPathAttribute : Attribute
     {
-        public string XPath { get; }
+        private string _xPath = null;
+        public string XPath
+        {
+            get
+            {
+                return _xPath;
+            }
+            private set
+            {
+                _xPath = value;
+            }
+        }
         public string AttributeName { get; set; }
         public ReturnType NodeReturnType { get; set; }
 

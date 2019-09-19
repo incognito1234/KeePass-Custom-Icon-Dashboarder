@@ -26,7 +26,10 @@ namespace HtmlAgilityPack
         /// <summary>True to disable, false to enable the behavior tag p.</summary>
         public static bool DisableBehaviorTagP
         {
-            get => _disableBehaviorTagP;
+            get
+            {
+                return _disableBehaviorTagP;
+            }
             set
             {
                 if (value)
