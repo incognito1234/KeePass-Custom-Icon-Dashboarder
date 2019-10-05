@@ -67,7 +67,7 @@ namespace CustomIconDashboarderPlugin
 
         private KPCIDConfig m_kpcidConfig;
 
-        private static bool notifyModificationWhenCompleted;
+        private static bool notifyModificationWhenCompletedLastThread;
 
         private IconChooser CurrentIconChooser { get; set; }
 
@@ -281,8 +281,8 @@ namespace CustomIconDashboarderPlugin
         private void UpdateThreadStatus()
         {
             string status;
-            bool notifyDatabaseModificationAndUpdateMainFormNeeded = false;
-            bool resetDashboardNeeded = false;
+            bool neededNotifyDatabaseModificationAndUpdateMainForm = false;
+            bool neededResetDashboard = false;
             lock (lckBatchStatus)
             {
                 if (batchStatus == BatchStatusType.Stopping)
@@ -312,20 +312,20 @@ namespace CustomIconDashboarderPlugin
                 lbl_status.Text = String.Format("{0} - Nb Thread : {1} Active / {2} Create / {3} Total"
                     , status, nbActiveThread, nbCreatedThread, nbThreadToBeLaunched);
 
-                if ((batchStatus == BatchStatusType.Stopped) && (notifyModificationWhenCompleted))
+                if ((batchStatus == BatchStatusType.Stopped) && (notifyModificationWhenCompletedLastThread))
                 {
-                    notifyDatabaseModificationAndUpdateMainFormNeeded = true;
-                    resetDashboardNeeded = true;
-                    notifyModificationWhenCompleted = false;
+                    neededNotifyDatabaseModificationAndUpdateMainForm = true;
+                    neededResetDashboard = true;
+                    notifyModificationWhenCompletedLastThread = false;
                 }
 
 
             }
-            if (notifyDatabaseModificationAndUpdateMainFormNeeded)
+            if (neededNotifyDatabaseModificationAndUpdateMainForm)
             {
                 NotifyDatabaseModificationAndUpdateMainForm();
             }
-            if (resetDashboardNeeded) {
+            if (neededResetDashboard) {
                 ResetDashboard();
             }
             
@@ -764,7 +764,7 @@ namespace CustomIconDashboarderPlugin
                     UpdateIconLviFromBestIconFinder(lvi);
                 }
 
-                notifyModificationWhenCompleted = true;
+                notifyModificationWhenCompletedLastThread = true;
             }
         }
 		
@@ -802,7 +802,7 @@ namespace CustomIconDashboarderPlugin
         {
             ListView.CheckedListViewItemCollection lvsiChecked = m_lvViewIcon.CheckedItems;
             ResetThreadManagement(lvsiChecked.Count);
-            notifyModificationWhenCompleted = false;
+            notifyModificationWhenCompletedLastThread = false;
             foreach (ListViewItem lvi in lvsiChecked)
             {
                 ThreadPool.QueueUserWorkItem(
@@ -1097,28 +1097,48 @@ namespace CustomIconDashboarderPlugin
 		
 		}
         
-        void OnPickCustomIconClickForEntries()
+        void UpdateBestIconAndPickIconForEntries(ListViewItem lvi)
 		{
-        	// TODO - Convert OnPickCustomIconClickForEntries to threadsafe method
-        	ListView.CheckedListViewItemCollection lvsiChecked = m_lvAllEntries.CheckedItems;
-						
-			foreach(ListViewItem lvi in lvsiChecked) {
+        	UpdateBestIconFinderAndLviFromEntryLvi( lvi );
+			var readEntry = (PwEntry)lvi.Tag;
 				
-				UpdateBestIconFinderAndLviFromEntryLvi( lvi );
-				var readEntry = (PwEntry)lvi.Tag;
-				
-				IconChooser ich = m_iconChooserIndexerFromEntry[readEntry];
-				if ((ich != null) && (ich.ChoosenIcon != null)) {
-					PwCustomIcon newIcon = UpdateEntryFromImage(
-						readEntry, ich.ChoosenIcon, m_PluginHost.Database);
-					if ((newIcon != null )) {
-						UpdateBestIconFinderAndLviFromEntryLvi(lvi);
-					}
-					NotifyDatabaseModificationAndUpdateMainForm();
+			IconChooser ich = m_iconChooserIndexerFromEntry[readEntry];
+			if ((ich != null) && (ich.ChoosenIcon != null)) {
+				PwCustomIcon newIcon = UpdateEntryFromImage(
+					readEntry, ich.ChoosenIcon, m_PluginHost.Database);
+				if ((newIcon != null )) {
+					UpdateBestIconFinderAndLviFromEntryLvi(lvi);
 				}
-			}
-			ResetDashboard();
+                notifyModificationWhenCompletedLastThread = true;
+            }
+			
 		}
+
+        void OnPickCustomIconClickForEntriesThread(object objectLvi)
+        {
+            if (batchStatus != BatchStatusType.Stopping)
+            {
+                var lvi = (ListViewItem)objectLvi;
+                UpdateNbThread(1);
+                UpdateBestIconAndPickIconForEntries(lvi);
+                UpdateNbThread(-1);
+            }
+        }
+
+        void OnPickCustomIconClickForEntries()
+        {
+            ListView.CheckedListViewItemCollection lvsiChecked = m_lvAllEntries.CheckedItems;
+            ResetThreadManagement(lvsiChecked.Count);
+            notifyModificationWhenCompletedLastThread = false;
+            foreach (ListViewItem lvi in lvsiChecked)
+            {
+                ThreadPool.QueueUserWorkItem(
+                    new WaitCallback(this.OnPickCustomIconClickForEntriesThread),
+                    lvi);
+
+            }
+            UpdateDownloadResultPanelFromSelectedIcon();
+        }
 		
         void OnModifyIconClickForEntries()
 		{
