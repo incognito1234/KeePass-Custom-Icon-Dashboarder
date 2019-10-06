@@ -289,7 +289,7 @@ namespace CustomIconDashboarderPlugin
                 {
                     if (nbActiveThread > 0)
                     {
-                        status = "Stopping in progress";
+                        status = "Stopping";
                     }
                     else
                     {
@@ -1324,7 +1324,7 @@ namespace CustomIconDashboarderPlugin
 		#region Common methods
 		private void NotifyDatabaseModificationAndUpdateMainForm() {
 			m_PluginHost.Database.Modified = true;
-			m_PluginHost.MainWindow.UpdateUI(true, null, false, null, true, null, true);
+            m_PluginHost.MainWindow.UpdateUI(true, null, false, null, true, null, true);
 		}
 		
 		void OnDetailsCheckedChanged(object sender, EventArgs e)

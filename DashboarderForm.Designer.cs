@@ -319,7 +319,7 @@ namespace CustomIconDashboarderPlugin
             "Modify",
             "Remove",
             "Download Best Icon",
-            "Pick Choosen Icon"});
+            "Pick Chosen Icon"});
             this.cbo_iconActionSelector.Location = new System.Drawing.Point(8, 7);
             this.cbo_iconActionSelector.Margin = new System.Windows.Forms.Padding(8, 7, 8, 7);
             this.cbo_iconActionSelector.Name = "cbo_iconActionSelector";
@@ -401,7 +401,7 @@ namespace CustomIconDashboarderPlugin
             "-- Choose an action --",
             "Modify Icon",
             "Download Best Icon",
-            "Pick Choosen Icon"});
+            "Pick Chosen Icon"});
             this.cbo_entryActionSelector.Location = new System.Drawing.Point(8, 7);
             this.cbo_entryActionSelector.Margin = new System.Windows.Forms.Padding(8, 7, 8, 7);
             this.cbo_entryActionSelector.Name = "cbo_entryActionSelector";
