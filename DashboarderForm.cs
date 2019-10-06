@@ -810,7 +810,6 @@ namespace CustomIconDashboarderPlugin
                     lvi);
 
             }
-            UpdateDownloadResultPanelFromSelectedIcon();
         }
 
         void OnDownloadCustomIconClick()
@@ -1137,7 +1136,6 @@ namespace CustomIconDashboarderPlugin
                     lvi);
 
             }
-            UpdateDownloadResultPanelFromSelectedIcon();
         }
 		
         void OnModifyIconClickForEntries()
