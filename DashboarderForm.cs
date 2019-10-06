@@ -1324,6 +1324,7 @@ namespace CustomIconDashboarderPlugin
 		#region Common methods
 		private void NotifyDatabaseModificationAndUpdateMainForm() {
 			m_PluginHost.Database.Modified = true;
+            m_PluginHost.Database.UINeedsIconUpdate = true;
             m_PluginHost.MainWindow.UpdateUI(true, null, false, null, true, null, true);
 		}
 		
