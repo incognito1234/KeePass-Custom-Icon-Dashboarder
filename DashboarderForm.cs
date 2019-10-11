@@ -862,6 +862,7 @@ namespace CustomIconDashboarderPlugin
 			
 		}
 		
+        private Object lckKdbCustomIcons = new Object();  // Lock
 		/// <summary>
 		/// Get Custom Icon from image
 		/// </summary>
@@ -884,24 +885,29 @@ namespace CustomIconDashboarderPlugin
 					imgSc.Dispose();
 				}
 				
-				byte[] msByteArray = ms.ToArray();
-	            foreach (PwCustomIcon item in kdb.CustomIcons)
-	            {
-	                // re-use existing custom icon if it's already in the database
-	                // (This will probably fail if database is used on 
-	                // both 32 bit and 64 bit machines - not sure why...)
-	                if (KeePassLib.Utility.MemUtil.ArraysEqual(msByteArray, item.ImageDataPng))
-	                {
-	                	return item;
-	                }
-	            }
-	
-	            // Create a new custom icon for use with this entry
-	            var pwci = new PwCustomIcon(new PwUuid(true),
-	                ms.ToArray());
-	            kdb.CustomIcons.Add(pwci);
-	            ms.Close();
-				return pwci;
+                byte[] msByteArray = ms.ToArray();
+                lock (lckKdbCustomIcons)
+                {
+
+                    foreach (PwCustomIcon item in kdb.CustomIcons)
+                    {
+                        // re-use existing custom icon if it's already in the database
+                        // (This will probably fail if database is used on 
+                        // both 32 bit and 64 bit machines - not sure why...)
+                        if (KeePassLib.Utility.MemUtil.ArraysEqual(msByteArray, item.ImageDataPng))
+                        {
+                            return item;
+                        }
+                    }
+
+                    // Create a new custom icon for use with this entry
+                    var pwci = new PwCustomIcon(new PwUuid(true),
+                        ms.ToArray());
+                    kdb.CustomIcons.Add(pwci);
+
+                    ms.Close();
+                    return pwci;
+                }
 		 	}
 		 	catch (Exception e) {
 		 		MessageBox.Show("Error while processing custom icon" + System.Environment.NewLine
