@@ -99,8 +99,8 @@ namespace CustomIconDashboarderPlugin
             this.tpa_Debug = new System.Windows.Forms.TabPage();
             this.rtb_details = new System.Windows.Forms.RichTextBox();
             this.tlp_footer_right = new System.Windows.Forms.TableLayoutPanel();
-            this.bto_OK = new System.Windows.Forms.Button();
             this.lbl_status = new System.Windows.Forms.Label();
+            this.bto_OK = new System.Windows.Forms.Button();
             this.tlp_main = new System.Windows.Forms.TableLayoutPanel();
             ((System.ComponentModel.ISupportInitialize)(this.spc_mainSplitter)).BeginInit();
             this.spc_mainSplitter.Panel1.SuspendLayout();
@@ -941,41 +941,41 @@ namespace CustomIconDashboarderPlugin
             // tlp_footer_right
             // 
             this.tlp_footer_right.ColumnCount = 2;
-            this.tlp_footer_right.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 75F));
             this.tlp_footer_right.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.tlp_footer_right.Controls.Add(this.bto_OK, 1, 0);
-            this.tlp_footer_right.Controls.Add(this.lbl_status, 0, 0);
+            this.tlp_footer_right.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 75F));
+            this.tlp_footer_right.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tlp_footer_right.Controls.Add(this.lbl_status, 1, 0);
+            this.tlp_footer_right.Controls.Add(this.bto_OK, 0, 0);
             this.tlp_footer_right.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlp_footer_right.Location = new System.Drawing.Point(3, 1263);
             this.tlp_footer_right.Name = "tlp_footer_right";
             this.tlp_footer_right.RowCount = 1;
             this.tlp_footer_right.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlp_footer_right.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 58F));
             this.tlp_footer_right.Size = new System.Drawing.Size(1737, 58);
             this.tlp_footer_right.TabIndex = 7;
             // 
+            // lbl_status
+            // 
+            this.lbl_status.AutoSize = true;
+            this.lbl_status.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lbl_status.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lbl_status.Location = new System.Drawing.Point(437, 0);
+            this.lbl_status.Name = "lbl_status";
+            this.lbl_status.Size = new System.Drawing.Size(1297, 58);
+            this.lbl_status.TabIndex = 7;
+            this.lbl_status.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
             // bto_OK
             // 
-            this.bto_OK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.bto_OK.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.bto_OK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.bto_OK.Location = new System.Drawing.Point(1457, 7);
-            this.bto_OK.Margin = new System.Windows.Forms.Padding(8, 7, 80, 7);
+            this.bto_OK.Location = new System.Drawing.Point(117, 7);
+            this.bto_OK.Margin = new System.Windows.Forms.Padding(8, 7, 8, 7);
             this.bto_OK.Name = "bto_OK";
             this.bto_OK.Size = new System.Drawing.Size(200, 44);
             this.bto_OK.TabIndex = 6;
             this.bto_OK.Text = "&Close";
             this.bto_OK.UseVisualStyleBackColor = true;
-            // 
-            // lbl_status
-            // 
-            this.lbl_status.AutoSize = true;
-            this.lbl_status.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.lbl_status.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lbl_status.Location = new System.Drawing.Point(3, 0);
-            this.lbl_status.Name = "lbl_status";
-            this.lbl_status.Size = new System.Drawing.Size(1296, 58);
-            this.lbl_status.TabIndex = 7;
-            this.lbl_status.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
             // 
             // tlp_main
             // 
