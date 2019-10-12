@@ -2,7 +2,7 @@
   LomsonLib - Library to help management of various object types in program 
   developed in c#.
   
-  Copyright (C) 2014 Jareth Lomson <incognito1234@users.sourceforge.net>
+ Copyright (C) 2014 Jareth Lomson <jareth.lomson@gmail.com>
  
  This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by

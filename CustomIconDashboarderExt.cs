@@ -2,7 +2,7 @@
  CustomIconDashboarder - KeePass Plugin to get some information and 
   manage custom icons
   
-  Copyright (C) 2016 Jareth Lomson <incognito1234@users.sourceforge.net>
+  Copyright (C) 2019 Jareth Lomson <jareth.lomson@gmail.com>
  
  This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ namespace CustomIconDashboarderPlugin
 		
 		public override string UpdateUrl
         {
-            get { return "https://sourceforge.net/p/keepasscustomicondashboarder/KPCustomIconDashboarder/ci/master/tree/versionInfo.txt?format=raw"; }
+            get { return "https://raw.githubusercontent.com/incognito1234/Keepass-Custom-Icon-Dashboarder/master/versionInfo.txt"; }
         }
 
 		

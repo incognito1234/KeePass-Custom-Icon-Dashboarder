@@ -4,13 +4,22 @@
 Pre-requisites
 --------------
 KeePass Password Safe 2.00+
-(latest version tested on 2.25 to 2.33)
+Framework .NET 4.5+
 
 
 Installation instructions
 -------------------------
 Put the .plgx file into a folder called "plugins" inside your
 KeePass Password Safe installation folder
+
+Version 1.2.0
+-------------
+- Simultaneous icon downloads by introducing multithreading
+- Remember size and position of dashboard when closing windows
+
+- Improvements:
+   - Update HtmlAgilityPack with version v1.11.12
+
 
 Version 1.1.0
 -------------

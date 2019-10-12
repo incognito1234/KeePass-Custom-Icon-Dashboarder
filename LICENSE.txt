@@ -8,9 +8,11 @@
    
 HtmlAgilityPack
 ---------------
-   The library HtmlAgilityPack v1.11.12 is used. It is available here:
-   https://github.com/zzzprojects/html-agility-pack
+   The library HtmlAgilityPack v1.11.12 is used.
    
+   Original version is available here:
+    https://github.com/zzzprojects/html-agility-pack
+   Minor modifications has been performed to use it as a KeePass Plugin.
    
    This library is distributed under the terms of the MIT License (MIT)
    Permission is hereby granted, free of charge, to any person obtaining a copy
