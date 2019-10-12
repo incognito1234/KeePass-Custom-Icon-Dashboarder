@@ -117,7 +117,7 @@ namespace CustomIconDashboarderPlugin
         }
 
         private static bool resetDashboardInProgress = false;
-        private static readonly object lckResetDashboardInProgress = true;
+        private static readonly object lckResetDashboardInProgress = new object();
         private void ResetDashboard() {
 
             bool resetInProgress;
@@ -217,7 +217,7 @@ namespace CustomIconDashboarderPlugin
                     wf.Location = new Point(
                         this.Location.X + (this.Width - wf.Width) / 2,
                         this.Location.Y + (this.Height - wf.Height) / 2);
-                    wf.SetMessage("Current operation is stopping. Please Wait ... ");
+                    wf.SetMessage("Current operation is stopping. Please wait ... ");
                     wf.Enabled = false;
                     wf.Show();
                     int i = 0;
@@ -255,6 +255,17 @@ namespace CustomIconDashboarderPlugin
                 nbThreadToBeLaunched = nbToBeLaunched;
                 UpdateThreadStatus();
             }
+        }
+
+        private void InitiateThreadStopping()
+        {
+            lock (lckThreadStatus)
+            {
+                batchStatus = BatchStatusType.Stopping;
+                nbThreadToBeLaunched = nbCreatedThread;
+                UpdateThreadStatus();
+            }
+           
         }
 
         private delegate void UpdateNbThreadCallBack(int newValue);
@@ -309,10 +320,11 @@ namespace CustomIconDashboarderPlugin
                 }
 
 
-                lbl_status.Text = String.Format("{0} - Nb Thread : {1} Active / {2} Create / {3} Total"
+                lbl_status.Text = String.Format("{0} - Nb Thread : {1} Active / {2} Created / {3} Total"
                     , status, nbActiveThread, nbCreatedThread, nbThreadToBeLaunched);
 
-                if ((batchStatus == BatchStatusType.Stopped) && (notifyModificationWhenCompletedLastThread))
+                if ((batchStatus == BatchStatusType.Stopped) && (notifyModificationWhenCompletedLastThread) 
+                    && (nbCreatedThread >= nbThreadToBeLaunched))
                 {
                     neededNotifyDatabaseModificationAndUpdateMainForm = true;
                     neededResetDashboard = true;
@@ -344,14 +356,12 @@ namespace CustomIconDashboarderPlugin
 
         private void Btn_stopEntryAction_Click(object sender, EventArgs e)
         {
-            batchStatus = BatchStatusType.Stopping;
-            UpdateThreadStatus();
+            InitiateThreadStopping();           
         }
         
         private void Btn_stopIconAction_Click(object sender, EventArgs e)
         {
-            batchStatus = BatchStatusType.Stopping;
-            UpdateThreadStatus();
+            InitiateThreadStopping();
         }
         #endregion
 
