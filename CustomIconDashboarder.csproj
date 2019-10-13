@@ -146,7 +146,7 @@
     <None Include="cleanBinaries.cmd" />
     <None Include="createPlgx.cmd" />
     <None Include="LICENSE.txt" />
-    <None Include="README.txt" />
+    <None Include="README.md" />
     <None Include="versionInfo.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -161,6 +161,11 @@
       <Project>{f61ffd35-4b4a-4a54-84ef-7ea8b3c59b44}</Project>
       <Name>LomsonLib</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="docs\images\screenshot-dashboard-1.png" />
+    <Content Include="docs\images\screenshot-menuitem.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

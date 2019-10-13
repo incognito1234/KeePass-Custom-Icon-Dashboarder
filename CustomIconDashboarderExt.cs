@@ -37,7 +37,7 @@ namespace CustomIconDashboarderPlugin
 		
 		public override string UpdateUrl
         {
-            get { return "https://raw.githubusercontent.com/incognito1234/Keepass-Custom-Icon-Dashboarder/master/versionInfo.txt"; }
+            get { return "https://raw.githubusercontent.com/incognito1234/KeePass-Custom-Icon-Dashboarder/master/versionInfo.txt"; }
         }
 
 		
