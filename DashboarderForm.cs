@@ -965,37 +965,71 @@ namespace CustomIconDashboarderPlugin
 		{
 			m_lvAllEntries.BeginUpdate();
 			m_lvAllEntries.SmallImageList = m_PluginHost.MainWindow.ClientIcons;
+
+            Dictionary<PwEntry, Exception> lstCorruptedEntries = new Dictionary<PwEntry, Exception>();
 		
 			int j=0;
 			foreach(PwEntry pe in m_PluginHost.Database.RootGroup.GetEntries(true))
 			{
 				var lvi = new ListViewItem(pe.Strings.ReadSafe(PwDefs.TitleField));
-				
+                bool isCorrupted = false;
 				// ImageIndex et Current Size
 				if(pe.CustomIconUuid.Equals(PwUuid.Zero)) {
 					lvi.ImageIndex = (int)pe.IconId;
 					lvi.SubItems.Add("Standard");
 				}
 				else {
-					int iCustomIcon = m_PluginHost.Database.GetCustomIconIndex(pe.CustomIconUuid);
-					lvi.ImageIndex = (int)PwIcon.Count + iCustomIcon;
-					Image img = CompatibilityManager.GetOriginalImage(
-						m_PluginHost.Database.CustomIcons[iCustomIcon]);
-					lvi.SubItems.Add(img.Width.ToString(NumberFormatInfo.InvariantInfo)
-				                + " x " +
-				               img.Height.ToString(NumberFormatInfo.InvariantInfo));
-				}
-				lvi.SubItems.Add(""); // New Size
-				
-				lvi.SubItems.Add(pe.ParentGroup.GetFullPath(".",false));
-				lvi.SubItems.Add(pe.Strings.ReadSafe(PwDefs.UrlField));
-				
-				lvi.Tag = pe;
-				m_lvAllEntries.Items.Add(lvi);
-				UpdateEntryLviFromBestIconFinder(lvi);
-				j++;
+                    try
+                    {
+                        int iCustomIcon = m_PluginHost.Database.GetCustomIconIndex(pe.CustomIconUuid);
+                        lvi.ImageIndex = (int)PwIcon.Count + iCustomIcon;
+                        Image img = CompatibilityManager.GetOriginalImage(
+                            m_PluginHost.Database.CustomIcons[iCustomIcon]);
+                        lvi.SubItems.Add(img.Width.ToString(NumberFormatInfo.InvariantInfo)
+                                    + " x " +
+                                   img.Height.ToString(NumberFormatInfo.InvariantInfo));
+                    }
+                    catch (Exception e)
+                    {
+                        lstCorruptedEntries.Add(pe, e);
+                        isCorrupted = true;
+                    }
+                }
+                if (!isCorrupted)
+                {
+                    lvi.SubItems.Add(""); // New Size
+
+                    lvi.SubItems.Add(pe.ParentGroup.GetFullPath(".", false));
+                    lvi.SubItems.Add(pe.Strings.ReadSafe(PwDefs.UrlField));
+
+                    lvi.Tag = pe;
+                    m_lvAllEntries.Items.Add(lvi);
+                    UpdateEntryLviFromBestIconFinder(lvi);
+                    j++;
+                }
 			}
 			m_lvAllEntries.EndUpdate();
+            if (lstCorruptedEntries.Count > 0)
+            {
+                string msg = "It seems that custom icons of one or more entries are missing." + Environment.NewLine;
+                msg += "It can occur when entries are copied and pasted from database to an other one with old version of KeePass." + Environment.NewLine;
+                msg += lstCorruptedEntries.Count + " Entries are corrupted :" + Environment.NewLine;
+                foreach (KeyValuePair<PwEntry, Exception> kvp in lstCorruptedEntries)
+                {
+                    msg += "  *  " + kvp.Key.Strings.ReadSafe(PwDefs.TitleField) + Environment.NewLine;
+                }
+                msg += "Do you want to fix corrupted entries ?";
+                DialogResult dgResult = MessageBox.Show(msg, "Corrupted Database", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (dgResult == DialogResult.Yes)
+                {
+                    foreach (PwEntry pe in lstCorruptedEntries.Keys)
+                    {
+                        pe.CustomIconUuid = PwUuid.Zero;
+                        pe.IconId = PwIcon.Key;
+                        NotifyDatabaseModificationAndUpdateMainForm();
+                    }
+                }
+            }
 		}
 		
 		private void BuildEntriesListViews() {
