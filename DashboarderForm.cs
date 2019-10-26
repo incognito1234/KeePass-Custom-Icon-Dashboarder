@@ -373,7 +373,8 @@ namespace CustomIconDashboarderPlugin
             m_iconCounter = new IconStatsHandler();
             m_iconCounter.Initialize( m_PluginHost.Database);
             CreateCustomIconList();
-            CreateAllEntriesList();
+            List<PwEntry> corruptedEntries = getAndFixCorruptedEntries();
+            CreateAllEntriesList(corruptedEntries);
             m_lvIconsColumnSorter.UpdateCheckAllCheckBox(false);
             m_lvEntriesColumnSorter.UpdateCheckAllCheckBox(false);
         }
@@ -961,19 +962,66 @@ namespace CustomIconDashboarderPlugin
 		
 		#region ListView entries actions
 		
-		private void CreateAllEntriesList()
+        private List<PwEntry> getAndFixCorruptedEntries()
+        {
+            List<PwEntry> result = new List<PwEntry> ();
+            foreach (PwEntry pe in m_PluginHost.Database.RootGroup.GetEntries(true))
+            {
+                if (!pe.CustomIconUuid.Equals(PwUuid.Zero))
+                {
+                    int iCustomIcon = m_PluginHost.Database.GetCustomIconIndex(pe.CustomIconUuid);
+                    if (iCustomIcon < 0)
+                    {
+                        result.Add(pe);
+                    }
+                }
+            }
+
+            if (result.Count > 0)
+            {
+                string msg = "It seems that custom icons of one or more entries are missing." + Environment.NewLine;
+                msg += "It can occur when entries are copied and pasted from database to an other one with old version of KeePass." + Environment.NewLine;
+                msg += result.Count + " Entries are corrupted :" + Environment.NewLine;
+                foreach (PwEntry pe in result)
+                {
+                    msg += "  *  " + pe.Strings.ReadSafe(PwDefs.TitleField) + Environment.NewLine;
+                }
+                msg += "Do you want to fix corrupted entries ?";
+                DialogResult dgResult = MessageBox.Show(msg, "Corrupted Database", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (dgResult == DialogResult.Yes)
+                {
+                    foreach (PwEntry pe in result)
+                    {
+                        pe.CustomIconUuid = PwUuid.Zero;
+                        pe.IconId = PwIcon.Key;
+                        NotifyDatabaseModificationAndUpdateMainForm();
+                    }
+                    result = new List<PwEntry>();
+                }
+            }
+            return result;
+        }
+
+		/// <summary>
+        /// Create AllEntries LVI by ignoring list of entries (possibly corrupted)
+        /// </summary>
+        /// <param name="peToBeIgnored">List to be ignored</param>
+        private void CreateAllEntriesList(List<PwEntry> peToBeIgnored)
 		{
 			m_lvAllEntries.BeginUpdate();
 			m_lvAllEntries.SmallImageList = m_PluginHost.MainWindow.ClientIcons;
 
-            Dictionary<PwEntry, Exception> lstCorruptedEntries = new Dictionary<PwEntry, Exception>();
-		
 			int j=0;
 			foreach(PwEntry pe in m_PluginHost.Database.RootGroup.GetEntries(true))
 			{
+                if (peToBeIgnored.Contains(pe))
+                {
+                    continue;
+                }
+
 				var lvi = new ListViewItem(pe.Strings.ReadSafe(PwDefs.TitleField));
                 bool isCorrupted = false;
-				// ImageIndex et Current Size
+                // ImageIndex et Current Size
 				if(pe.CustomIconUuid.Equals(PwUuid.Zero)) {
 					lvi.ImageIndex = (int)pe.IconId;
 					lvi.SubItems.Add("Standard");
@@ -991,7 +1039,7 @@ namespace CustomIconDashboarderPlugin
                     }
                     catch (Exception e)
                     {
-                        lstCorruptedEntries.Add(pe, e);
+                        Debug.Assert(false, "Try build entry list with at list a correcupted entry");
                         isCorrupted = true;
                     }
                 }
@@ -1009,27 +1057,6 @@ namespace CustomIconDashboarderPlugin
                 }
 			}
 			m_lvAllEntries.EndUpdate();
-            if (lstCorruptedEntries.Count > 0)
-            {
-                string msg = "It seems that custom icons of one or more entries are missing." + Environment.NewLine;
-                msg += "It can occur when entries are copied and pasted from database to an other one with old version of KeePass." + Environment.NewLine;
-                msg += lstCorruptedEntries.Count + " Entries are corrupted :" + Environment.NewLine;
-                foreach (KeyValuePair<PwEntry, Exception> kvp in lstCorruptedEntries)
-                {
-                    msg += "  *  " + kvp.Key.Strings.ReadSafe(PwDefs.TitleField) + Environment.NewLine;
-                }
-                msg += "Do you want to fix corrupted entries ?";
-                DialogResult dgResult = MessageBox.Show(msg, "Corrupted Database", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                if (dgResult == DialogResult.Yes)
-                {
-                    foreach (PwEntry pe in lstCorruptedEntries.Keys)
-                    {
-                        pe.CustomIconUuid = PwUuid.Zero;
-                        pe.IconId = PwIcon.Key;
-                        NotifyDatabaseModificationAndUpdateMainForm();
-                    }
-                }
-            }
 		}
 		
 		private void BuildEntriesListViews() {
