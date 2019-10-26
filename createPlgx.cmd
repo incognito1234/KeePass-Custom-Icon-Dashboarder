@@ -31,7 +31,7 @@ del %TMP_PATH_PLUGIN%\LomsonLib\Properties\AssemblyInfo.cs
 
 %PATH_KEEPASS%\keepass.exe --plgx-create %TMP_PATH_PLUGIN% ^
    --plgx-prereq-kp:2.0 ^
-   --plgx-prereq-net:4.5
+   --plgx-prereq-net:4.0
 
 copy %TEMP%\CustomIconDashboarder.plgx %~dp0
 copy %~dp0\CustomIconDashboarder.plgx C:\temp\KeePass-2.43\Plugins
