@@ -630,7 +630,7 @@ namespace CustomIconDashboarderPlugin
 					bif.FindBestIcon();
 				}
 				else {
-					bif = new BestIconFinder();
+					bif = BestIconFinder.BuildInstanceWithNoURLResult();
 				}
 				   
 				var ich = new IconChooser(bif);
@@ -663,6 +663,10 @@ namespace CustomIconDashboarderPlugin
 			if (ich.Bif.Result.ResultCode == FinderResult.RESULT_NO_URL) {
                 UpdateAllEntriesLvi(lvi.SubItems[2], Resource.val_nourl);
 			}
+            else if (ich.Bif.Result.ResultCode == FinderResult.RESULT_MALFORMED_URL)
+            {
+                UpdateAllEntriesLvi(lvi.SubItems[2], Resource.val_malformedurl);
+            }
 			else if (ich.Bif.BestImage != null) {
                 UpdateAllEntriesLvi(lvi.SubItems[2],
                     ich.Bif.BestImage.Width.ToString(NumberFormatInfo.InvariantInfo)
@@ -1321,14 +1325,20 @@ namespace CustomIconDashboarderPlugin
 				BestIconFinder bif;
 				if (!string.IsNullOrEmpty(readUrl)) {
 					String urlFieldValue = LomsonLib.Utility.URLUtility.addUrlHttpPrefix(readUrl);
-							
-					var siteUri = new Uri(urlFieldValue);
-					
-					bif = new BestIconFinder( siteUri );
-					bif.FindBestIcon();
+
+                    try
+                    {   // Detect non-managed URL Format
+                        var siteUri = new Uri(urlFieldValue);
+                        bif = new BestIconFinder(siteUri);
+                        bif.FindBestIcon();
+                    }
+                    catch (Exception)
+                    {
+                        bif = BestIconFinder.BuildInstanceWithMalformedURLResult();                        
+                    }
 				}
 				else {
-					bif = new BestIconFinder();
+                    bif = BestIconFinder.BuildInstanceWithNoURLResult();
 				}
 				   
 				var ich = new IconChooser(bif);
@@ -1357,7 +1367,11 @@ namespace CustomIconDashboarderPlugin
 			if (ich.Bif.Result.ResultCode == FinderResult.RESULT_NO_URL) {
         		UpdateAllEntriesLvi(lvi.SubItems[2],Resource.val_nourl);
 			}
-			else if (ich.Bif.BestImage != null) {
+            else if (ich.Bif.Result.ResultCode == FinderResult.RESULT_MALFORMED_URL)
+            {
+                UpdateAllEntriesLvi(lvi.SubItems[2], Resource.val_malformedurl);
+            }
+            else if (ich.Bif.BestImage != null) {
 		    	UpdateAllEntriesLvi(
         			lvi.SubItems[2],
         			ich.Bif.BestImage.Width.ToString(NumberFormatInfo.InvariantInfo)

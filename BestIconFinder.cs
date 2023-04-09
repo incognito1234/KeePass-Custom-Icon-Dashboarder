@@ -111,7 +111,7 @@ namespace CustomIconDashboarderPlugin
 		public BestIconFinder()
 		{
 			this.SiteUri = null;
-			this.Result = new FinderResult(FinderResult.RESULT_NO_URL);
+            this.Result = null;
 			this.myLogger = new MyLogger(this);
 			this.BestImage = null;
 			this.IndexOfBestImage = -1;
@@ -119,9 +119,29 @@ namespace CustomIconDashboarderPlugin
 			this.NbRequestCacheInvoke = 0;
 			client = new MyWebClient();
 		}
-		
-		
-		public void FindBestIcon()
+
+        #region Embeded Factory
+        public static BestIconFinder BuildInstanceWithNoURLResult()
+        {
+            BestIconFinder result = new BestIconFinder
+            {
+                Result = new FinderResult(FinderResult.RESULT_NO_URL)
+            };
+            return result;
+        }
+
+        public static BestIconFinder BuildInstanceWithMalformedURLResult()
+        {
+            BestIconFinder result = new BestIconFinder
+            {
+                Result = new FinderResult(FinderResult.RESULT_MALFORMED_URL)
+            };
+            result.myLogger.LogDebug("Non managed URL format");
+            return result;
+        }
+        #endregion
+
+        public void FindBestIcon()
 		{
 			if (this.SiteUri == null) {
 				this.myLogger.LogWarn("No URL. Stop Find Best Icon");
@@ -169,7 +189,7 @@ namespace CustomIconDashboarderPlugin
 			
 		}
 		
-		public void FindBestIconForURI(Uri param_uri)
+       	public void FindBestIconForURI(Uri param_uri)
 		{
 			// Prepare
 			if (param_uri == null) {
@@ -559,8 +579,8 @@ namespace CustomIconDashboarderPlugin
 			}
 			
 		}
-        
-		private bool PreRequest_EventHandler(HttpWebRequest request)
+
+        private bool PreRequest_EventHandler(HttpWebRequest request)
         {
             request.CookieContainer = new System.Net.CookieContainer();
             request.Accept = REQUEST_HEADER_ACCEPT;
@@ -725,6 +745,7 @@ namespace CustomIconDashboarderPlugin
 		public const int RESULT_HTML_NOT_FOUND = 2;
 		public const int RESULT_HTML_PARSING = 3;
 		public const int RESULT_NO_URL = 4;
+        public const int RESULT_MALFORMED_URL = 5;
 		
 		public int ResultCode {get; private set; }
 		public FinderResult (int code) 
@@ -737,8 +758,9 @@ namespace CustomIconDashboarderPlugin
 				case FinderResult.RESULT_NOT_YET_SEARCH : return "Not Yet Search";
 				case RESULT_OK : return "OK";
 				case RESULT_HTML_NOT_FOUND : return "Html not found";
-				case RESULT_HTML_PARSING : return "Errot Html parsing";
+				case RESULT_HTML_PARSING : return "Error Html parsing";
 				case RESULT_NO_URL : return "No URL";
+                case RESULT_MALFORMED_URL: return "Malformed URL";
 				default : return "";
 			}
 		}
