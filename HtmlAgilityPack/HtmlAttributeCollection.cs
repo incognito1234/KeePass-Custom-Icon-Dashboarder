@@ -8,6 +8,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace HtmlAgilityPack
 {
@@ -20,7 +21,7 @@ namespace HtmlAgilityPack
 
         internal Dictionary<string, HtmlAttribute> Hashitems = new Dictionary<string, HtmlAttribute>(StringComparer.OrdinalIgnoreCase);
         private HtmlNode _ownernode;
-        private List<HtmlAttribute> items = new List<HtmlAttribute>();
+        internal List<HtmlAttribute> items = new List<HtmlAttribute>();
 
         #endregion
 
@@ -99,8 +100,10 @@ namespace HtmlAgilityPack
                 {
                     Append(value);
                 }
-
-                this[items.IndexOf(currentValue)] = value;
+                else
+                {
+	                this[items.IndexOf(currentValue)] = value;
+                }
             }
         }
 
@@ -150,7 +153,7 @@ namespace HtmlAgilityPack
 		/// </summary>
 		void ICollection<HtmlAttribute>.Clear()
         {
-            items.Clear();
+            Clear();
         }
 
         /// <summary>
@@ -227,7 +230,19 @@ namespace HtmlAgilityPack
         /// <returns></returns>
         bool ICollection<HtmlAttribute>.Remove(HtmlAttribute item)
         {
-            return items.Remove(item);
+            if (item == null)
+            {
+                return false;
+            }
+
+            int index = GetAttributeIndex(item);
+            if (index == -1)
+            {
+                return false;
+            }
+
+            RemoveAt(index);
+            return true;
         }
 
         /// <summary>
@@ -352,14 +367,20 @@ namespace HtmlAgilityPack
             {
                 throw new ArgumentNullException("name");
             }
-
+            
+            List<int> listToRemove = new List<int>();
             for (int i = 0; i < items.Count; i++)
             {
                 HtmlAttribute att = items[i];
                 if (String.Equals(att.Name, name, StringComparison.OrdinalIgnoreCase))
                 {
-                    RemoveAt(i);
+                    listToRemove.Add(i);
                 }
+            }
+
+            foreach(var i in listToRemove.OrderByDescending(x => x))
+			{ 
+                RemoveAt(i);
             }
         }
 
