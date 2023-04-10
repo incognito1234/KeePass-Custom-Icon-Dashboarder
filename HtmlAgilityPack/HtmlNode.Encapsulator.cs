@@ -833,8 +833,18 @@ namespace HtmlAgilityPack
         /// <summary>
         /// XPath Expression that is used to find related html node.
         /// </summary>
-        public string XPath { get; }
-
+        private string _xPath = null;
+        public string XPath
+        {
+            get
+            {
+                return _xPath;
+            }
+            private set
+            {
+                _xPath = value;
+            }
+        }
         /// <summary>
         /// Html Attribute name
         /// </summary>

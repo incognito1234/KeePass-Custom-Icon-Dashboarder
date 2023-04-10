@@ -406,7 +406,7 @@ namespace HtmlAgilityPack
 
             if (depthLevel > HtmlDocument.MaxDepthLevel)
             {
-                throw new Exception($"Maximum deep level reached: {HtmlDocument.MaxDepthLevel}");
+                throw new Exception("Maximum deep level reached: " + HtmlDocument.MaxDepthLevel.ToString());
             }
 
 			if (!_ownerdocument.BackwardCompatibility)
@@ -1676,7 +1676,8 @@ namespace HtmlAgilityPack
 		{
 			if (child == null)
 			{
-				throw new ArgumentNullException($"Oops! the '{nameof(child)}' parameter cannot be null.");
+				throw new ArgumentNullException(
+                    "Oops! the 'HtmlNode' parameter cannot be null.");
 			}
 
 			var oldParent = child.ParentNode; 
@@ -1695,7 +1696,8 @@ namespace HtmlAgilityPack
 		{
 			if (children == null)
 			{
-                throw new ArgumentNullException($"Oops! the '{nameof(children)}' parameter cannot be null.");
+                throw new ArgumentNullException(
+                    "Oops! the 'HtmlNodeCollection' parameter cannot be null.");
 			}
 
 			var oldParent = children.ParentNode;
@@ -1714,7 +1716,8 @@ namespace HtmlAgilityPack
 		{
 			if (oldChildren == null)
 			{
-                throw new ArgumentNullException($"Oops! the '{nameof(oldChildren)}' parameter cannot be null.");
+                throw new ArgumentNullException(
+                    "Oops! the 'HtmlNodeCollection' parameter cannot be null.");
 			}
 
 			var list = oldChildren.ToList();
