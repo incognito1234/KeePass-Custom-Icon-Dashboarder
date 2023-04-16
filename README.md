@@ -45,17 +45,19 @@ Custom icon Dashboard (downloading in progress)
 
 ## Changelog
 
+### Version 1.3.0
+- Manage malformed URL
+- Detect and fix corrupt icons
+
 ### Version 1.2.0
 - Simultaneous icon downloads by introducing multithreading
 - Remember size and position of dashboard when closing windows
 - Plugin is now hosted by github
-- Improvements:
-   - Update HtmlAgilityPack with version v1.11.12
-
+- Improvement: Update HtmlAgilityPack with version v1.11.12
 
 ### Version 1.1.0
-- All icons from URL are downloaded. The best-sized icon is choosen by default.
-  Then it is possible to change manually the choosen icon.
+- All icons from URL are downloaded. The best-sized icon is chosen by default.
+  Then it is possible to change manually the chosen icon.
 - Add support of downloading icons of entries with standard icons.
 - Display index of selected icon in the upper right corner of dashboard.
 
