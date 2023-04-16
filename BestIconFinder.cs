@@ -42,8 +42,11 @@ namespace CustomIconDashboarderPlugin
 		
 		
 		public static void InitClass() {
-            //  Enable TLS 1.1 (768) and TLS 1.2 (3072)
-            ServicePointManager.SecurityProtocol = (SecurityProtocolType)768 | (SecurityProtocolType)3072;
+            //  Enable TLS 1.1 (768), TLS 1.2 (3072) and TLS 1.3 (12288)
+            ServicePointManager.SecurityProtocol =
+                (SecurityProtocolType)768 | 
+                (SecurityProtocolType)3072 | 
+                (SecurityProtocolType)12288;
         }
 
         ~BestIconFinder() {
