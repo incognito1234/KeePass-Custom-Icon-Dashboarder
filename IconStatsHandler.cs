@@ -1,8 +1,8 @@
 ﻿/*
- CustomIconDashboarder - KeePass Plugin to get some information and
+  CustomIconDashboarder - KeePass Plugin to get some information and 
   manage custom icons
-   
- Copyright (C) 2016 Jareth Lomson <jareth.lomson@gmail.com>
+  
+  Copyright (C) 2023 Jareth Lomson <jareth.lomson@gmail.com>
 
  This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
